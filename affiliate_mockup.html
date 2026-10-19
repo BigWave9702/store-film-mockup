@@ -1,0 +1,1083 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WebPhimAI Affiliate</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout concept: sidebar + sticky header; every detail page carries the "chuỗi hoa hồng" ribbon (Publisher → … → Chi trả) showing where the record sits in the money flow. Admin = indigo accent, Publisher = teal accent. */
+:root{
+--bg:#f8f8fa;--card:#fff;--fg:#17171c;--muted:#f1f1f5;--mfg:#6b6b78;--bd:#e3e3ea;--inp:#cfcfd9;
+--a-adm:#4338ca;--as-adm:#ecebfd;--a-pub:#0f766e;--as-pub:#e1f4f0;
+--accent:var(--a-adm);--accent-soft:var(--as-adm);--accent-fg:#fff;--ring:#9d98ee;
+--ok:#15803d;--okb:#e6f5ea;--warn:#a15c07;--warnb:#fdf1d3;--bad:#b42323;--badb:#fde9e9;--info:#1d4ed8;--infob:#e8effe;
+--adjb:#fff6dc;--adjl:#e9b949;--side:#fcfcfd;--shadow:0 1px 2px rgba(20,20,40,.06);
+--c1:#4338ca;--c2:#0f9d8a;--c3:#d9822b;--grid:#ececf2;
+--radius:7px;--sans:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'DM Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+--bg:#0e0e13;--card:#16161d;--fg:#ececf2;--muted:#1e1e27;--mfg:#9a9aaa;--bd:#2a2a35;--inp:#3a3a48;
+--a-adm:#8f8bf5;--as-adm:#23224a;--a-pub:#3fc2ac;--as-pub:#103833;--accent-fg:#0e0e13;--ring:#5b57c9;
+--ok:#4cc77a;--okb:#14301f;--warn:#e8b048;--warnb:#3a2c0e;--bad:#f27b7b;--badb:#3d1a1a;--info:#7ea6ff;--infob:#18264a;
+--adjb:#33290e;--adjl:#b88a1d;--side:#12121a;--shadow:none;--c1:#8f8bf5;--c2:#3fc2ac;--c3:#e8a054;--grid:#262632;color-scheme:dark}}
+:root[data-theme="dark"]{
+--bg:#0e0e13;--card:#16161d;--fg:#ececf2;--muted:#1e1e27;--mfg:#9a9aaa;--bd:#2a2a35;--inp:#3a3a48;
+--a-adm:#8f8bf5;--as-adm:#23224a;--a-pub:#3fc2ac;--as-pub:#103833;--accent-fg:#0e0e13;--ring:#5b57c9;
+--ok:#4cc77a;--okb:#14301f;--warn:#e8b048;--warnb:#3a2c0e;--bad:#f27b7b;--badb:#3d1a1a;--info:#7ea6ff;--infob:#18264a;
+--adjb:#33290e;--adjl:#b88a1d;--side:#12121a;--shadow:none;--c1:#8f8bf5;--c2:#3fc2ac;--c3:#e8a054;--grid:#262632;color-scheme:dark}
+:root[data-portal="pub"]{--accent:var(--a-pub);--accent-soft:var(--as-pub)}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:13.5px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--ring);outline-offset:1px}
+.mono{font-family:var(--mono);font-size:12px}
+.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.mut{color:var(--mfg)} .sm{font-size:12px} .nowrap{white-space:nowrap}
+h1,h2,h3{margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:21px;font-weight:700} h2{font-size:15px;font-weight:700} h3{font-size:13.5px;font-weight:700}
+.ic{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic.sm{width:14px;height:14px}
+/* shell */
+.app{display:grid;grid-template-columns:252px minmax(0,1fr);min-height:100%}
+.app.col{grid-template-columns:60px minmax(0,1fr)}
+.side{background:var(--side);border-right:1px solid var(--bd);position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;padding:12px 10px;gap:2px}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 14px;font-weight:800;font-size:15px}
+.logo{width:28px;height:28px;border-radius:7px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-weight:800;flex:none}
+.brand small{display:block;font-weight:500;color:var(--mfg);font-size:11px;margin-top:-2px}
+.grp{font-size:11.5px;color:var(--mfg);font-weight:600;padding:12px 10px 4px}
+.nav{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:6px;color:var(--fg);background:none;border:0;text-align:left;width:100%;font-weight:500}
+.nav:hover{background:var(--muted)}
+.nav.on{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.nav.sub{padding-left:34px;font-size:13px}
+.col .side .t,.col .grp,.col .brand div{display:none}
+.col .nav.sub{padding-left:10px}
+.main{min-width:0;display:flex;flex-direction:column}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;padding:9px 20px;min-height:52px}
+.crumb{display:flex;align-items:center;gap:6px;color:var(--mfg);font-size:12.5px;flex-wrap:wrap;min-width:0}
+.crumb a{color:var(--mfg);text-decoration:none;cursor:pointer} .crumb a:hover{color:var(--fg)}
+.crumb b{color:var(--fg);font-weight:600}
+.sp{flex:1}
+.page{padding:20px;display:flex;flex-direction:column;gap:16px;max-width:1500px;width:100%}
+.ph{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.ph p{margin:3px 0 0;color:var(--mfg);max-width:70ch}
+.menu-btn{display:none}
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:34px;padding:0 13px;border-radius:var(--radius);border:1px solid var(--inp);background:var(--card);font-weight:600;white-space:nowrap}
+.btn:hover{background:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)} .btn.primary:hover{filter:brightness(1.1)}
+.btn.destructive{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn.ghost{border-color:transparent;background:none} .btn.ghost:hover{background:var(--muted)}
+.btn.s{height:28px;padding:0 9px;font-size:12.5px}
+.btn.i{width:30px;height:30px;padding:0}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.input,.select,.textarea{width:100%;height:34px;border:1px solid var(--inp);background:var(--card);border-radius:var(--radius);padding:0 10px;min-width:0}
+.textarea{height:auto;padding:8px 10px;min-height:70px;resize:vertical}
+.input.err,.select.err,.textarea.err{border-color:var(--bad)}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-weight:600;font-size:12.5px}
+.field label i{color:var(--bad);font-style:normal}
+.help{color:var(--mfg);font-size:12px} .emsg{color:var(--bad);font-size:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.cb{width:15px;height:15px;accent-color:var(--accent)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;box-shadow:var(--shadow)}
+.cp{padding:16px} .ch{padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.ch p{margin:2px 0 0;color:var(--mfg);font-size:12.5px}
+.badge{display:inline-flex;align-items:center;gap:4px;height:21px;padding:0 8px;border-radius:99px;font-size:11.5px;font-weight:600;white-space:nowrap;background:var(--muted);color:var(--mfg)}
+.badge.ok{background:var(--okb);color:var(--ok)} .badge.warn{background:var(--warnb);color:var(--warn)} .badge.bad{background:var(--badb);color:var(--bad)}
+.badge.info{background:var(--infob);color:var(--info)} .badge.acc{background:var(--accent-soft);color:var(--accent)}
+.badge.adj{background:var(--adjb);color:var(--warn);box-shadow:inset 0 0 0 1px var(--adjl)}
+.badge.lock{background:var(--fg);color:var(--bg)}
+.alert{display:flex;gap:10px;padding:11px 13px;border-radius:var(--radius);border:1px solid var(--bd);background:var(--card);font-size:12.5px}
+.alert.info{background:var(--infob);border-color:transparent} .alert.warn{background:var(--warnb);border-color:transparent;color:var(--warn)}
+.alert.bad{background:var(--badb);border-color:transparent;color:var(--bad)} .alert.ok{background:var(--okb);border-color:transparent;color:var(--ok)}
+.alert .ic{margin-top:2px} .alert b{display:block}
+/* tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--bd);overflow:auto}
+.tab{background:none;border:0;border-bottom:2px solid transparent;padding:9px 13px;font-weight:600;color:var(--mfg);white-space:nowrap;margin-bottom:-1px}
+.tab:hover{color:var(--fg)} .tab.on{color:var(--accent);border-color:var(--accent)}
+/* filter */
+.fbar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:14px 16px}
+.fbar .field{flex:1 1 190px;max-width:260px}
+.seg{display:inline-flex;border:1px solid var(--inp);border-radius:var(--radius);overflow:hidden;background:var(--card)}
+.seg button{border:0;background:none;padding:0 11px;height:32px;font-weight:600;color:var(--mfg);border-right:1px solid var(--bd)}
+.seg button:last-child{border:0} .seg button.on{background:var(--accent-soft);color:var(--accent)}
+.dr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.dr .input{width:142px}
+/* multiselect */
+.ms{position:relative}
+.ms-t{width:100%;min-height:34px;display:flex;align-items:center;gap:5px;flex-wrap:wrap;border:1px solid var(--inp);background:var(--card);border-radius:var(--radius);padding:3px 28px 3px 8px;text-align:left;position:relative}
+.ms-t .ic{position:absolute;right:8px;top:9px;color:var(--mfg)}
+.ms-ph{color:var(--mfg)} .chip{display:inline-flex;align-items:center;gap:3px;background:var(--muted);border-radius:5px;padding:1px 6px;font-size:12px;font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ms-p{position:absolute;z-index:40;left:0;top:calc(100% + 4px);width:max(100%,290px);background:var(--card);border:1px solid var(--bd);border-radius:9px;box-shadow:0 8px 30px rgba(0,0,0,.18);padding:8px;display:flex;flex-direction:column;gap:6px}
+.ms-tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px}
+.ms-tools .lk{background:none;border:0;color:var(--accent);font-weight:600;padding:2px 4px}
+.ms-l{max-height:210px;overflow:auto;display:flex;flex-direction:column}
+.ms-o{display:flex;align-items:center;gap:8px;padding:6px 6px;border-radius:5px;cursor:pointer}
+.ms-o:hover{background:var(--muted)} .ms-o small{color:var(--mfg);margin-left:auto}
+/* table */
+.tw{overflow:auto;max-width:100%;max-height:640px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
+th{position:sticky;top:0;background:var(--muted);text-align:left;font-weight:600;color:var(--mfg);font-size:12px;padding:9px 12px;white-space:nowrap;border-bottom:1px solid var(--bd);z-index:2}
+th.sort{cursor:pointer} th.sort:hover{color:var(--fg)}
+td{white-space:nowrap;padding:9px 12px;border-bottom:1px solid var(--bd);vertical-align:middle}
+tr[data-act="row"]{cursor:pointer} tbody tr:hover td{background:color-mix(in srgb,var(--muted) 70%,transparent)}
+td.r,th.r{text-align:right} 
+tr.adj td{background:var(--adjb)} tr.adj td:first-child{box-shadow:inset 3px 0 0 var(--adjl)}
+tr.tot td{font-weight:700;background:var(--muted)}
+tr.nest>td{padding:0;background:var(--bg)}
+.nestw{padding:10px 12px 12px 44px}
+.tbar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;flex-wrap:wrap}
+.pager{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:10px 16px;border-top:1px solid var(--bd);color:var(--mfg);font-size:12.5px;flex-wrap:wrap}
+.dd{position:relative} .ddp{position:absolute;right:0;top:calc(100% + 4px);z-index:30;background:var(--card);border:1px solid var(--bd);border-radius:9px;padding:6px;min-width:190px;box-shadow:0 8px 30px rgba(0,0,0,.18)}
+.ddp label{display:flex;gap:8px;align-items:center;padding:5px 6px;border-radius:5px;cursor:pointer} .ddp label:hover{background:var(--muted)}
+.skel{background:linear-gradient(90deg,var(--muted),var(--bd),var(--muted));background-size:200% 100%;animation:sk 1.2s infinite;border-radius:5px;height:14px}
+@keyframes sk{to{background-position:-200% 0}}
+.empty{padding:44px 16px;text-align:center;color:var(--mfg);display:flex;flex-direction:column;align-items:center;gap:6px}
+.empty b{color:var(--fg);font-size:14px}
+/* kpi */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.kpi{padding:13px 15px} .kpi .l{color:var(--mfg);font-size:12px;font-weight:600} .kpi .v{font-size:22px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums;letter-spacing:-.02em} .kpi .s{font-size:12px;color:var(--mfg);margin-top:1px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mfg);flex-wrap:wrap} .legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px}
+svg.chart{width:100%;height:auto;display:block} svg.chart text{fill:var(--mfg);font:11px var(--sans)}
+.hb{display:grid;grid-template-columns:150px 1fr 90px;gap:10px;align-items:center;font-size:12.5px;padding:5px 0}
+.hb .bar{height:8px;background:var(--muted);border-radius:9px;overflow:hidden} .hb .bar i{display:block;height:100%;background:var(--accent);border-radius:9px}
+.prog{height:6px;background:var(--muted);border-radius:9px;overflow:hidden;min-width:70px} .prog i{display:block;height:100%;background:var(--accent)}
+/* chain ribbon */
+.chain{display:flex;overflow:auto;border:1px solid var(--bd);border-radius:10px;background:var(--card)}
+.chain div{flex:1 0 auto;padding:8px 14px 8px 22px;font-size:12px;font-weight:600;color:var(--mfg);white-space:nowrap;position:relative;border-right:1px solid var(--bd)}
+.chain div:last-child{border:0}
+.chain div::after{content:'';position:absolute;right:-6px;top:50%;width:10px;height:10px;background:var(--card);border-top:1px solid var(--bd);border-right:1px solid var(--bd);transform:translateY(-50%) rotate(45deg);z-index:1}
+.chain div:last-child::after{display:none}
+.chain .done{color:var(--fg)} .chain .cur{background:var(--accent-soft);color:var(--accent)} .chain .cur::after{background:var(--accent-soft)}
+.chain small{display:block;font-weight:500;color:var(--mfg);font-size:11px}
+.eq{display:flex;gap:8px;align-items:stretch;flex-wrap:wrap}
+.eq>div{flex:1 1 130px;border:1px solid var(--bd);border-radius:9px;padding:10px 12px;background:var(--card)} .eq .o{flex:0 0 auto;align-self:center;font-weight:700;font-size:18px;color:var(--mfg);min-width:0;border:0;background:none;padding:0 2px;flex-basis:auto}
+.eq small{color:var(--mfg);display:block;font-size:11.5px;font-weight:600} .eq b{font-size:17px;font-variant-numeric:tabular-nums}
+.eq .fin{background:var(--accent-soft);border-color:transparent} .eq .fin b{color:var(--accent)}
+.kv{margin:0;display:grid;grid-template-columns:150px 1fr;gap:7px 12px;font-size:13px} .kv dt{color:var(--mfg)} .kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.link{color:var(--accent);background:none;border:0;padding:0;font-weight:600;text-align:left} .link:hover{text-decoration:underline}
+.pst{width:34px;height:34px;border-radius:6px;flex:none;display:grid;place-items:center;color:#fff;font-weight:700;font-size:11px}
+.cell2{display:flex;gap:9px;align-items:center;min-width:0} .cell2 small{display:block;color:var(--mfg)}
+.url{max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:middle}
+/* overlays */
+.bk{position:fixed;inset:0;background:rgba(10,10,20,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.dlg{background:var(--card);border-radius:12px;width:min(560px,100%);max-height:calc(100% - 20px);overflow:auto;border:1px solid var(--bd)}
+.dlg.w{width:min(760px,100%)}
+.dh{padding:16px 18px 6px} .dh p{margin:3px 0 0;color:var(--mfg)}
+.db{padding:10px 18px 14px;display:flex;flex-direction:column;gap:12px} .df{padding:12px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.bk.sh{justify-content:flex-end;padding:0;align-items:stretch}
+.sheet{background:var(--card);width:min(620px,100%);overflow:auto;border-left:1px solid var(--bd);display:flex;flex-direction:column}
+.toasts{position:fixed;right:16px;bottom:16px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--fg);color:var(--bg);padding:10px 14px;border-radius:9px;font-weight:600;max-width:340px;animation:ti .2s}
+@keyframes ti{from{transform:translateY(8px);opacity:0}}
+.devbar{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:90;background:var(--fg);color:var(--bg);border-radius:99px;padding:4px 6px 4px 12px;display:flex;gap:6px;align-items:center;font-size:12px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.devbar button{border:0;background:rgba(127,127,140,.3);color:inherit;border-radius:99px;padding:3px 10px;font-weight:600}
+.devbar button.on{background:var(--bg);color:var(--fg)}
+/* login */
+.login{min-height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.lf{display:flex;align-items:center;justify-content:center;padding:32px 20px}
+.lf form{width:min(380px,100%);display:flex;flex-direction:column;gap:14px}
+.lv{background:var(--accent);color:var(--accent-fg);padding:44px;display:flex;flex-direction:column;justify-content:space-between;gap:30px;position:relative;overflow:hidden}
+.lv h2{font-size:28px;line-height:1.2;max-width:16ch;font-weight:800}
+.flow{display:flex;flex-direction:column;gap:0;max-width:340px}
+.flow div{display:flex;gap:12px;align-items:center;padding:7px 0;font-weight:600;position:relative}
+.flow div::before{content:'';width:11px;height:11px;border-radius:50%;border:2px solid currentColor;flex:none;background:var(--accent)}
+.flow div:not(:last-child)::after{content:'';position:absolute;left:5px;top:24px;height:14px;border-left:2px solid currentColor;opacity:.5}
+.flow small{opacity:.75;font-weight:500;margin-left:auto}
+.spin{width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:rot .7s linear infinite} @keyframes rot{to{transform:rotate(360deg)}}
+.lockbar{display:flex;gap:10px;align-items:center;background:var(--fg);color:var(--bg);padding:10px 14px;border-radius:var(--radius);font-weight:600}
+@media (max-width:1100px){.two{grid-template-columns:1fr}.app{grid-template-columns:60px minmax(0,1fr)}.side .t,.side .grp,.side .brand div{display:none}.nav.sub{padding-left:10px}}
+@media (max-width:760px){
+.app,.app.col{grid-template-columns:1fr}
+.side{position:fixed;z-index:60;width:260px;left:-270px;transition:left .2s}
+.side.open{left:0}.side.open .t,.side.open .grp,.side.open .brand div{display:revert}.side.open .nav.sub{padding-left:34px}
+.menu-btn{display:inline-flex}.page{padding:14px}.top{padding:8px 14px}
+.login{grid-template-columns:1fr}.lv{display:none}.grid2,.grid3{grid-template-columns:1fr}
+.kv{grid-template-columns:110px 1fr}.hb{grid-template-columns:100px 1fr 70px}
+.devbar{max-width:calc(100% - 20px);flex-wrap:wrap;border-radius:14px;justify-content:center}
+.fbar .field{max-width:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+#app{min-height:100%}.login{min-height:100vh}.cut{display:inline-block;white-space:normal;min-width:140px;max-width:230px;line-height:1.35;vertical-align:middle}
+tr.selrow td{background:var(--accent-soft)!important}
+@media (max-width:760px){.devbar{flex-wrap:nowrap;overflow-x:auto;border-radius:99px;left:10px;right:10px;transform:none;justify-content:flex-start;bottom:8px}.devbar button,.devbar span{white-space:nowrap;flex:none}}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="ov"></div><div id="toasts" class="toasts" aria-live="polite"></div><div id="dev"></div>
+<script>
+/* ================= DỮ LIỆU MẪU — bám affiliate_db.md ================= */
+let _s=20261007;const rnd=()=>{_s|=0;_s=_s+0x6D2B79F5|0;let t=Math.imul(_s^_s>>>15,1|_s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const D1=86400000,pad=n=>String(n).padStart(2,'0');
+const ymd=ts=>{const d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const mk=(y,m,d,h=0,mi=0)=>new Date(y,m-1,d,h,mi).getTime();
+const NOW=mk(2026,10,7,16,0),TODAY=ymd(NOW);
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return ymd(d.getTime())};
+const diffDays=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/D1);
+const dmy=ts=>{if(!ts)return'—';const d=new Date(ts);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()};
+const dmyhm=ts=>{if(!ts)return'—';const d=new Date(ts);return dmy(ts)+' '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const ysd=s=>{const[a,b,c]=s.split('-');return c+'/'+b+'/'+a};
+const fmt=n=>new Intl.NumberFormat('en-US').format(Math.round(n));
+const vnd=n=>(n<0?'−':'')+new Intl.NumberFormat('vi-VN').format(Math.abs(Math.round(n)))+' ₫';
+const sgn=n=>(n>0?'+':'')+(n<0?'−':'')+(n===0?'0':new Intl.NumberFormat('vi-VN').format(Math.abs(Math.round(n))))+' ₫';
+const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'—';
+const kyLabel=ma=>ma.slice(4)+'/'+ma.slice(0,4);
+
+const STAFF={1:'Nguyễn Minh Quân',2:'Trần Thu Hà',3:'Lê Hoàng Nam',0:'Hệ thống đối soát'};
+const PUB=[
+ {id:1,ten:'Sao Mai Media',email:'lienhe@saomai.vn',lh:'0903 112 233 · Phạm Thảo',st:1,tao:mk(2026,6,12)},
+ {id:2,ten:'Kênh Phim Ngắn VN',email:'bd@kenhphimngan.vn',lh:'0912 445 566 · Đỗ Khoa',st:1,tao:mk(2026,6,28)},
+ {id:3,ten:'Review Phim 24h',email:'hello@review24h.vn',lh:'0988 201 302 · Vũ Lan',st:1,tao:mk(2026,7,5)},
+ {id:4,ten:'Điện Ảnh Cuối Tuần',email:'ads@dienanhct.vn',lh:'0935 778 990 · Bùi Hưng',st:1,tao:mk(2026,7,19)},
+ {id:5,ten:'TikTok Phim Hay Studio',email:'studio@phimhay.vn',lh:'0977 334 455 · Ngô Mai',st:1,tao:mk(2026,8,2)},
+ {id:6,ten:'Blog Cine Việt',email:'admin@cineviet.vn',lh:'0866 120 340 · Lý Tuấn',st:2,tao:mk(2026,7,30)},
+ {id:7,ten:'Zalo Phim Club',email:'club@zalophim.vn',lh:'0902 765 432 · Hồ Nga',st:0,tao:mk(2026,10,5)}];
+const PUBm=Object.fromEntries(PUB.map(p=>[p.id,p]));
+PUB.forEach(p=>p.ma='NXB-'+String(p.id).padStart(4,'0'));
+const CAMP=[
+ {id:1,ma:'CD-2610-PHIMAI',ten:'Chiến dịch Phim AI tháng 10',bd:'2026-10-01',kt:'2026-10-31',st:1,by:1,mota:'Đẩy các phim AI nổi bật cho tháng 10, ưu tiên đăng ký VIP mới.'},
+ {id:2,ma:'CD-2609-SHORT',ten:'Chiến dịch Phim ngắn WebPhimAI',bd:'2026-09-01',kt:'2026-12-31',st:1,by:1,mota:'Phim ngắn dưới 15 phút, kéo người xem mới vào gói VIP tháng.'},
+ {id:3,ma:'CD-2609-NEW',ten:'Chiến dịch Nội dung mới',bd:'2026-09-20',kt:null,st:1,by:2,mota:'Quảng bá nội dung mới phát hành, tính hoa hồng theo lượt xem và đăng ký.'},
+ {id:4,ma:'CD-2608-HE',ten:'Chiến dịch Mùa hè phim AI',bd:'2026-08-01',kt:'2026-08-31',st:2,by:2,mota:'Chiến dịch mùa hè đã kết thúc.'},
+ {id:5,ma:'CD-2611-VIPPRO',ten:'Chiến dịch Dùng thử VIP Pro',bd:'2026-11-01',kt:'2026-11-30',st:0,by:3,mota:'Chuẩn bị cho tháng 11, đang tạm dừng cho đến ngày bắt đầu.'},
+ {id:6,ma:'CD-2610-CUOITUAN',ten:'Chiến dịch Phim AI cuối tuần',bd:'2026-10-01',kt:'2026-12-31',st:1,by:1,mota:'Chiến dịch đang mở đăng ký: đẩy phim ngắn cuối tuần, hoa hồng theo lượt xem và đăng ký VIP.'}];
+const CAMPm=Object.fromEntries(CAMP.map(c=>[c.id,c]));
+const MOV=[
+ {id:1,ten:'Đại chiến AI',loai:'Phim lẻ',h:250},{id:2,ten:'Thành phố tương lai',loai:'Phim lẻ',h:190},{id:3,ten:'Hành trình cuối cùng',loai:'Series',h:20},
+ {id:4,ten:'Ký ức lượng tử',loai:'Phim lẻ',h:290},{id:5,ten:'Nàng robot Hà Nội',loai:'Phim ngắn',h:330},{id:6,ten:'Mật mã Sài Gòn 2099',loai:'Phim lẻ',h:210},
+ {id:7,ten:'Đêm cuối ở Neo-Huế',loai:'Phim ngắn',h:150},{id:8,ten:'Người gác đèn vũ trụ',loai:'Series',h:40},{id:9,ten:'Cánh cửa thứ bảy',loai:'Phim ngắn',h:270},{id:10,ten:'Mưa trên sao Hỏa',loai:'Phim lẻ',h:170}];
+const MOVm=Object.fromEntries(MOV.map(m=>[m.id,m]));
+const CM=[];let _id=1;
+[[1,[1,2,3,4,5]],[2,[3,6,7,8]],[3,[9,10,1]],[4,[2,6,7]],[5,[8]],[6,[2,5,9]]].forEach(([c,ms])=>ms.forEach(m=>CM.push({id:_id++,c,m,st:1,ngung:null})));
+CM.find(x=>x.c===1&&x.m===5).st=0;CM.find(x=>x.c===1&&x.m===5).ngung='2026-10-05';
+const ASG=[];_id=1;
+[[1,1,'2026-10-01'],[1,2,'2026-09-01'],[1,3,'2026-09-22'],[1,4,'2026-08-05'],
+ [2,1,'2026-10-01'],[2,2,'2026-09-01'],[2,4,'2026-08-05'],
+ [3,1,'2026-10-01'],[3,3,'2026-09-22'],[3,2,'2026-09-03'],
+ [4,2,'2026-09-02'],[4,3,'2026-09-22'],[4,4,'2026-08-08'],
+ [5,1,'2026-10-02'],[5,2,'2026-09-05'],
+ [6,4,'2026-08-08'],[6,2,'2026-09-04']].forEach(([p,c,d])=>ASG.push({id:_id++,p,c,gan:mk(...d.split('-').map(Number)),huy:null,st:1,by:1}));
+{const a=ASG.find(x=>x.p===6&&x.c===2);a.huy=mk(2026,9,20);a.st=0}
+const SRC=['facebook','tiktok','youtube','blog','zalo'];
+const LINK=[];_id=1;
+const b36=()=>{let s='';while(s.length<8)s+='abcdefghjkmnpqrstuvwxyz23456789'[Math.floor(rnd()*31)];return s};
+ASG.forEach(a=>CM.filter(x=>x.c===a.c).forEach(x=>{const code=b36();LINK.push({id:_id++,asg:a.id,p:a.p,c:a.c,m:x.m,code,url:'https://webphimai.vn/xem/'+x.m+'?tc='+code,nguon:SRC[Math.floor(rnd()*5)],st:(x.st===1&&a.st===1)?1:0,w:.4+rnd()*1.8})}));
+const LINKm=Object.fromEntries(LINK.map(l=>[l.id,l]));
+const EV=['CLICK','VIEW','Đăng ký mới','Gia hạn','Khác'];
+const TINH=['Cố định','Phần trăm'];
+const COSO=['Gross','Gross sau giảm giá','Net','Net không thuế'];
+const RULES=[];_id=1;
+const R=(c,p,ev,tinh,val,coso,from,to,ex={})=>RULES.push({id:_id++,c,p,ev,tinh,val,coso,dv:'VND',from:mk(...from.split('-').map(Number)),to:to?mk(...to.split('-').map(Number),23,59):null,sl:null,tien:null,gx:null,tl:null,by:1,st:1,...ex});
+R(1,null,2,1,30,2,'2026-10-01',null);R(1,null,3,1,10,2,'2026-10-01',null);R(1,2,2,1,35,2,'2026-10-01',null);
+R(1,null,0,0,30,0,'2026-10-01',null);R(1,null,1,0,200,0,'2026-10-01',null,{gx:30,tl:40});
+R(2,null,2,0,20000,0,'2026-09-01','2026-09-30');R(2,null,2,0,25000,0,'2026-10-01',null);R(2,null,3,0,8000,0,'2026-09-01',null);
+R(3,null,1,0,300,0,'2026-09-20',null,{gx:60,tl:50});R(3,null,0,0,50,0,'2026-09-20',null,{sl:5000});R(3,null,2,1,25,1,'2026-09-20',null);R(3,null,3,1,8,1,'2026-09-20',null);
+R(4,null,2,0,18000,0,'2026-08-01','2026-08-31');R(4,null,3,0,6000,0,'2026-08-01','2026-08-31');
+R(5,null,2,1,40,2,'2026-11-01','2026-11-30');
+R(1,2,0,0,45,0,'2026-10-01',null,{st:0});
+R(6,null,0,0,40,0,'2026-10-01',null);R(6,null,1,0,250,0,'2026-10-01',null,{gx:30,tl:40});R(6,null,2,1,20,2,'2026-10-01',null);R(6,null,3,1,8,2,'2026-10-01',null);
+const REG=[{id:1,p:2,c:6,st:0,ts:NOW-20*3600000,note:'Kênh YouTube và fanpage phim ngắn, khoảng 40 nghìn người theo dõi.',ly:null,xl:null,by:null,asg:null}];
+const RULEm=Object.fromEntries(RULES.map(r=>[r.id,r]));
+const findRule=(c,p,ev,ts)=>{const L=RULES.filter(r=>r.st===1&&r.c===c&&r.ev===ev&&r.from<=ts&&(!r.to||ts<=r.to));return L.find(r=>r.p===p)||L.find(r=>r.p==null)};
+const PKG=[{id:1,ten:'VIP tháng',gia:79000},{id:2,ten:'VIP Pro tháng',gia:149000},{id:3,ten:'VIP năm',gia:790000}];
+const ruleText=r=>(r.tinh===1?r.val+'%':vnd(r.val))+(r.tinh===1?' · '+COSO[r.coso]:'');
+/* ---- sinh sự kiện theo ngày, chuyển đổi, giao dịch hoa hồng ---- */
+const ST=[],CV=[],TX=[],GK=[];let _cv=9000,_tx=40000,_gk=1;
+function mkGK(l,ts,user){const g={id:_gk,an:'an_'+((0x9e3779b1*_gk++)>>>0).toString(16).padStart(8,'0'),user,asg:l.asg,l:l.id,code:l.code,p:l.p,c:l.c,m:l.m,nguon:l.nguon,ev:l.nguon,mh:'FIRST_CLICK',ts,het:ts+30*D1};GK.push(g);return g}
+const START='2026-08-09';
+for(let day=START;day<=TODAY;day=addDays(day,1)){
+ const f=day===TODAY?.62:1,dts=new Date(day+'T00:00:00').getTime();
+ for(const l of LINK){
+  const c=CAMPm[l.c],a=ASG.find(x=>x.id===l.asg),cm=CM.find(x=>x.c===l.c&&x.m===l.m),p=PUBm[l.p];
+  if(day<c.bd||(c.kt&&day>c.kt)||c.st===0)continue;
+  if(day<ymd(a.gan)||(a.huy&&day>=ymd(a.huy)))continue;
+  if(p.id===6&&day>='2026-10-01')continue;
+  if(cm.ngung&&day>=cm.ngung)continue;
+  const click=Math.round(l.w*f*(16+rnd()*30)),view=Math.round(click*(.5+rnd()*.3)),qual=Math.round(view*(.55+rnd()*.25));
+  const nconv=Math.floor(view*.03+rnd());
+  ST.push({d:day,p:l.p,c:l.c,m:l.m,l:l.id,click,view,qual,conv:nconv});
+  for(let i=0,na=Math.round(click*.04);i<na;i++)mkGK(l,dts+Math.floor(rnd()*(day===TODAY?15:23)*3600000),rnd()<.2?100000+Math.floor(rnd()*899999):null);
+  for(const ev of[0,1]){const q=ev===0?click:qual;if(!q)continue;const ets=day===TODAY?NOW-60000:dts+23*3600000+59*60000,r=findRule(l.c,l.p,ev,ets);if(!r)continue;const eff=r.sl?Math.min(q,r.sl):q,amt=Math.round(eff*r.val);if(amt<=0)continue;
+   TX.push({id:_tx++,cv:null,gk:null,p:l.p,c:l.c,m:l.m,l:l.id,rule:r.id,ev,tinh:r.tinh,coso:r.coso,base:eff,val:r.val,amt,st:0,ky:null,ds:null,ts:ets,by:null,duyet:null,qty:eff,agg:1,day})}
+  for(let i=0;i<nconv;i++){
+   const hmax=day===TODAY?15:23,ts=dts+Math.floor(rnd()*(hmax*60+59))*60000;
+   const loai=rnd()<.35?1:0,pk=PKG[rnd()<.6?0:rnd()<.7?1:2],gross=pk.gia,giam=rnd()<.25?Math.round(gross*.1):0,net=gross-giam,thue=Math.round(net*10/110);
+   const r=findRule(l.c,l.p,2+loai,ts);if(!r)continue;
+   const base=[gross,gross-giam,net,net-thue][r.coso],amt=r.tinh===1?Math.round(base*r.val/100):r.val;
+   const cv={id:_cv++,p:l.p,c:l.c,m:l.m,l:l.id,code:l.code,loai,pk,gross,giam,thue,net,ts,st:rnd()<.03?2:1,user:100000+Math.floor(rnd()*899999),pay:7700000+_cv*3,evt:'pay-'+Math.floor(rnd()*1e9).toString(36)};
+   CV.push(cv);const gq=Math.max(a.gan,new Date(c.bd+'T00:00:00').getTime(),ts-Math.floor(rnd()*20)*D1-Math.floor(rnd()*70000000));cv.gk=mkGK(l,Math.min(gq,ts-60000),cv.user).id;
+   TX.push({id:_tx++,cv:cv.id,p:l.p,c:l.c,m:l.m,l:l.id,rule:r.id,ev:2+loai,tinh:r.tinh,coso:r.coso,base,val:r.val,amt,st:0,ky:null,ds:null,ts,by:null,duyet:null});
+  }
+ }
+}
+TX.sort((a,b)=>a.ts-b.ts).forEach((t,i)=>{t.id=40000+i;t.day=t.day||ymd(t.ts);t.qty=t.qty||1});
+const TXm=Object.fromEntries(TX.map(t=>[t.id,t])),CVm=Object.fromEntries(CV.map(c=>[c.id,c]));
+const KY=[
+ {id:1,ma:'202608',tu:mk(2026,8,1),den:mk(2026,8,31,23,59),st:3,khoa:mk(2026,9,3,10,20),by:1},
+ {id:2,ma:'202609',tu:mk(2026,9,1),den:mk(2026,9,30,23,59),st:2,khoa:mk(2026,10,3,9,45),by:1},
+ {id:3,ma:'202610',tu:mk(2026,10,1),den:mk(2026,10,31,23,59),st:0,khoa:null,by:null}];
+const KYm=Object.fromEntries(KY.map(k=>[k.ma,k]));
+const monthOf=ts=>{const d=new Date(ts);return d.getFullYear()+pad(d.getMonth()+1)};
+/* trạng thái giao dịch theo thời điểm */
+TX.forEach(t=>{const m=monthOf(t.ts);
+ if(m==='202608')t.st=2;
+ else if(m==='202609'){t.st=[1,2,3].includes(t.p)?2:1;if(rnd()<.015)t.st=3}
+ else t.st=t.ts<mk(2026,10,6)?1:0;
+ if(t.st>0){t.by=rnd()<.5?1:2;t.duyet=t.ts+D1*(.5+rnd())}});
+/* điều chỉnh */
+const ADJ=[];_id=1;
+const ADJ_T=['Refund','Chargeback','Hủy','Thủ công','Khác'];
+const ADJ_REASON=['Người dùng hoàn tiền gói trong 48 giờ đầu','Ngân hàng phát hành khiếu nại giao dịch thẻ','Đăng ký bị hủy trước khi kích hoạt','Rà soát traffic bất thường, giảm hoa hồng theo biên bản','Điều chỉnh theo thỏa thuận với publisher'];
+TX.forEach(t=>{if(t.st===3||t.ev<2)return;const m=monthOf(t.ts);const pr=m==='202608'?.007:m==='202609'?.014:.012;
+ if(rnd()>=pr)return;
+ const end=m==='202608'?mk(2026,8,31,18):m==='202609'?mk(2026,9,30,18):NOW;
+ const at=Math.min(end,t.ts+D1*(1+rnd()*3));if(at<=t.ts)return;
+ const loai=Math.floor(rnd()*4),so=loai===3?-Math.round(t.amt*(.1+rnd()*.3)/100)*100:-t.amt;
+ ADJ.push({id:_id++,tx:t.id,cv:t.cv,loai,so,dv:'VND',ly:ADJ_REASON[loai],ref:['RF','CB','HUY','TC'][loai]+'-'+(5000+_id*7),ts:at,by:loai===3?1:0});});
+var adjOf=id=>ADJ.filter(a=>a.tx===id);
+var adjSum=id=>adjOf(id).reduce((s,a)=>s+a.so,0);
+TX.filter(t=>monthOf(t.ts)==='202610'&&t.ts<mk(2026,10,6)).filter(t=>t.ev>=2).filter((t,i)=>i%41===6).forEach((t,i)=>{if(adjOf(t.id).length)return;const loai=[0,3,2,1,3][i%5],so=loai===3?-Math.round(t.amt*.2/100)*100:-t.amt;ADJ.push({id:_id++,tx:t.id,cv:t.cv,loai,so,dv:'VND',ly:ADJ_REASON[loai],ref:['RF','CB','HUY','TC'][loai]+'-'+(5000+_id*7),ts:Math.min(NOW-3600000*(i+2),t.ts+D1*1.5),by:loai===3?1:0})});
+TX.filter(t=>t.ev>=2&&t.st!==3&&['202608','202609'].includes(monthOf(t.ts))).filter((t,i)=>i%97===11).forEach((t,i)=>{const loai=[0,1,0,3][i%4],so=loai===3?(i%2?1:-1)*Math.round(t.amt*.15/100)*100:-t.amt;if(!so)return;ADJ.push({id:0,tx:t.id,cv:t.cv,loai,so,dv:'VND',ly:ADJ_REASON[loai]+' (phát sinh sau chốt kỳ)',ref:['RF','CB','HUY','TC'][loai]+'-'+(7000+i*13),ts:mk(2026,10,2+i%5,10+i%6,5),by:loai===3?1:0})});
+ADJ.sort((a,b)=>a.ts-b.ts).forEach((a,i)=>a.id=i+1);
+/* đối soát + chi tiết + chi trả */
+const DS=[],CT=[],CHI=[];let _ds=1,_ct=1,_chi=1;
+const dsStatus=['Chờ đối soát','Đã xác nhận','Đã khóa','Đã thanh toán','Có vấn đề'];
+function adjForDS(ky,p,txs){const k=KYm[ky],ids=new Set(txs.map(t=>t.id));return ADJ.filter(a=>{const t=TXm[a.tx];return t.p===p&&a.ts<=k.den&&!CT.some(c=>c.adj===a.id)&&(ids.has(a.tx)||(t.ds!=null&&DS.find(d=>d.id===t.ds).ky<ky))})}
+function buildDS(ky,p,by){
+ const k=KYm[ky],txs=TX.filter(t=>t.p===p&&t.ds==null&&t.st!==3&&t.st!==0&&t.ts>=k.tu&&t.ts<=k.den),adjs=adjForDS(ky,p,txs);
+ if(!txs.length&&!adjs.length)return null;
+ const ds={id:_ds++,ky,p,st:0,tao:NOW,dv:'VND'};DS.push(ds);
+ txs.forEach(t=>{t.ds=ds.id;t.ky=ky;CT.push({id:_ct++,ds:ds.id,loai:0,tx:t.id,adj:null,hh:t.amt,dc:0,tt:t.amt,st:1,ly:'',ts:NOW,by})});
+ adjs.forEach(a=>CT.push({id:_ct++,ds:ds.id,loai:1,tx:null,adj:a.id,hh:0,dc:a.so,tt:a.so,st:1,ly:a.ly,ts:NOW,by}));
+ return ds}
+['202608','202609'].forEach(ky=>PUB.forEach(p=>{const ds=buildDS(ky,p.id,0);if(ds)ds.st=ky==='202608'?3:2;}));
+const dsOf=id=>DS.find(d=>d.id===id);
+const dsLines=id=>CT.filter(c=>c.ds===id);
+const dsTot=id=>{const L=dsLines(id).filter(c=>c.st===1);const gv=L.filter(c=>c.tx&&TXm[c.tx].cv).reduce((s,c)=>s+CVm[TXm[c.tx].cv].net,0);const hh=L.reduce((s,c)=>s+c.hh,0),dc=L.reduce((s,c)=>s+c.dc,0);return{gv,hh,dc,pay:hh+dc,n:L.length}};
+const chiOf=ds=>CHI.filter(c=>c.ds===ds);
+const chiSt=['Chờ chi','Đang xử lý','Thành công','Thất bại'];
+DS.forEach(d=>{const t=dsTot(d.id);const pay=(st,ex={})=>{CHI.push({id:_chi++,ds:d.id,p:d.p,pt:'bank_transfer',so:t.pay,dv:'VND',ref:null,st,yc:mk(2026,d.ky==='202608'?9:10,d.ky==='202608'?5:5,10),tt:null,ly:null,...ex})};
+ const x=CHI[CHI.length-1];
+ if(d.ky==='202608'){pay(2);const c=CHI[CHI.length-1];c.ref='VCB'+(88100000+d.p*137);c.tt=c.yc+3600000*5}
+ else if(d.p<=3){d.st=3;pay(2);const c=CHI[CHI.length-1];c.ref='VCB'+(99200000+d.p*311);c.tt=c.yc+3600000*4;TX.filter(t2=>t2.ds===d.id).forEach(t2=>t2.st=2)}
+ else if(d.p===4){pay(1,{ref:'VCB-PENDING-'+d.p})}
+ else if(d.p===6){pay(3,{ly:'Sai số tài khoản ngân hàng, ngân hàng thụ hưởng từ chối lệnh chuyển'})}});
+/* mọi giao dịch Tháng 9 của publisher đã chi trả => trạng thái 2 (đồng bộ); các ds còn lại giữ 'đã duyệt' */
+const DEF_FIL=null;
+/* ================= KHUNG UI ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const S={route:'login-admin',params:{},user:null,ui:'normal',col:false,side:false,dd:null,tab:{},login:{}};
+const F={},PG={},SORT={},VIS={},SEL={},EXP={},MS={},ROWH={},act={},DL={};
+const IC={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.5c2.2.7 3.5 2.6 3.5 5.5"/>',flag:'<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>',film:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>',click:'<path d="M9 9l11 4-4.5 1.8L13 19.5z"/><path d="M5 5l2 2M4 10h2.5M10 4v2.5"/>',eye:'<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5M3 17.5l9 5 9-5" opacity=".6"/>',coins:'<circle cx="9" cy="9" r="6"/><path d="M15 9.5a6 6 0 1 1-5.5 8.5"/><path d="M9 6.5v5M7.5 8h3"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>',scale:'<path d="M12 3v18M5 21h14M5 7h14"/><path d="M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/>',wallet:'<path d="M3 7a2 2 0 0 1 2-2h13v4"/><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 14h2"/>',search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',down:'<path d="M6 9l6 6 6-6"/>',right:'<path d="M9 6l6 6-6 6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',plus:'<path d="M12 5v14M5 12h14"/>',copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/>',lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',out:'<path d="M9 4H5a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h4M16 8l4 4-4 4M20 12H9"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',cols:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 4v16"/>',pane:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/>',trash:'<path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/>',pause:'<path d="M8 5v14M16 5v14"/>',play:'<path d="M7 5l12 7-12 7z"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>',up:'<path d="M6 15l6-6 6 6"/>',doc:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>'};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||''}</svg>`;
+const clone=o=>JSON.parse(JSON.stringify(o));
+const jp=o=>JSON.stringify(o).replace(/'/g,'&#39;');
+const goB=(r,p,label,cls='link')=>`<button class="${cls}" data-act="go" data-r="${r}" data-p='${jp(p||{})}'>${label}</button>`;
+/* ---- badges ---- */
+const B=(t,c='')=>`<span class="badge ${c}">${t}</span>`;
+const bPub=s=>[B('Chờ duyệt','warn'),B('Hoạt động','ok'),B('Tạm ngưng','bad')][s];
+const bCamp=s=>[B('Tạm dừng','warn'),B('Đang chạy','ok'),B('Kết thúc')][s];
+const bAsg=s=>s?B('Đang hoạt động','ok'):B('Đã hủy gán');
+const bLink=s=>s?B('Hoạt động','ok'):B('Tắt');
+const bTx=(t)=>t.st===2?B(ic('lock','sm')+' Đã chi trả','lock'):t.st===3?B('Từ chối','bad'):t.ds!=null?B('Đã đối soát','info'):[B('Chờ duyệt','warn'),B('Đã duyệt','ok')][t.st];
+const bCv=s=>[B('Chờ xử lý','warn'),B('Hợp lệ','ok'),B('Nghi ngờ','bad'),B('Loại')][s];
+const bKy=s=>[B('Mở','ok'),B('Đang đối soát','info'),B(ic('lock','sm')+' Đã khóa','lock'),B('Hoàn tất','acc')][s];
+const bDs=s=>[B('Chờ đối soát','warn'),B('Đã xác nhận','info'),B(ic('lock','sm')+' Đã khóa','lock'),B('Đã thanh toán','ok'),B('Có vấn đề','bad')][s];
+const bChi=s=>[B('Chờ chi','warn'),B('Đang xử lý','info'),B('Thành công','ok'),B('Thất bại','bad')][s];
+const bEv=e=>B(EV[e],e>=2?'acc':'');
+const bRuleSt=r=>r.st===1?B('Kích hoạt','ok'):B('Dừng','warn');
+const bRuleEff=r=>r.from>NOW?B('Chưa hiệu lực','warn'):(r.to&&r.to<NOW)?B('Hết hiệu lực'):B('Đang hiệu lực','ok');
+const pubAv=p=>`<div class="cell2"><span class="pst" style="background:hsl(${p.id*47+200} 45% 42%)">${p.ten.split(' ').slice(0,2).map(w=>w[0]).join('')}</span><div style="min-width:0"><b>${p.ten}</b><small class="mono">${p.ma}</small></div></div>`;
+const movCell=m=>`<div class="cell2"><span class="pst" style="background:hsl(${m.h} 50% 38%);width:26px;height:34px;font-size:10px">${m.ten[0]}</span><div style="min-width:0"><span>${m.ten}</span><small>${m.loai}</small></div></div>`;
+const campCell=c=>`<div class="cut"><b>${c.ten}</b><small class="mut mono" style="display:block">${c.ma}</small></div>`;
+/* ---- toast / overlay ---- */
+function toast(msg){const e=document.createElement('div');e.className='toast';e.textContent=msg;$('#toasts').appendChild(e);setTimeout(()=>e.remove(),3200)}
+function dlg(html,w){$('#ov').innerHTML=`<div class="bk" data-act="bkx"><div class="dlg ${w?'w':''}" role="dialog" aria-modal="true">${html}</div></div>`}
+function sheet(html){$('#ov').innerHTML=`<div class="bk sh" data-act="bkx"><aside class="sheet" role="dialog" aria-modal="true">${html}</aside></div>`}
+function closeOv(){$('#ov').innerHTML='';S.dd=null}
+let CONF=null;
+function confirmDlg(o){CONF=o.fn;dlg(`<div class="dh"><h2>${o.title}</h2><p>${o.desc}</p></div>${o.body?`<div class="db">${o.body}</div>`:''}<div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn ${o.danger?'destructive':'primary'}" data-act="conf">${o.ok}</button></div>`)}
+const alertB=(t,body,k='info',i='info')=>`<div class="alert ${k}">${ic(i)}<div>${t?`<b>${t}</b>`:''}${body}</div></div>`;
+/* ---- router ---- */
+function go(r,p={}){S.route=r;S.params=p;S.ui='normal';S.dd=null;S.side=false;closeOv();render();window.scrollTo(0,0)}
+function render(){const y=window.scrollY,rt=S.route;
+ const pubLogin=rt==='login-pub',pub=S.user?S.user.type==='pub':pubLogin;
+ document.documentElement.dataset.portal=pub?'pub':'adm';
+ $('#app').innerHTML=rt.startsWith('login')?loginView():shell();
+ $('#dev').innerHTML=devbar();window.scrollTo(0,y)}
+function menuCfg(){return S.user.type==='pub'?[
+ {g:'',i:[['p-dash','home','Tổng quan']]},
+ {g:'Publisher',i:[['p-avail','flag','Chiến dịch có thể chạy'],['p-run','link','Chiến dịch đang chạy'],['p-attr','target','Gắn kết nguồn'],['p-tx','coins','Giao dịch hoa hồng'],['p-rec','scale','Tra soát'],['p-pay','wallet','Chi trả']]}]:[
+ {g:'',i:[['a-dash','home','Tổng quan']]},
+ {g:'Danh mục',i:[['a-pubs','users','Publisher'],['a-camps','flag','Chiến dịch']]},
+ {g:'Thống kê chi tiết',i:[['a-click','click','Lượt nhấp'],['a-view','eye','Lượt xem'],['a-conv','target','Chuyển đổi'],['a-attr','link','Gắn kết nguồn']]},
+ {g:'Thống kê tổng hợp',i:[['a-agg','layers','Theo chiến dịch']]},
+ {g:'Hoa hồng',i:[['a-tx','coins','Giao dịch hoa hồng'],['a-adj','edit','Điều chỉnh hoa hồng'],['a-rec','scale','Tra soát'],['a-pay','wallet','Chi trả']]}]}
+const PARENT={'p-avail-d':'p-avail','p-run-d':'p-run','p-rec-d':'p-rec','p-pay-d':'p-pay','a-pub-d':'a-pubs','a-camp-d':'a-camps','a-rec-d':'a-rec','a-pay-d':'a-pay'};
+function shell(){const adm=S.user.type==='admin',rt=RT[S.route],cur=PARENT[S.route]||S.route;
+ const menu=menuCfg().map(g=>(g.g?`<div class="grp">${g.g}</div>`:'')+g.i.map(([r,i,l])=>`<button class="nav ${g.g?'sub':''} ${cur===r?'on':''}" data-act="go" data-r="${r}" title="${l}">${ic(i)}<span class="t">${l}</span></button>`).join('')).join('');
+ const crumbs=rt.crumb().map(([l,r,p],i,a)=>i<a.length-1?`<a data-act="go" data-r="${r}" data-p='${jp(p||{})}'>${l}</a>${ic('right','sm')}`:`<b>${l}</b>`).join('');
+ return `<div class="app ${S.col?'col':''}"><aside class="side ${S.side?'open':''}"><div class="brand"><span class="logo">W</span><div>WebPhimAI<small>${adm?'Quản trị hoa hồng':'Publisher Portal'}</small></div></div>${menu}</aside>${S.side?'<div class="bk" style="z-index:55" data-act="sidex"></div>':''}
+ <div class="main"><header class="top"><button class="btn ghost i menu-btn" data-act="side" aria-label="Mở menu">${ic('menu')}</button><button class="btn ghost i" data-act="col" aria-label="Thu gọn menu" title="Thu gọn menu">${ic('pane')}</button><nav class="crumb" aria-label="Breadcrumb">${crumbs}</nav><span class="sp"></span>
+ <button class="btn ghost i" data-act="theme" aria-label="Đổi giao diện sáng/tối">${ic('sun')}</button>
+ <div class="dd"><button class="btn s" data-act="dd" data-k="user"><span class="logo" style="width:22px;height:22px;font-size:11px">${S.user.name[0]}</span><span class="sm">${S.user.name}</span>${ic('down','sm')}</button>
+ ${S.dd==='user'?`<div class="ddp" style="min-width:250px"><div style="padding:6px 8px"><b>${S.user.name}</b><div class="mut sm">${S.user.mail}</div><div style="margin-top:6px">${B(adm?'Vai trò: Quản trị Affiliate':'Cổng Publisher','acc')}</div><div class="help" style="margin-top:6px">${adm?'Menu hiển thị theo quyền (cms_db.vai_tro_quyen_han): 14 quyền.':'Chỉ xem dữ liệu của chính bạn.'}</div></div><button class="btn ghost s" style="width:100%;justify-content:flex-start" data-act="logout">${ic('out','sm')} Đăng xuất</button></div>`:''}</div></header>
+ <main class="page">${S.ui==='error'&&rt.noerr?'':''}${rt.fn()}</main></div></div>`}
+const RT={};
+const chain=(cur,note={})=>{const N=['Publisher','Chiến dịch','Nội dung phim','Link theo dõi','Sự kiện','Hoa hồng','Điều chỉnh','Đối soát','Chi trả'];
+ return `<div class="chain" aria-label="Chuỗi hoa hồng">${N.map((n,i)=>`<div class="${i===cur?'cur':i<cur?'done':''}">${n}${note[i]?`<small>${note[i]}</small>`:''}</div>`).join('')}</div>`};
+const phead=(t,d,right='')=>`<div class="ph"><div><h1>${t}</h1>${d?`<p>${d}</p>`:''}</div><div style="display:flex;gap:8px;flex-wrap:wrap">${right}</div></div>`;
+const kpi=(l,v,s='')=>`<div class="card kpi"><div class="l">${l}</div><div class="v">${v}</div>${s?`<div class="s">${s}</div>`:''}</div>`;
+const tabsH=(key,list,def)=>{const cur=S.tab[key]||def;return `<div class="tabs" role="tablist">${list.map(([id,l])=>`<button class="tab ${cur===id?'on':''}" role="tab" data-act="tab" data-k="${key}" data-v="${id}">${l}</button>`).join('')}</div>`};
+const curTab=(key,def)=>S.tab[key]||def;
+const kvH=a=>`<dl class="kv">${a.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`;
+const lockBar=m=>`<div class="lockbar">${ic('lock')}<span>${m}</span></div>`;
+/* ---- multiselect (select2-like) ---- */
+const OPT={
+ pub:()=>PUB.map(p=>({v:p.id,l:p.ten,s:p.ma})),camp:()=>CAMP.map(c=>({v:c.id,l:c.ten,s:c.ma})),
+ mov:()=>MOV.map(m=>({v:m.id,l:m.ten,s:m.loai})),ky:()=>KY.map(k=>({v:k.ma,l:'Kỳ '+kyLabel(k.ma),s:''}))};
+function msel(id,opts,store,fld,ph,o={}){MS[id]={opts,store,fld,q:'',open:false,one:!!o.one,ph};return msHtml(id)}
+function msHtml(id){const m=MS[id],sel=m.store[m.fld]||[];
+ const chips=sel.length?(sel.length<=2||m.one?sel.map(v=>{const o=m.opts.find(x=>x.v===v);return o?`<span class="chip">${o.l}</span>`:''}).join(''):`<span class="chip">${m.opts.find(x=>x.v===sel[0]).l}</span><span class="chip">+${sel.length-1}</span>`):`<span class="ms-ph">${m.ph}</span>`;
+ const vis=m.opts.filter(o=>(o.l+' '+(o.s||'')).toLowerCase().includes(m.q.toLowerCase()));
+ const panel=m.open?`<div class="ms-p"><input class="input" data-msq="${id}" value="${m.q}" placeholder="Tìm kiếm…" autocomplete="off">
+ ${m.one?'':`<div class="ms-tools"><button type="button" class="lk" data-act="ms-all" data-id="${id}">Chọn tất cả (${vis.length})</button><button type="button" class="lk" data-act="ms-none" data-id="${id}">Bỏ chọn tất cả</button><button type="button" class="lk" data-act="ms-clr" data-id="${id}">Xóa</button><span class="mut" style="margin-left:auto">Đã chọn ${sel.length}/${m.opts.length}</span></div>`}
+ <div class="ms-l">${vis.length?vis.map(o=>`<label class="ms-o"><input type="${m.one?'radio':'checkbox'}" class="cb" data-act="ms-t" data-id="${id}" data-v="${o.v}" ${sel.includes(o.v)?'checked':''}><span>${o.l}</span>${o.s?`<small>${o.s}</small>`:''}</label>`).join(''):'<div class="empty" style="padding:14px">Không tìm thấy kết quả</div>'}</div></div>`:'';
+ return `<div class="ms" data-ms="${id}"><button type="button" class="ms-t" data-act="ms-o" data-id="${id}" aria-haspopup="listbox">${chips}${ic('down','sm')}</button>${panel}</div>`}
+function msRe(id,focus){const e=document.querySelector(`[data-ms="${id}"]`);if(!e)return;e.outerHTML=msHtml(id);if(focus){const q=document.querySelector(`[data-msq="${id}"]`);if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}}}
+/* ---- bộ lọc ---- */
+const presetRange=p=>p==='today'?[TODAY,TODAY]:p==='yesterday'?[addDays(TODAY,-1),addDays(TODAY,-1)]:[addDays(TODAY,-6),TODAY];
+function FS(key,init={}){if(!F[key]){const a={q:'',preset:'today',from:TODAY,to:TODAY,camp:[],pub:[],mov:[],ev:[],st:[],ky:[],adj:false,...init};F[key]={a,d:clone(a),err:''}}return F[key]}
+function fbar(key,o={}){const f=FS(key,o.init),d=f.d;
+ const fld=(l,h)=>`<div class="field"><label>${l}</label>${h}</div>`;
+ return `<div class="card"><div class="fbar">
+ ${o.q===false?'':`<div class="field" style="flex:2 1 260px;max-width:340px"><label for="q-${key}">Tìm kiếm</label><input id="q-${key}" class="input" data-f="${key}.q" value="${d.q}" placeholder="Tên chiến dịch, nội dung phim, publisher…"></div>`}
+ ${o.date===false?'':`<div class="field" style="flex:1 1 auto;max-width:none"><label>Thời gian (tối đa 30 ngày)</label><div class="dr"><div class="seg">${[['today','Hôm nay'],['yesterday','Hôm qua'],['7d','7 ngày'],['custom','Tùy chọn']].map(([v,l])=>`<button type="button" class="${d.preset===v?'on':''}" data-act="fpre" data-k="${key}" data-v="${v}">${l}</button>`).join('')}</div>
+ ${d.preset==='custom'?`<input type="date" class="input ${f.err?'err':''}" data-f="${key}.from" value="${d.from}" aria-label="Từ ngày"><span class="mut">→</span><input type="date" class="input ${f.err?'err':''}" data-f="${key}.to" value="${d.to}" aria-label="Đến ngày">`:`<span class="mut sm nowrap">${d.from===d.to?ysd(d.from):ysd(d.from)+' → '+ysd(d.to)}</span>`}</div></div>`}
+ ${o.camp===false?'':fld('Chiến dịch',msel(key+':camp',OPT.camp(),d,'camp','Tất cả chiến dịch'))}
+ ${o.pub===false||S.user.type==='pub'?'':fld('Publisher',msel(key+':pub',OPT.pub(),d,'pub','Tất cả publisher'))}
+ ${o.mov===false?'':fld('Nội dung phim',msel(key+':mov',OPT.mov(),d,'mov','Tất cả phim'))}
+ ${o.ev?fld(o.evl||'Loại sự kiện',msel(key+':ev',o.ev,d,'ev','Tất cả sự kiện')):''}
+ ${o.st?fld(o.stl||'Trạng thái',msel(key+':st',o.st,d,'st','Tất cả')):''}
+ ${o.ky?fld('Kỳ đối soát',msel(key+':ky',OPT.ky(),d,'ky','Tất cả kỳ')):''}
+ ${o.adj?`<label class="field" style="flex:0 0 auto;flex-direction:row;align-items:center;gap:7px;padding-bottom:8px"><input type="checkbox" class="cb" data-f="${key}.adj" ${d.adj?'checked':''}> <span>Chỉ giao dịch đã điều chỉnh</span></label>`:''}
+ <div style="display:flex;gap:6px;padding-bottom:1px"><button class="btn primary" data-act="fapply" data-k="${key}">${ic('search','sm')} Tìm kiếm</button><button class="btn" data-act="freset" data-k="${key}">Đặt lại</button></div>
+ </div>${f.err?`<div style="padding:0 16px 12px">${alertB('',f.err,'bad','warn')}</div>`:''}</div>`}
+function filt(rows,key,o={}){const a=FS(key).a;const pubOnly=S.user.type==='pub'?S.user.pid:null;
+ return rows.filter(r=>{if(pubOnly&&r.p!==pubOnly)return false;
+  if(o.date!==false){const d=r.d||ymd(r.ts);if(d<a.from||d>a.to)return false}
+  if(a.q){const h=((CAMPm[r.c]||{}).ten+' '+(CAMPm[r.c]||{}).ma+' '+(MOVm[r.m]||{}).ten+' '+(PUBm[r.p]||{}).ten+' '+(r.code||'')+' '+(r.an||'')+' '+(r.user||'')).toLowerCase();if(!h.includes(a.q.toLowerCase()))return false}
+  if(a.camp.length&&!a.camp.includes(r.c))return false;if(a.pub.length&&!a.pub.includes(r.p))return false;if(a.mov.length&&!a.mov.includes(r.m))return false;
+  if(a.ev.length&&!a.ev.includes(r.ev))return false;
+  return true})}
+/* ---- bảng dữ liệu ---- */
+function dt(key,cols,rows,o={}){if(!VIS[key]){VIS[key]={};cols.forEach(c=>{if(c.hide)VIS[key][c.k]=false})}const V=VIS[key],vis=cols.filter(c=>V[c.k]!==false);const idf=o.id||(r=>r.id);
+ const sr=SORT[key];if(sr){const c=cols.find(x=>x.k===sr.k);if(c){const g=c.v||(r=>r[c.k]);rows=[...rows].sort((a,b)=>{const x=g(a),y=g(b);return(x>y?1:x<y?-1:0)*sr.dir})}}
+ const size=o.size||10,np=Math.max(1,Math.ceil(rows.length/size));const pg=Math.min(PG[key]||0,np-1);PG[key]=pg;const page=rows.slice(pg*size,pg*size+size);
+ const sel=SEL[key]||(SEL[key]=new Set());if(o.row)ROWH[key]=o.row;
+ const w=vis.length+(o.select?1:0)+(o.expand?1:0);
+ let body;
+ if(S.ui==='loading')body=Array.from({length:6},()=>`<tr>${'<td><div class="skel"></div></td>'.repeat(w)}</tr>`).join('');
+ else if(S.ui==='error')body=`<tr><td colspan="${w}"><div class="empty">${ic('warn')}<b>Không tải được dữ liệu</b><span>Kết nối tới Affiliate API bị gián đoạn. Thử tải lại, nếu vẫn lỗi hãy báo bộ phận vận hành.</span><button class="btn s" data-act="ui" data-v="normal">Tải lại</button></div></td></tr>`;
+ else if(S.ui==='empty'||!rows.length)body=`<tr><td colspan="${w}"><div class="empty">${ic('search')}<b>${S.ui==='empty'?'Chưa có dữ liệu':'Không có dữ liệu phù hợp'}</b><span>${S.ui==='empty'?'Dữ liệu sẽ xuất hiện khi hệ thống ghi nhận phát sinh mới.':'Thử mở rộng khoảng thời gian (tối đa 30 ngày) hoặc bỏ bớt bộ lọc.'}</span></div></td></tr>`;
+ else body=page.map(r=>{const id=idf(r),ex=o.expand&&EXP[key+id];const cls=(o.rowCls?o.rowCls(r):'');
+  return `<tr class="${cls}" ${o.row?`data-act="row" data-key="${key}" data-id="${id}"`:''}>${o.select?`<td><input type="checkbox" class="cb" data-act="sel" data-key="${key}" data-id="${id}" ${sel.has(String(id))?'checked':''} aria-label="Chọn dòng"></td>`:''}${o.expand?`<td><button class="btn ghost i s" data-act="exp" data-key="${key}" data-id="${id}" aria-label="Mở rộng">${ic(ex?'down':'right','sm')}</button></td>`:''}${vis.map(c=>`<td class="${c.r?'r num':''}">${c.f?c.f(r):r[c.k]}</td>`).join('')}</tr>${ex?`<tr class="nest"><td colspan="${w}"><div class="nestw">${o.expand(r)}</div></td></tr>`:''}`}).join('');
+ const tot=o.tot&&rows.length&&S.ui==='normal'?`<tr class="tot">${o.select?'<td></td>':''}${o.expand?'<td></td>':''}${vis.map((c,i)=>`<td class="${c.r?'r num':''}">${i===0?'Tổng ('+fmt(rows.length)+' dòng)':(o.tot(c.k,rows)??'')}</td>`).join('')}</tr>`:'';
+ const allSel=o.select&&page.length&&page.every(r=>sel.has(String(idf(r))));
+ return `<div class="card"><div class="tbar"><div class="mut sm">${S.ui==='normal'?`<b style="color:var(--fg)">${fmt(rows.length)}</b> kết quả${o.select&&sel.size?` · đã chọn <b style="color:var(--fg)">${sel.size}</b>`:''}`:'&nbsp;'}</div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${o.bulk&&sel.size?o.bulk(sel):''}${o.tools||''}
+ <div class="dd"><button class="btn s" data-act="dd" data-k="vis-${key}">${ic('cols','sm')} Cột</button>${S.dd==='vis-'+key?`<div class="ddp">${cols.map(c=>`<label><input type="checkbox" class="cb" data-act="vis" data-key="${key}" data-c="${c.k}" ${V[c.k]!==false?'checked':''}>${c.t}</label>`).join('')}</div>`:''}</div></div></div>
+ <div class="tw"><table><thead><tr>${o.select?`<th style="width:34px"><input type="checkbox" class="cb" data-act="selall" data-key="${key}" ${allSel?'checked':''} aria-label="Chọn tất cả trang"></th>`:''}${o.expand?'<th style="width:36px"></th>':''}${vis.map(c=>`<th class="${c.r?'r':''} ${c.s===false?'':'sort'}" ${c.s===false?'':`data-act="sort" data-key="${key}" data-c="${c.k}"`}>${c.t}${sr&&sr.k===c.k?(sr.dir>0?' ↑':' ↓'):''}</th>`).join('')}</tr></thead><tbody>${body}${tot}</tbody></table></div>
+ <div class="pager"><span>${rows.length&&S.ui==='normal'?`Hiển thị ${pg*size+1}–${Math.min(rows.length,pg*size+size)} / ${fmt(rows.length)}`:''}</span><div style="display:flex;gap:6px;align-items:center"><button class="btn s" data-act="pg" data-key="${key}" data-v="-1" ${pg<=0?'disabled':''}>Trước</button><span>Trang ${pg+1}/${np}</span><button class="btn s" data-act="pg" data-key="${key}" data-v="1" ${pg>=np-1?'disabled':''}>Sau</button></div></div></div>`}
+/* ---- biểu đồ ---- */
+const short=n=>n>=1e9?(n/1e9).toFixed(1).replace('.0','')+' tỷ':n>=1e6?(n/1e6).toFixed(1).replace('.0','')+' tr':n>=1e3?(n/1e3).toFixed(n>=1e4?0:1).replace('.0','')+'k':String(Math.round(n));
+const niceMax=v=>{const raw=v/4,p=Math.pow(10,Math.floor(Math.log10(raw)));for(const m of[1,2,2.5,5,10])if(raw<=m*p)return m*p*4;return 40*p};
+function lineChart(labels,series,o={}){const W=640,H=o.h||200,L=46,Rr=14,T=14,Bt=26;const mx=niceMax(Math.max(1,...series.flatMap(s=>s.data)));
+ const x=i=>L+(labels.length<2?(W-L-Rr)/2:i*(W-L-Rr)/(labels.length-1)),y=v=>T+(H-T-Bt)*(1-v/mx);const step=Math.ceil(labels.length/7);
+ let g='';for(let i=0;i<=4;i++){const v=mx*i/4,yy=y(v);g+=`<line x1="${L}" x2="${W-Rr}" y1="${yy}" y2="${yy}" stroke="var(--grid)"/><text x="${L-6}" y="${yy+4}" text-anchor="end">${(o.f||short)(v)}</text>`}
+ labels.forEach((l,i)=>{if(i%step===0||i===labels.length-1)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="${i===0?'start':i===labels.length-1?'end':'middle'}">${l}</text>`});
+ series.forEach((s,k)=>{const pts=s.data.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`);const col=`var(--c${k+1})`;
+  if(k===0)g+=`<polygon points="${x(0)},${y(0)} ${pts.join(' ')} ${x(s.data.length-1)},${y(0)}" fill="${col}" opacity=".1"/>`;
+  g+=`<polyline points="${pts.join(' ')}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"/>`;
+  const li=s.data.length-1;g+=`<circle cx="${x(li)}" cy="${y(s.data[li])}" r="3.5" fill="${col}" stroke="var(--card)" stroke-width="1.5"/>`;
+  s.data.forEach((v,i)=>{g+=`<circle cx="${x(i)}" cy="${y(v)}" r="7" fill="transparent"><title>${labels[i]} · ${s.name}: ${(o.ff||fmt)(v)}</title></circle>`})});
+ return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.title||'Biểu đồ'}">${g}</svg><div class="legend">${series.map((s,k)=>`<span><i style="background:var(--c${k+1})"></i>${s.name}</span>`).join('')}</div>`}
+function dayRange(from,to){const a=[];for(let d=from;d<=to;d=addDays(d,1))a.push(d);return a}
+function seriesST(rows,from,to,f){const ds=dayRange(from,to),mp={};rows.forEach(r=>{(mp[r.d]||(mp[r.d]=[])).push(r)});return{labels:ds.map(d=>d.slice(8)+'/'+d.slice(5,7)),vals:ds.map(d=>f(mp[d]||[]))}}
+const sumF=k=>rs=>rs.reduce((s,r)=>s+r[k],0);
+/* ---- tương tác ---- */
+document.addEventListener('click',e=>{const t=e.target;
+ if(!t.closest('.ms')){let ch=false;for(const id in MS)if(MS[id].open){MS[id].open=false;ch=true;if(document.querySelector(`[data-ms="${id}"]`))msRe(id)}}
+ if(S.dd&&!t.closest('.dd')){S.dd=null;render()}
+ const el=t.closest('[data-act]');if(!el)return;const a=el.dataset.act;
+ if(a==='row'&&t.closest('button,input,a,label'))return;
+ if((a==='bkx')&&t!==el)return;
+ const fn=act[a];if(fn)fn(el,e)});
+document.addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.f){const[k,fl]=t.dataset.f.split('.');(F[k]?F[k].d:DL)[fl]=t.type==='checkbox'?t.checked:t.value;if(t.type==='checkbox')return}
+ if(t.dataset.msq){MS[t.dataset.msq].q=t.value;msRe(t.dataset.msq,true)}
+ if(t.dataset.dl){DL[t.dataset.dl]=t.value;if(typeof dlPrev==='function')dlPrev()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeOv();return}
+ if(e.key==='Enter'&&e.target.dataset.f&&e.target.dataset.f.endsWith('.q'))act.fapply({dataset:{k:e.target.dataset.f.split('.')[0]}})});
+document.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='lg')doLogin()});
+Object.assign(act,{
+ go:el=>go(el.dataset.r,el.dataset.p?JSON.parse(el.dataset.p):{}),
+ side:()=>{S.side=true;render()},sidex:()=>{S.side=false;render()},col:()=>{S.col=!S.col;render()},
+ theme:()=>{const r=document.documentElement,d=r.dataset.theme==='dark'||(!r.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark'},
+ dd:el=>{S.dd=S.dd===el.dataset.k?null:el.dataset.k;render()},
+ logout:()=>{const p=S.user.type;S.user=null;S.login={};go(p==='pub'?'login-pub':'login-admin')},
+ ovx:closeOv,bkx:closeOv,conf:()=>{const f=CONF;closeOv();f&&f()},
+ tab:el=>{S.tab[el.dataset.k]=el.dataset.v;render()},
+ ui:el=>{S.ui=el.dataset.v;render()},
+ fpre:el=>{const f=F[el.dataset.k],v=el.dataset.v;f.d.preset=v;if(v!=='custom'){[f.d.from,f.d.to]=presetRange(v)}f.err='';render()},
+ fapply:el=>{const f=F[el.dataset.k],d=f.d;
+  if(d.preset==='custom'){if(!d.from||!d.to)f.err='Chọn đủ ngày bắt đầu và ngày kết thúc.';else if(d.from>d.to)f.err='Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.';else if(diffDays(d.from,d.to)+1>30)f.err='Khoảng thời gian tìm kiếm không được vượt quá 30 ngày.';else if(d.to>TODAY)f.err='Không thể chọn ngày trong tương lai.';else f.err=''}
+  else{[d.from,d.to]=presetRange(d.preset);f.err=''}
+  if(!f.err){f.a=clone(d);Object.keys(PG).forEach(k=>{if(k.startsWith(el.dataset.k))PG[k]=0})}render()},
+ freset:el=>{delete F[el.dataset.k];render()},
+ 'ms-o':el=>{const m=MS[el.dataset.id];const was=m.open;for(const i in MS)if(MS[i].open){MS[i].open=false;if(i!==el.dataset.id)msRe(i)}m.open=!was;m.q='';msRe(el.dataset.id,true)},
+ 'ms-t':el=>{const m=MS[el.dataset.id],v=isNaN(el.dataset.v)||el.dataset.v===''?el.dataset.v:Number(el.dataset.v);let s=m.store[m.fld]||[];
+  if(m.one){m.store[m.fld]=[v];m.open=false}else m.store[m.fld]=s.includes(v)?s.filter(x=>x!==v):[...s,v];
+  msRe(el.dataset.id,!m.one);if(typeof dlPrev==='function')dlPrev()},
+ 'ms-all':el=>{const m=MS[el.dataset.id],vis=m.opts.filter(o=>(o.l+' '+(o.s||'')).toLowerCase().includes(m.q.toLowerCase())).map(o=>o.v);m.store[m.fld]=[...new Set([...(m.store[m.fld]||[]),...vis])];msRe(el.dataset.id,true)},
+ 'ms-none':el=>{const m=MS[el.dataset.id],vis=m.opts.filter(o=>(o.l+' '+(o.s||'')).toLowerCase().includes(m.q.toLowerCase())).map(o=>o.v);m.store[m.fld]=(m.store[m.fld]||[]).filter(v=>!vis.includes(v));msRe(el.dataset.id,true)},
+ 'ms-clr':el=>{const m=MS[el.dataset.id];m.store[m.fld]=[];msRe(el.dataset.id,true)},
+ sort:el=>{const k=el.dataset.key,c=el.dataset.c,s=SORT[k];SORT[k]=s&&s.k===c?(s.dir>0?{k:c,dir:-1}:null):{k:c,dir:1};render()},
+ pg:el=>{PG[el.dataset.key]=(PG[el.dataset.key]||0)+Number(el.dataset.v);render()},
+ vis:el=>{const V=VIS[el.dataset.key];V[el.dataset.c]=el.checked?true:false;render()},
+ row:el=>{const h=ROWH[el.dataset.key];h&&h(el.dataset.id)},
+ exp:el=>{const k=el.dataset.key+el.dataset.id;EXP[k]=!EXP[k];render()},
+ sel:el=>{const s=SEL[el.dataset.key];el.checked?s.add(el.dataset.id):s.delete(el.dataset.id);render()},
+ selall:el=>{const s=SEL[el.dataset.key];document.querySelectorAll(`[data-act="sel"][data-key="${el.dataset.key}"]`).forEach(c=>{el.checked?s.add(c.dataset.id):s.delete(c.dataset.id)});render()},
+ copy:el=>{const v=el.dataset.v;(navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(()=>toast('Đã sao chép liên kết theo dõi'),()=>toast('Không sao chép tự động được, hãy chọn và sao chép thủ công'))}});
+/* ---- đăng nhập ---- */
+function loginView(){const pub=S.route==='login-pub',L=S.login;const e=L.err||{};
+ const copy=pub?{h:'Theo dõi từng lượt xem, từng đồng hoa hồng của bạn.',n:'Tài khoản nhà xuất bản (affiliate_db.nha_xuat_ban). Cổng này chỉ cho phép xem dữ liệu của chính bạn.',em:L.email??'lienhe@saomai.vn',alt:['Bạn là quản trị viên? Vào cổng Quản trị','login-admin']}
+ :{h:'Điều hành chuỗi hoa hồng, từ chiến dịch tới chi trả.',n:'Đăng nhập bằng tài khoản hệ thống CMS (cms_db.tai_khoan_he_thong). Menu hiển thị theo vai trò và quyền hạn.',em:L.email??'quan.nguyen@webphimai.vn',alt:['Bạn là publisher? Vào cổng Publisher','login-pub']};
+ return `<div class="login"><div class="lf"><form id="lg" novalidate><div class="brand" style="padding:0"><span class="logo">W</span><div>WebPhimAI<small>${pub?'Affiliate · Publisher Portal':'Affiliate · Quản trị'}</small></div></div>
+ <div><h1>${pub?'Đăng nhập Publisher Portal':'Quản trị Affiliate'}</h1><p class="mut" style="margin:4px 0 0">${copy.n}</p></div>
+ ${L.fail?alertB('Đăng nhập không thành công','Email hoặc mật khẩu không đúng. Kiểm tra lại, hoặc dùng “Quên mật khẩu”.','bad','warn'):''}
+ <div class="field"><label for="lg-e">Email <i>*</i></label><input id="lg-e" class="input ${e.m?'err':''}" type="email" value="${copy.em}" autocomplete="username">${e.m?`<span class="emsg">${e.m}</span>`:''}</div>
+ <div class="field"><label for="lg-p">Mật khẩu <i>*</i></label><input id="lg-p" class="input ${e.p?'err':''}" type="password" value="${L.pass??'matkhau123'}" autocomplete="current-password">${e.p?`<span class="emsg">${e.p}</span>`:'<span class="help">Gõ “sai” để xem trạng thái lỗi đăng nhập.</span>'}</div>
+ <div style="display:flex;justify-content:space-between;align-items:center"><label style="display:flex;gap:7px;align-items:center"><input type="checkbox" class="cb" checked> Ghi nhớ đăng nhập</label><button type="button" class="link" onclick="toast('Đã gửi hướng dẫn đặt lại mật khẩu tới email')">Quên mật khẩu?</button></div>
+ <button class="btn primary" style="height:38px" ${L.loading?'disabled':''}>${L.loading?'<span class="spin"></span> Đang đăng nhập…':'Đăng nhập'}</button>
+ <button type="button" class="link" data-act="go" data-r="${copy.alt[1]}">${copy.alt[0]}</button></form></div>
+ <div class="lv"><div class="brand" style="padding:0"><span class="logo" style="background:var(--accent-fg);color:var(--accent)">W</span><div>WebPhimAI</div></div><h2>${copy.h}</h2>
+ <div class="flow">${[['Publisher','được gán chiến dịch'],['Nội dung phim','mỗi phim một mã theo dõi'],['Click · View · Chuyển đổi',''],['Hoa hồng','theo quy tắc tại thời điểm ghi nhận'],['Điều chỉnh','không sửa giao dịch gốc'],['Đối soát theo tháng',''],['Chi trả','']].map(([a,b])=>`<div>${a}<small>${b}</small></div>`).join('')}</div></div></div>`}
+function doLogin(){const pub=S.route==='login-pub',m=$('#lg-e').value.trim(),p=$('#lg-p').value;const err={};
+ if(!m)err.m='Nhập email đăng nhập.';else if(!/^\S+@\S+\.\S+$/.test(m))err.m='Email chưa đúng định dạng.';
+ if(!p)err.p='Nhập mật khẩu.';
+ S.login={email:m,pass:p,err,fail:false};if(Object.keys(err).length){render();return}
+ if(p==='sai'){S.login.fail=true;render();return}
+ S.login.loading=true;render();
+ setTimeout(()=>{S.user=pub?{type:'pub',pid:1,name:PUBm[1].ten,mail:PUBm[1].email}:{type:'admin',name:'Nguyễn Minh Quân',mail:'quan.nguyen@webphimai.vn',uid:1};S.login={};go(pub?'p-dash':'a-dash')},800)}
+/* thanh trạng thái mock */
+function devbar(){return `<div class="devbar" role="toolbar" aria-label="Điều khiển mockup"><span>Mockup</span><button data-act="go" data-r="login-admin">Đăng nhập Admin</button><button data-act="go" data-r="login-pub">Đăng nhập Publisher</button>${S.user?['normal|Bình thường','loading|Đang tải','empty|Trống','error|Lỗi'].map(x=>{const[v,l]=x.split('|');return `<button class="${S.ui===v?'on':''}" data-act="ui" data-v="${v}">${l}</button>`}).join(''):''}</div>`}
+/* ================= TÍNH TOÁN DÙNG CHUNG ================= */
+TX.forEach(t=>t.code=LINKm[t.l].code);
+const sumA=(a,f)=>a.reduce((s,x)=>s+f(x),0);
+const STL={};ST.forEach(r=>(STL[r.l]||(STL[r.l]=[])).push(r));
+const rateNow=(c,p,ev)=>findRule(c,p,ev,NOW);
+const TXL={};TX.forEach(t=>(TXL[t.l]||(TXL[t.l]=[])).push(t));
+function linkAgg(l,from,to){const rs=(STL[l.id]||[]).filter(r=>r.d>=from&&r.d<=to);
+ const click=sumA(rs,r=>r.click),view=sumA(rs,r=>r.view),qual=sumA(rs,r=>r.qual),conv=sumA(rs,r=>r.conv);
+ const rc=rateNow(l.c,l.p,0),rv=rateNow(l.c,l.p,1);
+ const T=(TXL[l.id]||[]).filter(t=>t.st!==3&&t.day>=from&&t.day<=to);
+ const hCk=sumA(T.filter(t=>t.ev===0),t=>t.amt),hVw=sumA(T.filter(t=>t.ev===1),t=>t.amt),hCv=sumA(T.filter(t=>t.ev>=2),t=>t.amt);
+ return{click,view,qual,conv,hCk,hVw,hCv,tot:hCk+hVw+hCv,rc,rv}}
+const sumAgg=(a,k)=>sumA(a,x=>x[k]);
+const txFinal=t=>t.amt+adjSum(t.id);
+const txLocked=t=>t.ds!=null||t.st===2||t.st===3;
+const nextKy=()=>{const k=KY.find(x=>x.st<=1);return k?k.ma:null};
+function adjInKy(p,ky){const ds=DS.find(d=>d.p===p&&d.ky===ky);if(ds)return CT.filter(c=>c.ds===ds.id&&c.adj&&c.st===1).map(c=>ADJ.find(a=>a.id===c.adj));const k=KYm[ky];if(k.st>1)return[];return ADJ.filter(a=>TXm[a.tx].p===p&&a.ts<=k.den&&!CT.some(c=>c.adj===a.id))}
+const kyAdjAll=ky=>PUB.flatMap(p=>adjInKy(p.id,ky));
+const txKey=t=>t.st===1&&t.ds!=null?'rec':t.st;
+const snapText=t=>t.ev<2?vnd(t.val)+'/lượt × '+fmt(t.qty):t.tinh===1?t.val+'% · '+COSO[t.coso]:vnd(t.val)+' cố định';
+const sgnC=n=>n===0?'<span class="mut">—</span>':`<span style="color:${n<0?'var(--bad)':'var(--ok)'}">${sgn(n)}</span>`;
+const rulesFor=(c,p)=>{const L=RULES.filter(r=>r.st===1&&r.c===c&&(r.p==null||r.p===p)&&(!r.to||r.to>=NOW));const out={};L.sort((a,b)=>a.from-b.from).forEach(r=>{const k=r.ev;if(!out[k]||(r.p!=null&&out[k].p==null)||(r.p==out[k].p&&r.from>out[k].from))out[k]=r});return Object.values(out)};
+const mini=(cols,rows,empty='Chưa có dữ liệu')=>`<div class="tw" style="max-height:none"><table><thead><tr>${cols.map(c=>`<th class="${c.r?'r':''}">${c.t}</th>`).join('')}</tr></thead><tbody>${rows.length?rows.map(r=>`<tr>${cols.map(c=>`<td class="${c.r?'r num':''}">${c.f(r)}</td>`).join('')}</tr>`).join(''):`<tr><td colspan="${cols.length}"><div class="empty" style="padding:20px">${empty}</div></td></tr>`}</tbody></table></div>`;
+const chainL=(labels,idx)=>`<div class="chain">${labels.map((n,i)=>`<div class="${i===idx?'cur':i<idx?'done':''}">${n}</div>`).join('')}</div>`;
+const eqH=(a,b,c,la='Hoa hồng ghi nhận',lb='Điều chỉnh',lc='Thực tế')=>`<div class="eq"><div><small>${la}</small><b>${vnd(a)}</b></div><div class="o">+</div><div><small>${lb}</small><b>${sgn(b)}</b></div><div class="o">=</div><div class="fin"><small>${lc}</small><b>${vnd(c)}</b></div></div>`;
+const evOpts=[{v:0,l:'CLICK'},{v:1,l:'VIEW'},{v:2,l:'Đăng ký mới'},{v:3,l:'Gia hạn'}];
+const txStOpts=[{v:0,l:'Chờ duyệt'},{v:1,l:'Đã duyệt'},{v:'rec',l:'Đã đối soát'},{v:2,l:'Đã chi trả'},{v:3,l:'Từ chối'}];
+function txRows(key){const a=FS(key).a;let r=filt(TX,key,{date:false});if(a.ky.length)r=r.filter(t=>a.ky.includes(monthOf(t.ts)));if(a.st.length)r=r.filter(t=>a.st.includes(txKey(t)));if(a.adj)r=r.filter(t=>adjOf(t.id).length);return r}
+function txCols(adm){return[
+ {k:'id',t:'Mã GD',f:t=>`<span class="mono">#${t.id}</span>`},
+ {k:'ts',t:'Thời gian',f:t=>`<span class="nowrap">${dmyhm(t.ts)}</span>`},
+ ...(adm?[{k:'p',t:'Publisher',v:t=>PUBm[t.p].ten,f:t=>PUBm[t.p].ten}]:[]),
+ {k:'c',t:'Chiến dịch',v:t=>CAMPm[t.c].ten,f:t=>`<span class="cut">${CAMPm[t.c].ten}</span>`},
+ {k:'m',t:'Nội dung phim',v:t=>MOVm[t.m].ten,f:t=>`<span class="cut">${MOVm[t.m].ten}</span>`},
+ {k:'ev',t:'Sự kiện',f:t=>bEv(t.ev)},
+ {k:'ref',t:'Mã sự kiện / mã gộp',hide:true,s:false,f:t=>t.cv?`<span class="mono">${CVm[t.cv].evt}</span>`:`<span class="mono">GOP-${t.ev?'VIEW':'CLICK'}-${t.l}-${t.day}</span>`},
+ {k:'rule',t:'Quy tắc đã áp dụng',s:false,f:t=>`<span class="sm">${snapText(t)}</span><small class="mut mono" style="display:block">Rule #${t.rule}</small>`},
+ {k:'amt',t:'Hoa hồng gốc',r:1,f:t=>vnd(t.amt)},
+ {k:'adj',t:'Điều chỉnh',r:1,v:t=>adjSum(t.id),f:t=>sgnC(adjSum(t.id))},
+ {k:'fin',t:'Hoa hồng cuối',r:1,v:txFinal,f:t=>`<b>${vnd(txFinal(t))}</b>`},
+ {k:'st',t:'Trạng thái',f:t=>bTx(t)+(adjOf(t.id).length?' '+B(ic('edit','sm')+' Đã điều chỉnh','adj'):'')},
+ {k:'ky',t:'Kỳ',hide:true,f:t=>t.ky?kyLabel(t.ky):'—'}]}
+
+/* ---- chi tiết luot_nhap / luot_xem của dòng sổ gộp theo ngày ---- */
+function rawEvents(t){const r=ST.find(x=>x.l===t.l&&x.d===t.day),l=LINKm[t.l],rl=RULEm[t.rule],view=t.ev===1,total=r?(view?r.view:r.click):t.qty,valid=Math.min(total,t.qty),n=Math.min(30,total);
+ const hx=x=>(x*2654435761>>>0).toString(16).slice(0,8),d0=new Date(t.day+'T00:00:00').getTime(),rows=[];
+ for(let i=0;i<n;i++){const seed=t.l*131+i*17+Number(t.day.slice(8))+(view?7:0),ts=d0+((seed*7919)%86000)*1000,ok=view?((i*total/n)%total)<valid:true,sec=view?(ok?(rl.gx||30)+seed%600:Math.max(3,(rl.gx||30)-1-seed%25)):0,tl=view?(ok?Math.min(100,(rl.tl||40)+seed%(101-(rl.tl||40))):Math.max(2,(rl.tl||40)-1-seed%30)):0;
+  rows.push(view?{id:'v'+seed,ts,ok,user:seed%3?null:100000+seed%899999,an:'an_'+hx(seed),sec,tl,evt:'view-'+hx(seed)}:{id:'n'+seed,ts,ok:true,an:'an_'+hx(seed),ip:(seed%200+10)+'.'+(seed%250)+'.*.*',ua:UA[seed%6],nguon:l.nguon})}
+ return{total,valid,rows:rows.sort((a,b)=>b.ts-a.ts),view}}
+function rawSection(t){if(t.cv)return'';const e=rawEvents(t),adm=S.user.type==='admin';
+ const cols=e.view?[{t:'Xem lúc',f:x=>dmyhm(x.ts)},{t:'Mã ẩn danh',f:x=>`<span class="mono">${x.an}</span>`},{t:'Người dùng',f:x=>x.user?`<span class="mono">#${x.user}</span>`:'<span class="mut">—</span>'},{t:'Thời gian xem',r:1,f:x=>x.sec+' giây'},{t:'Tỷ lệ xem',r:1,f:x=>x.tl+'%'},{t:'Mã sự kiện nguồn',f:x=>`<span class="mono">${x.evt}</span>`},{t:'Tính hoa hồng',f:x=>x.ok?B('Hợp lệ','ok'):B('Chưa đạt điều kiện')}]:[{t:'Thời gian nhấp',f:x=>dmyhm(x.ts)},{t:'Mã ẩn danh',f:x=>`<span class="mono">${x.an}</span>`},{t:'Địa chỉ IP',f:x=>`<span class="mono">${x.ip}</span>`},{t:'User agent',f:x=>x.ua},{t:'Nguồn',f:x=>x.nguon},{t:'Tính hoa hồng',f:x=>B('Hợp lệ','ok')}];
+ return `<div><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px"><h3>${e.view?'Lượt xem':'Lượt nhấp'} cấu thành dòng sổ <span class="mut sm">(${e.view?'luot_xem':'luot_nhap'})</span></h3>${adm?`<button class="btn s" data-act="txraw" data-id="${t.id}">Mở nhật ký đầy đủ</button>`:''}</div>
+ <div class="mut sm" style="margin-bottom:8px">Link <span class="mono">${LINKm[t.l].code}</span> · ngày ${ysd(t.day)}: ${fmt(e.total)} ${e.view?'lượt xem':'lượt nhấp'}, trong đó ${fmt(e.valid)} lượt hợp lệ được gộp thành dòng sổ này${e.view?' (đạt thời gian và tỷ lệ xem tối thiểu của quy tắc)':''}. Hiển thị mẫu ${e.rows.length} dòng.</div>${mini(cols,e.rows)}</div>`}
+/* ---- sheet giao dịch hoa hồng ---- */
+function txSheet(id){const t=TXm[id],cv=t.cv?CVm[t.cv]:null,p=PUBm[t.p],c=CAMPm[t.c],m=MOVm[t.m],l=LINKm[t.l],r=RULEm[t.rule],ad=adjOf(t.id),adm=S.user.type==='admin',ds=t.ds&&dsOf(t.ds),sum=adjSum(t.id);
+ const cur=findRule(t.c,t.p,t.ev,NOW),changed=cur&&(cur.id!==t.rule);
+ sheet(`<div class="ch"><div><h2>Giao dịch hoa hồng <span class="mono">#${t.id}</span></h2><p>${dmyhm(t.ts)} · ${bTx(t)}${ad.length?' '+B(ic('edit','sm')+' Đã điều chỉnh','adj'):''}</p></div><button class="btn ghost i" data-act="ovx" aria-label="Đóng">${ic('x')}</button></div>
+ <div class="cp" style="display:flex;flex-direction:column;gap:14px">
+ ${txLocked(t)?lockBar(t.st===2?'Dữ liệu kỳ '+kyLabel(t.ky)+' đã chi trả và không thể chỉnh sửa.':t.st===3?'Giao dịch đã bị từ chối, không thể thao tác.':'Giao dịch thuộc kỳ '+kyLabel(t.ky)+' đã chốt. Số liệu kỳ này không đổi.'):''}${t.ds!=null&&t.st!==3&&nextKy()?alertB('Điều chỉnh sau chốt kỳ','Có thể tạo điều chỉnh tăng/giảm cho giao dịch này. Bản ghi mới sẽ vào kỳ đối soát '+kyLabel(nextKy())+', kỳ '+kyLabel(t.ky)+' giữ nguyên.','info','info'):''}
+ <div><h3 style="margin-bottom:8px">Giao dịch gốc + điều chỉnh = hoa hồng cuối</h3>${eqH(t.amt,sum,txFinal(t),'Giao dịch gốc (không bị sửa)','Điều chỉnh',  'Hoa hồng cuối')}</div>
+ <div><h3 style="margin-bottom:8px">Liên kết dữ liệu</h3>${kvH([['Publisher',adm?goB('a-pub-d',{id:p.id},p.ten):p.ten],['Chiến dịch',adm?goB('a-camp-d',{id:c.id},c.ten):c.ten],['Nội dung phim',m.ten],['Mã theo dõi',`<span class="mono">${l.code}</span> · ${l.nguon}`],...(cv?[['Chuyển đổi',`${bCv(cv.st)} <span class="mono">${cv.evt}</span><div class="mut sm">Thanh toán #${cv.pay} · ${cv.loai?'Gia hạn':'Đăng ký mới'} · ${cv.pk.ten} · ghi một lần cho mỗi khoản thanh toán</div>`],['Gắn kết nguồn',adm?`<button class="link mono" data-act="attr" data-id="${cv.gk}">${GK[cv.gk-1].an}</button> <span class="mut sm">first-click, ${GK[cv.gk-1].nguon}</span>`:`<span class="mono">${GK[cv.gk-1].an}</span>`],['Giá trị tính',`Gross ${vnd(cv.gross)} · giảm ${vnd(cv.giam)} · thuế ${vnd(cv.thue)} · net ${vnd(cv.net)}`]]:[['Sự kiện',`Ghi sổ gộp theo ngày <b>${ysd(t.day)}</b>`],['Số lượt hợp lệ',fmt(t.qty)+' lượt '+EV[t.ev]],['Giá trị tính',fmt(t.qty)+' × '+vnd(t.val)+' = '+vnd(t.amt)]])])}</div>
+ ${rawSection(t)}
+ <div><h3 style="margin-bottom:8px">Snapshot quy tắc tại thời điểm ghi nhận</h3>
+ <div class="card cp">${kvH([['Quy tắc',`<span class="mono">#${t.rule}</span> · ${EV[t.ev]}`],['Phương thức',TINH[t.tinh]],['Giá trị',t.tinh===1?t.val+'%':vnd(t.val)],['Cơ sở tính',t.ev<2?'Số lượt hợp lệ trong ngày':COSO[t.coso]],['Số tiền cơ sở',t.ev<2?fmt(t.base)+' lượt':vnd(t.base)],['Hoa hồng',`<b>${vnd(t.amt)}</b>`]])}</div>
+ ${changed?`<div style="margin-top:8px">${alertB('Quy tắc hiện hành đã khác','Hiện áp dụng '+ruleText(cur)+' (Rule #'+cur.id+'). Giao dịch này vẫn giữ snapshot cũ, lịch sử không bị tính lại.','warn','warn')}</div>`:''}</div>
+ <div><h3 style="margin-bottom:8px">Điều chỉnh (${ad.length})</h3>${ad.length?mini([{t:'Mã',f:a=>`<span class="mono">#${a.id}</span>`},{t:'Loại',f:a=>B(ADJ_T[a.loai])},{t:'Số tiền',r:1,f:a=>sgnC(a.so)},{t:'Lý do',f:a=>`<span class="cut sm">${a.ly}</span>`},{t:'Kỳ ghi nhận',f:a=>{const c=CT.find(x=>x.adj===a.id);return c?B('Kỳ '+kyLabel(dsOf(c.ds).ky),'info'):nextKy()?B('Chờ vào kỳ '+kyLabel(nextKy()),'warn'):'—'}},{t:'Thời gian',f:a=>dmyhm(a.ts)}],ad):'<div class="mut">Chưa có điều chỉnh.</div>'}</div>
+ <div><h3 style="margin-bottom:8px">Đối soát</h3>${ds?kvH([['Bản đối soát',(adm?goB('a-rec-d',{ds:ds.id},'Kỳ '+kyLabel(ds.ky)+' · '+p.ten):'<button class="link" data-act="go" data-r="p-rec-d" data-p=\''+jp({ds:ds.id})+'\'>Kỳ '+kyLabel(ds.ky)+'</button>')+' '+bDs(ds.st)]]):'<div class="mut">Chưa đưa vào bản đối soát nào.</div>'}${t.by?`<div class="mut sm" style="margin-top:6px">Duyệt bởi ${STAFF[t.by]} lúc ${dmyhm(t.duyet)}</div>`:''}</div>
+ ${adm?`<div style="display:flex;gap:8px;flex-wrap:wrap;position:sticky;bottom:0;background:var(--card);padding-top:10px;border-top:1px solid var(--bd)">${t.st===0?`<button class="btn" data-act="txok" data-id="${t.id}">${ic('check','sm')} Duyệt</button><button class="btn" data-act="txno" data-id="${t.id}">Từ chối</button>`:''}<button class="btn primary" data-act="txadj" data-id="${t.id}" ${t.st===3?'disabled title="Giao dịch đã bị từ chối"':''}>${ic('edit','sm')} Tạo điều chỉnh</button></div>`:''}
+ </div>`)}
+/* ---- tạo điều chỉnh ---- */
+const parseMoney=s=>{const n=Number(String(s).replace(/[^\d-]/g,''));return isNaN(n)?0:n};
+function adjPrevHtml(){const t=TXm[DL.tx[0]];if(!t)return '';const so=parseMoney(DL.so),cur=adjSum(t.id),fin=t.amt+cur+so;
+ return (t.ds!=null&&nextKy()?`<div style="margin-bottom:8px">${alertB('Giao dịch thuộc kỳ '+kyLabel(t.ky)+' đã chốt','Số liệu kỳ '+kyLabel(t.ky)+' không thay đổi. Điều chỉnh này sẽ được ghi vào kỳ đối soát '+kyLabel(nextKy())+'.','info','lock')}</div>`:'')+eqH(t.amt+cur,so,fin,'Hoa hồng hiện tại','Điều chỉnh mới','Hoa hồng cuối')+(fin<0?`<div style="margin-top:8px">${alertB('','Hoa hồng cuối âm: kiểm tra lại số tiền điều chỉnh.','warn','warn')}</div>`:'')}
+function dlPrev(){const e=$('#adj-prev');if(e&&DL.tx&&DL.tx[0])e.innerHTML=adjPrevHtml();const r=$('#rec-prev');if(r)r.innerHTML=recPrevHtml()}
+function adjDlg(txId){DL.tx=txId?[Number(txId)]:[];DL.loai='3';DL.so='';DL.ly='';DL.ref='';DL.err={};DL.lock=!!txId;adjForm()}
+function adjForm(){const e=DL.err||{};const fixed=DL.lock;
+ const opts=TX.filter(t=>t.st!==3&&t.ev>=2&&ymd(t.ts)>=addDays(TODAY,-60)).slice(-300).reverse().map(t=>({v:t.id,l:'#'+t.id+' · '+PUBm[t.p].ten+' · '+MOVm[t.m].ten+(t.ds!=null?' · kỳ '+kyLabel(t.ky)+' đã chốt':''),s:vnd(t.amt)}));
+ dlg(`<div class="dh"><h2>Tạo điều chỉnh hoa hồng</h2><p>Điều chỉnh là bản ghi mới tham chiếu giao dịch gốc. Giao dịch gốc không bị sửa hoặc xóa.</p></div><div class="db">
+ <div class="field"><label>Giao dịch hoa hồng <i>*</i></label>${fixed?`<div class="input" style="display:flex;align-items:center;background:var(--muted)"><span class="mono">#${DL.tx[0]}</span>&nbsp;· ${PUBm[TXm[DL.tx[0]].p].ten} · ${MOVm[TXm[DL.tx[0]].m].ten}</div>`:msel('adj:tx',opts,DL,'tx','Tìm theo mã, publisher, phim…',{one:true})}${e.tx?`<span class="emsg">${e.tx}</span>`:''}</div>
+ <div class="grid2"><div class="field"><label for="a-lo">Loại điều chỉnh <i>*</i></label><select id="a-lo" class="select" data-dl="loai">${ADJ_T.map((l,i)=>`<option value="${i}" ${DL.loai==i?'selected':''}>${l}</option>`).join('')}</select></div>
+ <div class="field"><label for="a-so">Số tiền điều chỉnh (₫) <i>*</i></label><input id="a-so" class="input ${e.so?'err':''}" data-dl="so" value="${DL.so}" placeholder="-20000" inputmode="numeric">${e.so?`<span class="emsg">${e.so}</span>`:'<span class="help">Số âm để giảm, số dương để tăng.</span>'}</div></div>
+ <div class="field"><label for="a-ly">Lý do <i>*</i></label><textarea id="a-ly" class="textarea ${e.ly?'err':''}" data-dl="ly" maxlength="500" placeholder="VD: Người dùng hoàn tiền trong 48 giờ">${DL.ly}</textarea>${e.ly?`<span class="emsg">${e.ly}</span>`:''}</div>
+ <div class="field"><label for="a-rf">Mã tham chiếu</label><input id="a-rf" class="input" data-dl="ref" value="${DL.ref}" placeholder="Mã refund / chargeback / thanh toán"></div>
+ <div id="adj-prev">${DL.tx[0]?adjPrevHtml():''}</div></div>
+ <div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="adjgo">Tiếp tục</button></div>`,1)}
+Object.assign(act,{
+ txadj:el=>adjDlg(el.dataset.id),
+ adjgo:()=>{const e={};if(!DL.tx[0])e.tx='Chọn giao dịch hoa hồng cần điều chỉnh.';const so=parseMoney(DL.so);if(!so)e.so='Nhập số tiền khác 0.';if(!DL.ly.trim())e.ly='Nhập lý do điều chỉnh.';DL.err=e;
+  if(Object.keys(e).length){adjForm();return}
+  const t=TXm[DL.tx[0]];dlg(`<div class="dh"><h2>Xác nhận tạo điều chỉnh</h2></div><div class="db">${alertB('Thao tác này không thể hoàn tác','Điều chỉnh được ghi vào sổ và vào kỳ đối soát đang mở. Bạn không thể sửa hoặc xóa sau khi tạo (BR-21).','warn','warn')}${kvH([['Giao dịch',`<span class="mono">#${t.id}</span> · ${PUBm[t.p].ten}`],['Loại',ADJ_T[DL.loai]],['Số tiền',sgn(so)],['Lý do',DL.ly]])}${adjPrevHtml()}</div><div class="df"><button class="btn" data-act="adjback">Quay lại</button><button class="btn primary" data-act="adjdo">Xác nhận điều chỉnh</button></div>`,1)},
+ adjback:()=>adjForm(),
+ adjdo:()=>{const t=TXm[DL.tx[0]];const a={id:Math.max(...ADJ.map(x=>x.id))+1,tx:t.id,cv:t.cv,loai:Number(DL.loai),so:parseMoney(DL.so),dv:'VND',ly:DL.ly.trim(),ref:DL.ref||'—',ts:NOW,by:S.user.uid};ADJ.push(a);closeOv();toast('Đã tạo điều chỉnh #'+a.id);render()},
+ txraw:el=>{const t=TXm[el.dataset.id];closeOv();S.tab[t.ev===1?'ssview':'ssclick']='log';goF(t.ev===1?'a-view':'a-click',t.ev===1?'a-view':'a-click',{preset:'custom',from:t.day,to:t.day,pub:[t.p],camp:[t.c],mov:[t.m]})},
+ txok:el=>{const t=TXm[el.dataset.id];t.st=1;t.by=S.user.uid;t.duyet=NOW;toast('Đã duyệt giao dịch #'+t.id);txSheet(t.id);render()},
+ txno:el=>{const id=el.dataset.id;confirmDlg({title:'Từ chối giao dịch #'+id+'?',desc:'Giao dịch bị từ chối sẽ không được đưa vào đối soát.',ok:'Từ chối giao dịch',danger:1,fn:()=>{TXm[id].st=3;TXm[id].by=S.user.uid;toast('Đã từ chối giao dịch #'+id);render()}})}});
+
+CV.forEach(c=>c.ev=2+c.loai);
+function goF(route,key,init,params){delete F[key];FS(key,init);go(route,params||{})}
+const recent=()=>({preset:'7d',from:addDays(TODAY,-6),to:TODAY});
+
+const DSST=[{v:0,l:'Chờ đối soát'},{v:1,l:'Đã xác nhận'},{v:2,l:'Đã khóa'},{v:3,l:'Đã thanh toán'},{v:4,l:'Có vấn đề'}];
+/* ================= CỔNG PUBLISHER (chỉ xem) ================= */
+const myAsg=()=>ASG.filter(a=>a.p===S.user.pid);
+const roBanner=()=>alertB('Chỉ xem','Publisher không có quyền tạo, sửa hoặc xóa dữ liệu ở các màn hình này. Liên hệ quản trị viên nếu cần thay đổi.','info','lock');
+const recSummary=ky=>{const pid=S.user.pid,k=KYm[ky];const tx=TX.filter(t=>t.p===pid&&t.st!==3&&monthOf(t.ts)===ky);const ds=DS.find(d=>d.p===pid&&d.ky===ky);
+ const ajs=adjInKy(pid,ky),adj=sumA(ajs,a=>a.so),hh=sumA(tx,t=>t.amt),elig=sumA(tx.filter(t=>t.st>=1),t=>t.amt)+adj;
+ const dt_=ds?dsTot(ds.id):null,paid=ds?sumA(chiOf(ds.id).filter(c=>c.st===2),c=>c.so):0;
+ return{k,tx,ajs,ds,hh,adj,elig,rec:dt_?dt_.pay:0,paid,left:dt_?dt_.pay-paid:0}};
+RT['p-dash']={crumb:()=>[['Tổng quan']],fn:()=>{const pid=S.user.pid,from=addDays(TODAY,-29),rs=ST.filter(r=>r.p===pid&&r.d>=from),tx=TX.filter(t=>t.p===pid&&ymd(t.ts)>=from&&t.st!==3);
+ const ac=myAsg().filter(a=>a.st&&CAMPm[a.c].st===1),lk=LINK.filter(l=>l.p===pid&&l.st&&CAMPm[l.c].st===1);
+ const pend=sumA(TX.filter(t=>t.p===pid&&t.st===1&&t.ds==null),txFinal),paid=sumA(CHI.filter(c=>c.p===pid&&c.st===2),c=>c.so);
+ const a=seriesST(rs,from,TODAY,sumF('click')),b=seriesST(rs,from,TODAY,sumF('view')),c=seriesST(rs,from,TODAY,sumF('conv'));
+ const cm=dayRange(from,TODAY).map(d=>sumA(tx.filter(t=>ymd(t.ts)===d),t=>t.amt));
+ return phead('Tổng quan','Hiệu quả 30 ngày gần nhất của '+S.user.name+'. Số liệu chỉ gồm dữ liệu của bạn.')+chain(0,{1:ac.length+' đang chạy',2:new Set(lk.map(l=>l.m)).size+' phim',5:vnd(sumA(tx,t=>t.amt))})+
+ `<div class="kpis">${kpi('Chiến dịch đang chạy',ac.length,'được gán cho bạn')}${kpi('Nội dung phim',new Set(lk.map(l=>l.m)).size,lk.length+' link theo dõi')}${kpi('Lượt nhấp',fmt(sumF('click')(rs)))}${kpi('Lượt xem',fmt(sumF('view')(rs)))}${kpi('Chuyển đổi',fmt(sumF('conv')(rs)),'CR '+pct(sumF('conv')(rs),sumF('click')(rs))+' trên click')}${kpi('Hoa hồng ghi nhận',vnd(sumA(tx,t=>t.amt)),'30 ngày')}${kpi('Chờ đối soát',vnd(pend),'đã duyệt, chưa vào kỳ')}${kpi('Đã chi trả',vnd(paid),'lũy kế')}</div>
+ <div class="two"><div class="card"><div class="ch"><h2>Click, view theo ngày</h2></div><div class="cp">${lineChart(a.labels,[{name:'Click',data:a.vals},{name:'View',data:b.vals}],{title:'Click và view theo ngày'})}</div></div>
+ <div class="card"><div class="ch"><h2>Hoa hồng ghi nhận theo ngày</h2></div><div class="cp">${lineChart(a.labels,[{name:'Hoa hồng (₫)',data:cm}],{title:'Hoa hồng theo ngày',ff:vnd})}</div></div></div>
+ <div class="card"><div class="ch"><div><h2>Giao dịch hoa hồng gần nhất</h2></div>${goB('p-tx',{},'Xem tất cả','btn s')}</div>${mini([{t:'Thời gian',f:t=>dmyhm(t.ts)},{t:'Chiến dịch',f:t=>CAMPm[t.c].ten},{t:'Phim',f:t=>MOVm[t.m].ten},{t:'Sự kiện',f:t=>bEv(t.ev)},{t:'Hoa hồng cuối',r:1,f:t=>vnd(txFinal(t))},{t:'Trạng thái',f:t=>bTx(t)}],TX.filter(t=>t.p===pid).slice(-6).reverse())}</div>`}};
+/* --- 1. chiến dịch có thể chạy --- */
+RT['p-avail']={crumb:()=>[['Publisher'],['Chiến dịch có thể chạy']],fn:()=>{FS('p-avail');const a=FS('p-avail').a;
+ let rows=CAMP.filter(c=>(!a.q||(c.ten+c.ma).toLowerCase().includes(a.q.toLowerCase()))&&(!a.st.length||a.st.includes(c.st)));
+ return phead('Chiến dịch có thể chạy','Các chiến dịch của WebPhimAI và chính sách hoa hồng áp dụng cho bạn. Chọn chiến dịch đang chạy chưa được gán để đăng ký.')+alertB('Chỉ xem, trừ đăng ký chạy','Publisher chỉ xem dữ liệu. Thao tác duy nhất là gửi hoặc rút đăng ký chạy chiến dịch; việc gán chiến dịch do quản trị viên duyệt.','info','lock')+
+ fbar('p-avail',{date:false,camp:false,mov:false,pub:false,st:[{v:0,l:'Tạm dừng'},{v:1,l:'Đang chạy'},{v:2,l:'Kết thúc'}],stl:'Trạng thái chiến dịch'})+
+ dt('p-avail',[{k:'ten',t:'Chiến dịch',f:campCell,v:c=>c.ten},{k:'st',t:'Trạng thái',f:c=>bCamp(c.st)},{k:'tg',t:'Thời gian',v:c=>c.bd,f:c=>`<span class="nowrap">${ysd(c.bd)} → ${c.kt?ysd(c.kt):'không giới hạn'}</span>`},
+  {k:'n',t:'Số phim',r:1,f:c=>CM.filter(x=>x.c===c.id&&x.st===1).length},
+  {k:'pol',t:'Chính sách hoa hồng đang áp dụng',s:false,f:c=>{const L=rulesFor(c.id,S.user.pid);return L.length?L.map(r=>`<div class="sm nowrap">${bEv(r.ev)} ${ruleText(r)}${r.p?' '+B('Riêng cho bạn','acc'):''}</div>`).join(''):'<span class="mut">Chưa có quy tắc</span>'}},
+  {k:'me',t:'Của tôi',f:c=>regState(c).b},
+  {k:'a',t:'',s:false,f:c=>`<div style="display:flex;gap:4px">${goB('p-avail-d',{id:c.id},'Xem chi tiết','btn s')}${regState(c).k==='none'&&regOpen(c)?`<button class="btn s primary" data-act="regnew" data-id="${c.id}">Đăng ký chạy</button>`:''}</div>`}],rows,{row:id=>go('p-avail-d',{id:Number(id)})})}};
+RT['p-avail-d']={crumb:()=>[['Publisher'],['Chiến dịch có thể chạy','p-avail'],[CAMPm[S.params.id].ten]],fn:()=>{const c=CAMPm[S.params.id],pid=S.user.pid,rs=RULES.filter(r=>r.st===1&&r.c===c.id&&(r.p==null||r.p===pid)),mine=myAsg().find(x=>x.c===c.id&&x.st);
+ return phead(c.ten,c.mota,goB('p-avail',{},ic('right','sm').replace('<svg','<svg style="transform:rotate(180deg)"')+' Quay lại','btn')+(mine?goB('p-run-d',{asg:mine.id},'Xem chiến dịch đang chạy','btn primary'):'')+regBtn(c))+chain(1,{0:'Bạn',2:CM.filter(x=>x.c===c.id&&x.st===1).length+' phim',5:rs.length+' quy tắc'})+regCard(c)+
+ `<div class="card"><div class="cp">${kvH([['Mã chiến dịch',`<span class="mono">${c.ma}</span>`],['Trạng thái',bCamp(c.st)],['Thời gian',ysd(c.bd)+' → '+(c.kt?ysd(c.kt):'không giới hạn')],['Gán cho bạn',mine?B('Đã được gán từ '+dmy(mine.gan),'ok'):B('Chưa được gán')]])}</div></div>
+ <div class="card"><div class="ch"><div><h2>Chính sách hoa hồng</h2><p>Quy tắc riêng cho bạn được ưu tiên hơn quy tắc mặc định. Giao dịch đã ghi nhận luôn giữ quy tắc tại thời điểm phát sinh.</p></div></div>${mini([{t:'Sự kiện',f:r=>bEv(r.ev)},{t:'Cách tính',f:r=>TINH[r.tinh]},{t:'Giá trị',r:1,f:r=>r.tinh?r.val+'%':vnd(r.val)},{t:'Cơ sở tính',f:r=>r.tinh?COSO[r.coso]:'—'},{t:'Điều kiện',f:r=>[r.gx?'Xem tối thiểu '+r.gx+' giây':'',r.tl?'Tối thiểu '+r.tl+'% thời lượng':'',r.sl?'Tối đa '+fmt(r.sl)+' lượt':''].filter(Boolean).join(' · ')||'—'},{t:'Hiệu lực',f:r=>`<span class="nowrap">${dmy(r.from)} → ${r.to?dmy(r.to):'không giới hạn'}</span>`},{t:'Phạm vi',f:r=>r.p?B('Riêng cho bạn','acc'):B('Mặc định')},{t:'',f:r=>bRuleEff(r)}],rs,'Chưa có quy tắc hoa hồng')}</div>
+ <div class="card"><div class="ch"><h2>Nội dung phim trong chiến dịch</h2></div>${mini([{t:'Phim',f:x=>movCell(MOVm[x.m])},{t:'Trạng thái',f:x=>x.st?B('Đang hoạt động','ok'):B('Tạm dừng','warn')}],CM.filter(x=>x.c===c.id))}</div>`}};
+/* --- 2. chiến dịch đang chạy --- */
+const linkRowsOf=(asg)=>LINK.filter(l=>l.asg===asg.id);
+function runRows(key){const a=FS(key).a;return myAsg().filter(x=>x.st).map(x=>{const L=linkRowsOf(x).filter(l=>(!a.mov.length||a.mov.includes(l.m))),ag=L.map(l=>({l,...linkAgg(l,a.from,a.to)}));
+ return{id:x.id,asg:x,c:x.c,p:x.p,L:ag,click:sumAgg(ag,'click'),view:sumAgg(ag,'view'),conv:sumAgg(ag,'conv'),hCk:sumAgg(ag,'hCk'),hVw:sumAgg(ag,'hVw'),hCv:sumAgg(ag,'hCv'),tot:sumAgg(ag,'tot'),n:L.length}}).filter(r=>(!a.camp.length||a.camp.includes(r.c))&&(!a.q||(CAMPm[r.c].ten+CAMPm[r.c].ma+r.L.map(x=>MOVm[x.l.m].ten).join(' ')).toLowerCase().includes(a.q.toLowerCase())))}
+const linkTable=(L,full)=>mini([{t:'Nội dung phim',f:x=>movCell(MOVm[x.l.m])},{t:'Mã theo dõi',f:x=>`<span class="mono">${x.l.code}</span>`},{t:'Liên kết theo dõi',f:x=>`<span class="mono url" title="${x.l.url}">${x.l.url}</span> <button class="btn ghost i s" data-act="copy" data-v="${x.l.url}" aria-label="Sao chép liên kết" title="Sao chép liên kết">${ic('copy','sm')}</button>`},{t:'Nguồn',f:x=>x.l.nguon},{t:'Link',f:x=>bLink(x.l.st)},
+ {t:'Click',r:1,f:x=>fmt(x.click)},{t:'View',r:1,f:x=>fmt(x.view)},{t:'Chuyển đổi',r:1,f:x=>fmt(x.conv)},{t:'HH click',r:1,f:x=>x.rc?vnd(x.hCk):'—'},{t:'HH view',r:1,f:x=>x.rv?vnd(x.hVw):'—'},{t:'HH chuyển đổi',r:1,f:x=>vnd(x.hCv)},{t:'Tổng HH',r:1,f:x=>`<b>${vnd(x.tot)}</b>`}],L,'Không có nội dung nào trong chiến dịch')
+RT['p-run']={crumb:()=>[['Publisher'],['Chiến dịch đang chạy']],fn:()=>{FS('p-run');const rows=runRows('p-run');
+ return phead('Chiến dịch đang chạy','Mỗi chiến dịch gồm các nội dung phim, mã theo dõi, liên kết theo dõi và số liệu từng loại sự kiện. Mặc định hiển thị hôm nay.')+roBanner()+
+ fbar('p-run',{pub:false})+alertB('Cách ghi nhận hoa hồng','Click và view hợp lệ được ghi sổ gộp theo ngày cho từng link. Chuyển đổi chỉ ghi một lần cho mỗi khoản thanh toán (đăng ký mới hoặc gia hạn gói).','info','info')+
+ dt('p-run',[{k:'c',t:'Chiến dịch',v:r=>CAMPm[r.c].ten,f:r=>campCell(CAMPm[r.c])},{k:'st',t:'Trạng thái',f:r=>bCamp(CAMPm[r.c].st)},{k:'n',t:'Nội dung',r:1,f:r=>r.n},{k:'click',t:'Click',r:1,f:r=>fmt(r.click)},{k:'view',t:'View',r:1,f:r=>fmt(r.view)},{k:'conv',t:'Chuyển đổi',r:1,f:r=>fmt(r.conv)},
+ {k:'hCk',t:'HH click',r:1,f:r=>vnd(r.hCk)},{k:'hVw',t:'HH view',r:1,f:r=>vnd(r.hVw)},{k:'hCv',t:'HH chuyển đổi',r:1,f:r=>vnd(r.hCv)},{k:'tot',t:'Tổng hoa hồng',r:1,f:r=>`<b>${vnd(r.tot)}</b>`},{k:'a',t:'',s:false,f:r=>goB('p-run-d',{asg:r.id},'Chi tiết','btn s')}],rows,
+ {expand:r=>linkTable(r.L),row:id=>go('p-run-d',{asg:Number(id)}),tot:(k,rs)=>['click','view','conv','hCk','hVw','hCv','tot'].includes(k)?(k.startsWith('h')||k==='tot'?vnd(sumAgg(rs,k)):fmt(sumAgg(rs,k))):''})}};
+RT['p-run-d']={crumb:()=>[['Publisher'],['Chiến dịch đang chạy','p-run'],[CAMPm[ASG.find(a=>a.id===S.params.asg).c].ten]],fn:()=>{const asg=ASG.find(a=>a.id===S.params.asg),c=CAMPm[asg.c];FS('p-run-d',{mov:[],camp:[]});const a=FS('p-run-d').a;
+ const L=linkRowsOf(asg).filter(l=>!a.mov.length||a.mov.includes(l.m)).map(l=>({l,...linkAgg(l,a.from,a.to)})),rs=ST.filter(r=>L.some(x=>x.l.id===r.l)&&r.d>=a.from&&r.d<=a.to);
+ const s1=seriesST(rs,a.from,a.to,sumF('click')),s2=seriesST(rs,a.from,a.to,sumF('view')),s3=seriesST(rs,a.from,a.to,sumF('conv'));const rc=rateNow(c.id,asg.p,0),rv=rateNow(c.id,asg.p,1),rcv=[2,3].map(e=>rateNow(c.id,asg.p,e)).filter(Boolean);
+ return phead(c.ten,'Chi tiết chiến dịch bạn đang chạy: nội dung phim, mã theo dõi, liên kết và hoa hồng theo từng loại sự kiện.',goB('p-run',{},'Quay lại','btn')+`<button class="btn" data-act="attrpc" data-p="${S.user.pid}" data-c="${c.id}">Gắn kết nguồn</button>`)+chain(3,{0:'Bạn',1:c.ma,2:L.length+' phim',3:L.length+' link'})+fbar('p-run-d',{pub:false,camp:false,q:false})+
+ `<div class="kpis">${kpi('Click',fmt(sumAgg(L,'click')),rc?'HH '+vnd(sumAgg(L,'hCk'))+' · '+ruleText(rc)+'/lượt':'Không có quy tắc hoa hồng click')}${kpi('View',fmt(sumAgg(L,'view')),rv?'HH '+vnd(sumAgg(L,'hVw'))+' · '+vnd(rv.val)+'/lượt đạt điều kiện':'Không có quy tắc hoa hồng view')}${kpi('Chuyển đổi',fmt(sumAgg(L,'conv')),'HH '+vnd(sumAgg(L,'hCv')))}${kpi('Tổng hoa hồng',vnd(sumAgg(L,'tot')),'trong khoảng đã chọn')}</div>
+ <div class="two"><div class="card"><div class="ch"><h2>Click và view theo ngày</h2></div><div class="cp">${lineChart(s1.labels,[{name:'Click',data:s1.vals},{name:'View',data:s2.vals}],{title:'Click và view'})}</div></div><div class="card"><div class="ch"><h2>Chuyển đổi theo ngày</h2></div><div class="cp">${lineChart(s3.labels,[{name:'Chuyển đổi',data:s3.vals}],{title:'Chuyển đổi'})}</div></div></div>
+ <div class="card"><div class="ch"><div><h2>Nội dung phim, mã và liên kết theo dõi</h2><p>HH = hoa hồng. Nhấn biểu tượng sao chép để lấy liên kết gắn vào bài đăng.</p></div></div>${linkTable(L)}</div>
+ <div class="card"><div class="ch"><h2>Chính sách áp dụng</h2></div><div class="cp">${[...(rc?[rc]:[]),...(rv?[rv]:[]),...rcv].map(r=>`<div style="padding:3px 0">${bEv(r.ev)} ${ruleText(r)}${r.gx?' · xem tối thiểu '+r.gx+' giây':''}</div>`).join('')||'<span class="mut">Chưa có quy tắc.</span>'}</div></div>`}};
+/* --- 3. giao dịch hoa hồng --- */
+RT['p-tx']={crumb:()=>[['Publisher'],['Giao dịch hoa hồng']],fn:()=>{FS('p-tx');const rows=txRows('p-tx');
+ return phead('Giao dịch hoa hồng','Hoa hồng phát sinh từ chuyển đổi của bạn. Giao dịch có điều chỉnh được tô nền vàng, giao dịch gốc luôn giữ nguyên.')+roBanner()+
+ fbar('p-tx',{date:false,pub:false,ev:evOpts,st:txStOpts,ky:true,adj:true})+
+ dt('p-tx',txCols(false),rows,{row:id=>txSheet(Number(id)),rowCls:t=>adjOf(t.id).length?'adj':'',tot:k=>k==='amt'?vnd(sumA(txRows('p-tx'),t=>t.amt)):k==='adj'?sgn(sumA(txRows('p-tx'),t=>adjSum(t.id))):k==='fin'?vnd(sumA(txRows('p-tx'),txFinal)):''})}};
+/* --- 4. tra soát --- */
+RT['p-rec']={crumb:()=>[['Publisher'],['Tra soát']],fn:()=>{FS('p-rec');const fa=FS('p-rec').a;const rows=KY.filter(k=>!fa.ky.length||fa.ky.includes(k.ma)).map(k=>({id:k.ma,...recSummary(k.ma)})).filter(r=>!fa.st.length||(r.ds&&fa.st.includes(r.ds.st))).reverse();
+ return phead('Tra soát hoa hồng','Tổng hợp hoa hồng theo kỳ tháng. Mở từng kỳ để xem chi tiết khoản ghi nhận và điều chỉnh.')+roBanner()+chainL(['Hoa hồng ghi nhận','Đủ điều kiện','Đã đối soát','Đã khóa kỳ','Đã chi trả'],-1)+fbar('p-rec',{date:false,q:false,camp:false,mov:false,pub:false,ky:true,st:DSST,stl:'Trạng thái đối soát'})+
+ dt('p-rec',[{k:'k',t:'Kỳ đối soát',v:r=>r.id,f:r=>`<b>${kyLabel(r.id)}</b><small class="mut" style="display:block">${dmy(r.k.tu)} → ${dmy(r.k.den)}</small>`},{k:'hh',t:'Hoa hồng ghi nhận',r:1,f:r=>vnd(r.hh)},{k:'adj',t:'Điều chỉnh',r:1,f:r=>sgnC(r.adj)},{k:'elig',t:'Đủ điều kiện',r:1,f:r=>vnd(r.elig)},{k:'rec',t:'Đã đối soát',r:1,f:r=>r.ds?vnd(r.rec):'—'},{k:'paid',t:'Đã chi trả',r:1,f:r=>r.ds?vnd(r.paid):'—'},{k:'left',t:'Còn phải trả',r:1,f:r=>r.ds?`<b>${vnd(r.left)}</b>`:'—'},{k:'st',t:'Trạng thái',f:r=>bKy(r.k.st)+(r.ds?' '+bDs(r.ds.st):'')},{k:'a',t:'',s:false,f:r=>goB('p-rec-d',{ky:r.id},'Chi tiết','btn s')}],rows,{row:id=>go('p-rec-d',{ky:id})})}};
+RT['p-rec-d']={crumb:()=>[['Publisher'],['Tra soát','p-rec'],['Kỳ '+kyLabel(S.params.ky||dsOf(S.params.ds).ky)]],fn:()=>{const ky=S.params.ky||dsOf(S.params.ds).ky,s=recSummary(ky),ds=s.ds,idx=!ds?(s.elig?1:0):ds.st===3?4:ds.st===2?3:2;
+ const lines=ds?dsLines(ds.id).map(c=>({...c,t:c.tx&&TXm[c.tx],a:c.adj&&ADJ.find(x=>x.id===c.adj)})):s.tx.map(t=>({id:'t'+t.id,t,a:null,loai:0,hh:t.amt,dc:0,tt:t.amt,st:1})).concat(s.ajs.map(a=>({id:'a'+a.id,t:null,a,loai:1,hh:0,dc:a.so,tt:a.so,st:1})));
+ return phead('Kỳ '+kyLabel(ky),'Chi tiết các khoản ghi nhận và điều chỉnh trong kỳ. '+(ds?'':'Kỳ chưa có bản đối soát, bảng bên dưới là các giao dịch đã ghi nhận.'),goB('p-rec',{},'Quay lại','btn'))+roBanner()+chainL(['Hoa hồng ghi nhận','Đủ điều kiện','Đã đối soát','Đã khóa kỳ','Đã chi trả'],idx)+
+ (ds&&ds.st===3?lockBar('Dữ liệu đã chi trả và không thể chỉnh sửa.'):ds&&ds.st===2?lockBar('Kỳ đã khóa. Điều chỉnh phát sinh sau sẽ được ghi vào kỳ kế tiếp.'):'')+
+ `<div class="card cp">${eqH(s.hh,s.adj,s.hh+s.adj)}</div><div class="kpis">${kpi('Đủ điều kiện',vnd(s.elig),'đã duyệt')}${kpi('Đã đối soát',ds?vnd(s.rec):'—',ds?bDs(ds.st).replace(/<[^>]+>/g,''):'chưa đối soát')}${kpi('Đã chi trả',ds?vnd(s.paid):'—')}${kpi('Còn phải trả',ds?vnd(s.left):'—')}</div>`+
+ dt('p-rec-d',[{k:'loai',t:'Loại',f:c=>c.loai?B('Điều chỉnh','adj'):B('Hoa hồng','acc')},{k:'tx',t:'Giao dịch',f:c=>c.t?`<button class="link mono" data-act="txs" data-id="${c.t.id}">#${c.t.id}</button>`:(c.a?`<button class="link mono" data-act="txs" data-id="${c.a.tx}">#${c.a.tx} (điều chỉnh #${c.a.id})</button>`:'')},{k:'ev',t:'Sự kiện',f:c=>c.t?bEv(c.t.ev):B(ADJ_T[c.a.loai])},{k:'kg',t:'Kỳ giao dịch gốc',f:c=>c.a?B('Kỳ '+kyLabel(monthOf(TXm[c.a.tx].ts)),monthOf(TXm[c.a.tx].ts)<ky?'adj':''):'—'},{k:'m',t:'Nội dung phim',f:c=>MOVm[(c.t||TXm[c.a.tx]).m].ten},{k:'hh',t:'Hoa hồng',r:1,f:c=>vnd(c.hh)},{k:'dc',t:'Điều chỉnh',r:1,f:c=>sgnC(c.dc)},{k:'tt',t:'Thanh toán',r:1,f:c=>`<b>${vnd(c.tt)}</b>`},{k:'st',t:'Dòng',f:c=>c.st?B('Hợp lệ','ok'):B('Đã loại')},{k:'ly',t:'Lý do',hide:true,f:c=>c.ly||'—'}],lines,{rowCls:c=>c.loai||(c.t&&adjOf(c.t.id).length)?'adj':'',size:12,tot:k=>k==='hh'?vnd(sumA(lines,c=>c.hh)):k==='dc'?sgn(sumA(lines,c=>c.dc)):k==='tt'?vnd(sumA(lines,c=>c.tt)):''})}};
+act.txs=el=>txSheet(Number(el.dataset.id));
+/* --- 5. chi trả --- */
+RT['p-pay']={crumb:()=>[['Publisher'],['Chi trả']],fn:()=>{FS('p-pay');const fa=FS('p-pay').a;const rows=CHI.filter(c=>c.p===S.user.pid&&(!fa.ky.length||fa.ky.includes(dsOf(c.ds).ky))&&(!fa.st.length||fa.st.includes(c.st))).slice().reverse();
+ return phead('Chi trả hoa hồng','Số tiền hoa hồng thực tế đã và sẽ được chi trả cho bạn theo từng kỳ.')+roBanner()+fbar('p-pay',{date:false,q:false,camp:false,mov:false,pub:false,ky:true,st:[0,1,2,3].map(i=>({v:i,l:chiSt[i]})),stl:'Trạng thái chi trả'})+
+ dt('p-pay',[{k:'id',t:'Mã chi trả',f:c=>`<span class="mono">CT-${c.id}</span>`},{k:'ky',t:'Kỳ',v:c=>dsOf(c.ds).ky,f:c=>kyLabel(dsOf(c.ds).ky)},{k:'hh',t:'Hoa hồng',r:1,f:c=>vnd(dsTot(c.ds).hh)},{k:'dc',t:'Điều chỉnh',r:1,f:c=>sgnC(dsTot(c.ds).dc)},{k:'so',t:'Số tiền chi trả',r:1,f:c=>`<b>${vnd(c.so)}</b>`},{k:'pt',t:'Phương thức',f:c=>c.pt==='bank_transfer'?'Chuyển khoản':c.pt},{k:'st',t:'Trạng thái',f:c=>bChi(c.st)},{k:'tt',t:'Ngày chi',v:c=>c.tt||0,f:c=>dmyhm(c.tt)},{k:'ref',t:'Mã giao dịch',f:c=>c.ref?`<span class="mono">${c.ref}</span>`:'—'}],rows,{row:id=>go('p-pay-d',{id:Number(id)})})}};
+const payDetail=(adm)=>{const c=CHI.find(x=>x.id===S.params.id),ds=dsOf(c.ds),t=dsTot(ds.id),p=PUBm[c.p];
+ const lines=dsLines(ds.id).map(x=>({...x,t:x.tx&&TXm[x.tx],a:x.adj&&ADJ.find(y=>y.id===x.adj)}));
+ return `<div class="card"><div class="cp" style="max-width:640px">${kvH([['Publisher',p.ten],['Kỳ',kyLabel(ds.ky)],['Mã chi trả',`<span class="mono">CT-${c.id}</span>`]])}<hr style="border:0;border-top:1px dashed var(--bd);margin:12px 0">${kvH([['Hoa hồng',vnd(t.hh)],['Điều chỉnh',sgn(t.dc)],['Tổng phải trả',`<b style="font-size:17px">${vnd(c.so)}</b>`]])}<hr style="border:0;border-top:1px dashed var(--bd);margin:12px 0">${kvH([['Trạng thái chi',bChi(c.st)],['Phương thức',c.pt==='bank_transfer'?'Chuyển khoản ngân hàng':c.pt],['Mã giao dịch',c.ref?`<span class="mono">${c.ref}</span>`:'—'],['Yêu cầu lúc',dmyhm(c.yc)],['Chi lúc',dmyhm(c.tt)],...(c.ly?[['Lý do thất bại',`<span style="color:var(--bad)">${c.ly}</span>`]]:[])])}</div></div>
+ <div class="card"><div class="ch"><div><h2>Khoản cấu thành số tiền chi trả</h2><p>${lines.length} dòng từ bản đối soát kỳ ${kyLabel(ds.ky)}</p></div>${adm?goB('a-rec-d',{ds:ds.id},'Mở bản đối soát','btn s'):goB('p-rec-d',{ds:ds.id},'Mở kỳ đối soát','btn s')}</div>${mini([{t:'Loại',f:x=>x.loai?B('Điều chỉnh','adj'):B('Hoa hồng','acc')},{t:'Giao dịch',f:x=>`<span class="mono">#${x.t?x.t.id:x.a.tx}</span>`},{t:'Phim',f:x=>MOVm[(x.t||TXm[x.a.tx]).m].ten},{t:'Thanh toán',r:1,f:x=>vnd(x.tt)}],lines.slice(0,25))}${lines.length>25?`<div class="pager">Hiển thị 25/${lines.length} dòng</div>`:''}</div>`};
+RT['p-pay-d']={crumb:()=>[['Publisher'],['Chi trả','p-pay'],['CT-'+S.params.id]],fn:()=>{const c=CHI.find(x=>x.id===S.params.id);return phead('Chi tiết chi trả CT-'+c.id,'',goB('p-pay',{},'Quay lại','btn'))+roBanner()+chainL(['Hoa hồng','Đối soát','Khóa kỳ','Chi trả','Đã nhận'],c.st===2?4:c.st===1?3:2)+(c.st===2?lockBar('Dữ liệu đã chi trả và không thể chỉnh sửa.'):'')+payDetail(false)}};
+/* ================= CỔNG QUẢN TRỊ (1/2): tổng quan, publisher, chiến dịch ================= */
+const stdSum=(rows)=>({click:sumA(rows,r=>r.click),view:sumA(rows,r=>r.view),conv:sumA(rows,r=>r.conv)});
+const paidOf=p=>sumA(CHI.filter(c=>c.p===p&&c.st===2),c=>c.so);
+RT['a-dash']={crumb:()=>[['Tổng quan']],fn:()=>{const from=addDays(TODAY,-29),rs=ST.filter(r=>r.d>=from),tx=TX.filter(t=>ymd(t.ts)>=from&&t.st!==3);
+ const aC=CAMP.filter(c=>c.st===1),aM=CM.filter(x=>x.st===1&&CAMPm[x.c].st===1);const sm=stdSum(rs);
+ const pendRec=sumA(TX.filter(t=>t.st===1&&t.ds==null),txFinal),pendPay=sumA(DS.filter(d=>d.st===2),d=>dsTot(d.id).pay)-sumA(CHI.filter(c=>c.st===2&&dsOf(c.ds).st===2),c=>c.so);
+ const a=seriesST(rs,from,TODAY,sumF('click')),b=seriesST(rs,from,TODAY,sumF('view')),c=seriesST(rs,from,TODAY,sumF('conv'));
+ const cm=dayRange(from,TODAY).map(d=>sumA(tx.filter(t=>ymd(t.ts)===d),t=>t.amt));
+ const byP=PUB.map(p=>{const r=rs.filter(x=>x.p===p.id);return{p,click:sumA(r,x=>x.click),conv:sumA(r,x=>x.conv),hh:sumA(tx.filter(t=>t.p===p.id),t=>t.amt)}}).filter(x=>x.click).sort((x,y)=>y.hh-x.hh);
+ const byC=CAMP.map(cc=>{const r=rs.filter(x=>x.c===cc.id);return{c:cc,click:sumA(r,x=>x.click),conv:sumA(r,x=>x.conv),hh:sumA(tx.filter(t=>t.c===cc.id),t=>t.amt)}}).filter(x=>x.click).sort((x,y)=>y.hh-x.hh);
+ const mx=Math.max(...byC.map(x=>x.hh),1);
+ const q=[[TX.filter(t=>t.st===0).length,'giao dịch chờ duyệt','a-tx'],[KYm['202610'].st===0?1:0,'kỳ 10/2026 đang mở, chưa đối soát','a-rec'],[DS.filter(d=>d.st===2&&!chiOf(d.id).some(c=>c.st!==3)).length,'bản đối soát đã khóa, chờ tạo chi trả','a-pay'],[CHI.filter(c=>c.st===3).length,'lệnh chi trả thất bại cần xử lý','a-pay']].filter(x=>x[0]);
+ return phead('Tổng quan','Số liệu 30 ngày gần nhất của toàn bộ chương trình affiliate.')+chain(5,{0:PUB.filter(p=>p.st===1).length+' hoạt động',1:aC.length+' đang chạy',2:aM.length+' nội dung',5:vnd(sumA(tx,t=>t.amt)),7:vnd(pendRec)+' chờ',8:vnd(pendPay)+' chờ chi'})+
+ `<div class="kpis">${kpi('Publisher',PUB.length,PUB.filter(p=>p.st===1).length+' hoạt động')}${kpi('Chiến dịch đang chạy',aC.length)}${kpi('Nội dung đang chạy',aM.length)}${kpi('Click',fmt(sm.click))}${kpi('View',fmt(sm.view))}${kpi('Chuyển đổi',fmt(sm.conv),'CR '+pct(sm.conv,sm.click))}${kpi('Hoa hồng ghi nhận',vnd(sumA(tx,t=>t.amt)))}${kpi('Chờ đối soát',vnd(pendRec))}${kpi('Chờ chi trả',vnd(pendPay))}</div>
+ <div class="card"><div class="ch"><div><h2>Cần xử lý</h2><p>Các bước đang chờ quản trị viên trong chuỗi hoa hồng.</p></div></div><div class="cp" style="display:flex;gap:10px;flex-wrap:wrap">${q.map(([n,l,r])=>`<button class="btn" data-act="go" data-r="${r}"><b>${n}</b> ${l}</button>`).join('')}</div></div>
+ <div class="two"><div class="card"><div class="ch"><h2>Click và view theo ngày</h2></div><div class="cp">${lineChart(a.labels,[{name:'Click',data:a.vals},{name:'View',data:b.vals}],{title:'Xu hướng click và view'})}</div></div><div class="card"><div class="ch"><h2>Chuyển đổi và hoa hồng</h2></div><div class="cp">${lineChart(a.labels,[{name:'Hoa hồng (₫)',data:cm}],{title:'Hoa hồng theo ngày',ff:vnd})}<div class="mut sm" style="margin-top:6px">Chuyển đổi 30 ngày: ${fmt(sm.conv)} · trung bình ${(sm.conv/30).toFixed(1)}/ngày</div></div></div></div>
+ <div class="two"><div class="card"><div class="ch"><h2>Hiệu quả chiến dịch</h2><span class="mut sm">Hoa hồng 30 ngày</span></div><div class="cp">${byC.map(x=>`<div class="hb"><span>${x.c.ten}</span><div class="bar"><i style="width:${x.hh/mx*100}%"></i></div><b class="num">${vnd(x.hh)}</b></div>`).join('')}</div></div>
+ <div class="card"><div class="ch"><h2>Top publisher</h2>${goB('a-pubs',{},'Tất cả','btn s')}</div>${mini([{t:'Publisher',f:x=>x.p.ten},{t:'Click',r:1,f:x=>fmt(x.click)},{t:'Chuyển đổi',r:1,f:x=>fmt(x.conv)},{t:'Hoa hồng',r:1,f:x=>vnd(x.hh)}],byP.slice(0,5))}</div></div>
+ <div class="card"><div class="ch"><h2>Top chiến dịch</h2>${goB('a-camps',{},'Tất cả','btn s')}</div>${mini([{t:'Chiến dịch',f:x=>x.c.ten},{t:'Trạng thái',f:x=>bCamp(x.c.st)},{t:'Click',r:1,f:x=>fmt(x.click)},{t:'Chuyển đổi',r:1,f:x=>fmt(x.conv)},{t:'CR',r:1,f:x=>pct(x.conv,x.click)},{t:'Hoa hồng',r:1,f:x=>vnd(x.hh)}],byC)}</div>`}};
+/* ---- Publisher ---- */
+const crRank=(()=>{const from=addDays(TODAY,-29);const L=PUB.filter(p=>p.st!==0).map(p=>{const r=ST.filter(x=>x.p===p.id&&x.d>=from);return{id:p.id,cr:sumA(r,x=>x.conv)/Math.max(1,sumA(r,x=>x.click))}}).filter(x=>x.cr>0).sort((a,b)=>b.cr-a.cr);const m={};L.forEach((x,i)=>m[x.id]={cr:x.cr});return m})();
+function pubRows(){const a=FS('a-pubs').a;return PUB.filter(p=>(!a.st.length||a.st.includes(p.st))&&(!a.pub.length||a.pub.includes(p.id))&&(!a.q||(p.ten+p.ma+p.email).toLowerCase().includes(a.q.toLowerCase()))).map(p=>{
+ const L=LINK.filter(l=>l.p===p.id&&(!a.camp.length||a.camp.includes(l.c)));const ag=L.map(l=>({l,...linkAgg(l,a.from,a.to)}));
+ const as=ASG.filter(x=>x.p===p.id&&x.st&&CAMPm[x.c].st===1&&(!a.camp.length||a.camp.includes(x.c)));
+ return{id:p.id,p,nc:as.length,camps:as.map(x=>CAMPm[x.c]),nm:new Set(L.filter(l=>l.st&&CAMPm[l.c].st===1).map(l=>l.m)).size,...stdSum(ag),hh:sumAgg(ag,'tot'),paid:paidOf(p.id)}})}
+RT['a-pubs']={crumb:()=>[['Danh mục'],['Publisher']],fn:()=>{FS('a-pubs');const rows=pubRows();
+ return phead('Publisher','Publisher nào đang chạy chiến dịch nào, hoa hồng ghi nhận bao nhiêu và chỉ số sự kiện ra sao. Số liệu theo khoảng thời gian đã chọn, mặc định hôm nay.',`<button class="btn primary" data-act="pubnew">${ic('plus','sm')} Thêm publisher</button>`)+
+ fbar('a-pubs',{mov:false,st:[{v:0,l:'Chờ duyệt'},{v:1,l:'Hoạt động'},{v:2,l:'Tạm ngưng'}],stl:'Trạng thái publisher'})+
+ dt('a-pubs',[{k:'p',t:'Publisher',v:r=>r.p.ten,f:r=>pubAv(r.p)},{k:'st',t:'Trạng thái',v:r=>r.p.st,f:r=>bPub(r.p.st)},{k:'camps',t:'Đang chạy chiến dịch',s:false,f:r=>r.camps.length?r.camps.map(c=>`<span class="chip" title="${c.ten}">${c.ma.replace('CD-','')}</span>`).join(' '):'<span class="mut">Chưa chạy</span>'},{k:'nc',t:'Chiến dịch',r:1,f:r=>r.nc},{k:'nm',t:'Phim',r:1,f:r=>r.nm},{k:'click',t:'Click',r:1,f:r=>fmt(r.click)},{k:'view',t:'View',r:1,f:r=>fmt(r.view)},{k:'conv',t:'Chuyển đổi',r:1,f:r=>fmt(r.conv)},{k:'hh',t:'Hoa hồng ghi nhận',r:1,f:r=>vnd(r.hh)},{k:'paid',t:'Đã chi trả',r:1,hide:true,f:r=>vnd(r.paid)},
+ {k:'eff',t:'CR 30 ngày',r:1,v:r=>crRank[r.id]?crRank[r.id].cr:-1,f:r=>crRank[r.id]?(crRank[r.id].cr*100).toFixed(2)+'%':'—'},{k:'up',t:'Cập nhật',hide:true,f:r=>dmy(r.p.tao)},
+ {k:'a',t:'',s:false,f:r=>`<button class="btn s" data-act="go" data-r="a-pub-d" data-p='{"id":${r.id}}'>Xem</button> <button class="btn s" data-act="pubedit" data-id="${r.id}">Sửa</button>`}],rows,{row:id=>go('a-pub-d',{id:Number(id)}),tot:(k,rs)=>k==='click'||k==='view'||k==='conv'?fmt(sumAgg(rs,k)):k==='hh'?vnd(sumAgg(rs,'hh')):''})}};
+function pubForm(id){const p=id?PUBm[id]:null;DL.pe={id:p?p.id:null,email:p?p.email:'',ten:p?p.ten:'',lh:p?p.lh:'',st:p?p.st:0,pw:''};DL.err={};pubFormR()}
+function pubFormR(){const d=DL.pe,e=DL.err||{};dlg(`<div class="dh"><h2>${d.id?'Sửa publisher':'Thêm publisher'}</h2><p>Publisher đăng nhập cổng Publisher bằng email và mật khẩu này.</p></div><div class="db">
+ <div class="field"><label for="pe1">Tên nhà xuất bản <i>*</i></label><input id="pe1" class="input ${e.ten?'err':''}" data-dl="pe_ten" value="${d.ten}">${e.ten?`<span class="emsg">${e.ten}</span>`:''}</div>
+ <div class="field"><label for="pe2">Email đăng nhập <i>*</i></label><input id="pe2" class="input ${e.email?'err':''}" data-dl="pe_email" value="${d.email}" ${d.id?'readonly':''}>${e.email?`<span class="emsg">${e.email}</span>`:d.id?'<span class="help">Email là khóa đăng nhập, không đổi sau khi tạo.</span>':''}</div>
+ ${d.id?'':`<div class="field"><label for="pe3">Mật khẩu khởi tạo <i>*</i></label><input id="pe3" type="password" class="input ${e.pw?'err':''}" data-dl="pe_pw" value="${d.pw}">${e.pw?`<span class="emsg">${e.pw}</span>`:'<span class="help">Hệ thống lưu mật khẩu đã băm (mat_khau_hash).</span>'}</div>`}
+ <div class="field"><label for="pe4">Thông tin liên hệ</label><input id="pe4" class="input" data-dl="pe_lh" value="${d.lh}"></div>
+ <div class="field"><label for="pe5">Trạng thái <i>*</i></label><select id="pe5" class="select" data-dl="pe_st">${['Chờ duyệt','Hoạt động','Tạm ngưng'].map((l,i)=>`<option value="${i}" ${d.st==i?'selected':''}>${l}</option>`).join('')}</select></div></div>
+ <div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="pubsave">Lưu publisher</button></div>`)}
+/* data-dl keys cho form lồng: pe_x -> DL.pe.x */
+document.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.dl;if(k&&/^(pe|ce|re)_/.test(k)){const[g,f]=k.split('_');DL[g][f]=e.target.value;DL[k]=undefined;if(g==='re')ruleToggle()}});
+function ruleToggle(){const e=$('#re-view');if(e)e.hidden=DL.re.ev!=1}
+Object.assign(act,{pubnew:()=>pubForm(),pubedit:el=>pubForm(Number(el.dataset.id)),
+ pubsave:()=>{const d=DL.pe,e={};if(!d.ten.trim())e.ten='Nhập tên nhà xuất bản.';if(!d.id){if(!/^\S+@\S+\.\S+$/.test(d.email))e.email='Nhập email đúng định dạng.';else if(PUB.some(p=>p.email===d.email))e.email='Email đã được dùng cho publisher khác.';if(d.pw.length<8)e.pw='Mật khẩu tối thiểu 8 ký tự.'}
+  DL.err=e;if(Object.keys(e).length){pubFormR();return}
+  if(d.id){const p=PUBm[d.id];p.ten=d.ten;p.lh=d.lh;p.st=Number(d.st)}else{const p={id:PUB.length+1,ten:d.ten,email:d.email,lh:d.lh,st:Number(d.st),tao:NOW};p.ma='NXB-'+String(p.id).padStart(4,'0');PUB.push(p);PUBm[p.id]=p}
+  closeOv();toast('Đã lưu publisher');render()},
+ pubst:el=>{const p=PUBm[el.dataset.id],st=Number(el.dataset.st);confirmDlg({title:(st===1?'Kích hoạt ':'Tạm ngưng ')+p.ten+'?',desc:st===1?'Publisher sẽ đăng nhập và nhận hoa hồng bình thường.':'Publisher tạm ngưng sẽ không ghi nhận thêm sự kiện mới. Dữ liệu cũ vẫn giữ nguyên.',ok:st===1?'Kích hoạt':'Tạm ngưng',danger:st!==1,fn:()=>{p.st=st;toast('Đã cập nhật trạng thái publisher');render()}})}});
+RT['a-pub-d']={crumb:()=>[['Danh mục'],['Publisher','a-pubs'],[PUBm[S.params.id].ten]],fn:()=>{const p=PUBm[S.params.id],key='a-pub-d';FS(key,{mov:[],pub:[]});const a=FS(key).a,T=curTab('apd','ov');
+ const as=ASG.filter(x=>x.p===p.id).filter(x=>!a.camp.length||a.camp.includes(x.c)),L=LINK.filter(l=>l.p===p.id&&(!a.camp.length||a.camp.includes(l.c))&&(!a.mov.length||a.mov.includes(l.m))).map(l=>({l,...linkAgg(l,a.from,a.to)}));
+ const rs=ST.filter(r=>r.p===p.id&&r.d>=a.from&&r.d<=a.to&&L.some(x=>x.l.id===r.l)),tx=TX.filter(t=>t.p===p.id&&ymd(t.ts)>=a.from&&ymd(t.ts)<=a.to&&(!a.camp.length||a.camp.includes(t.c)));
+ const sm=stdSum(L),hh=sumA(tx,t=>t.amt);
+ let body='';
+ if(T==='ov'){const s1=seriesST(rs,a.from,a.to,sumF('click')),s2=seriesST(rs,a.from,a.to,sumF('view')),s3=seriesST(rs,a.from,a.to,sumF('conv'));const cm=dayRange(a.from,a.to).map(d=>sumA(tx.filter(t=>ymd(t.ts)===d),t=>t.amt));
+  body=`<div class="kpis">${kpi('Chiến dịch đang chạy',as.filter(x=>x.st&&CAMPm[x.c].st===1).length)}${kpi('Phim đang chạy',new Set(L.filter(x=>x.l.st&&CAMPm[x.l.c].st===1).map(x=>x.l.m)).size)}${kpi('Click',fmt(sm.click))}${kpi('View',fmt(sm.view))}${kpi('Chuyển đổi',fmt(sm.conv))}${kpi('Hoa hồng',vnd(hh))}${kpi('Tỷ lệ chuyển đổi',pct(sm.conv,sm.click),'trên click')}</div><div class="two"><div class="card"><div class="ch"><h2>Sự kiện theo thời gian</h2></div><div class="cp">${lineChart(s1.labels,[{name:'Click',data:s1.vals},{name:'View',data:s2.vals},{name:'Chuyển đổi',data:s3.vals}],{title:'Sự kiện theo ngày'})}</div></div><div class="card"><div class="ch"><h2>Hoa hồng theo thời gian</h2></div><div class="cp">${lineChart(s1.labels,[{name:'Hoa hồng (₫)',data:cm}],{ff:vnd,title:'Hoa hồng theo ngày'})}</div></div></div>
+  <div class="card"><div class="ch"><h2>Thông tin</h2></div><div class="cp">${kvH([['Mã',`<span class="mono">${p.ma}</span>`],['Email',p.email],['Liên hệ',p.lh],['Trạng thái',bPub(p.st)],['Ngày tạo',dmy(p.tao)],['Đã chi trả',vnd(paidOf(p.id))]])}</div></div>`}
+ if(T==='camp')body=dt('apd-c',[{k:'c',t:'Chiến dịch',v:x=>CAMPm[x.c].ten,f:x=>goB('a-camp-d',{id:x.c},CAMPm[x.c].ten)},{k:'cs',t:'Chiến dịch',f:x=>bCamp(CAMPm[x.c].st)},{k:'st',t:'Gán',f:x=>bAsg(x.st)},{k:'gan',t:'Ngày gán',v:x=>x.gan,f:x=>dmy(x.gan)},{k:'huy',t:'Hủy lúc',f:x=>dmy(x.huy)},{k:'hh',t:'Hoa hồng (khoảng chọn)',r:1,f:x=>vnd(sumA(tx.filter(t=>t.c===x.c),t=>t.amt))},{k:'rule',t:'Quy tắc áp dụng',s:false,f:x=>rulesFor(x.c,p.id).map(r=>`<div class="sm nowrap">${EV[r.ev]}: ${ruleText(r)}</div>`).join('')||'—'}],as,{id:x=>x.id});
+ if(T==='mov')body=dt('apd-m',[{k:'m',t:'Phim',v:x=>MOVm[x.l.m].ten,f:x=>movCell(MOVm[x.l.m])},{k:'c',t:'Chiến dịch',f:x=>CAMPm[x.l.c].ten},{k:'code',t:'Mã theo dõi',f:x=>`<span class="mono">${x.l.code}</span>`},{k:'url',t:'Liên kết',s:false,f:x=>`<span class="mono url" title="${x.l.url}">${x.l.url}</span>`},{k:'st',t:'Link',f:x=>bLink(x.l.st)},{k:'click',t:'Click',r:1,f:x=>fmt(x.click)},{k:'view',t:'View',r:1,f:x=>fmt(x.view)},{k:'conv',t:'Chuyển đổi',r:1,f:x=>fmt(x.conv)},{k:'tot',t:'Hoa hồng',r:1,f:x=>vnd(x.tot)}],L,{id:x=>x.l.id});
+ if(T==='com')body=`<div class="alert info">${ic('info')}<div>Hiển thị tối đa 30 ngày theo bộ lọc phía trên. ${goB('a-tx',{},'Mở sổ giao dịch hoa hồng đầy đủ')}</div></div>`+dt('apd-t',txCols(false),tx.slice().reverse(),{row:id=>txSheet(Number(id)),rowCls:t=>adjOf(t.id).length?'adj':''});
+ if(T==='perf'){const by=CAMP.map(c=>{const l=L.filter(x=>x.l.c===c.id);const s=stdSum(l),h=sumAgg(l,'tot');return{c,...s,h,cr:s.click?s.conv/s.click:0,per:s.conv?h/s.conv:0}}).filter(x=>x.click||x.conv);
+  body=dt('apd-p',[{k:'c',t:'Chiến dịch',v:x=>x.c.ten,f:x=>x.c.ten},{k:'click',t:'Click',r:1,f:x=>fmt(x.click)},{k:'view',t:'View',r:1,f:x=>fmt(x.view)},{k:'conv',t:'Chuyển đổi',r:1,f:x=>fmt(x.conv)},{k:'cr',t:'CR (chuyển đổi/click)',r:1,f:x=>(x.cr*100).toFixed(2)+'%'},{k:'vr',t:'View/click',r:1,f:x=>pct(x.view,x.click)},{k:'h',t:'Hoa hồng',r:1,f:x=>vnd(x.h)},{k:'per',t:'Hoa hồng/chuyển đổi',r:1,f:x=>x.conv?vnd(x.per):'—'},{k:'gk',t:'Gắn kết nguồn (còn hiệu lực)',r:1,f:x=>`<button class="link" data-act="attrpc" data-p="${p.id}" data-c="${x.c.id}">${fmt(gkCount(g=>g.p===p.id&&g.c===x.c.id))} (${fmt(gkCount(g=>g.p===p.id&&g.c===x.c.id&&g.het>NOW))})</button>`}],by,{id:x=>x.c.id})+alertB('Cách đọc chỉ số','CR = chuyển đổi / click. Hệ thống chỉ hiển thị chỉ số thực tế, không phân loại Tốt/Trung bình/Thấp.','info','info')}
+ return phead(p.ten,'Hồ sơ publisher và toàn bộ chuỗi hoa hồng phát sinh từ publisher này.',goB('a-pubs',{},'Quay lại','btn')+`<button class="btn" data-act="pubedit" data-id="${p.id}">Sửa</button>`+(p.st===1?`<button class="btn" data-act="pubst" data-id="${p.id}" data-st="2">${ic('pause','sm')} Tạm ngưng</button>`:`<button class="btn primary" data-act="pubst" data-id="${p.id}" data-st="1">${ic('play','sm')} ${p.st===0?'Duyệt và kích hoạt':'Kích hoạt lại'}</button>`))+chain(0,{1:as.filter(x=>x.st).length+' được gán',2:new Set(L.map(x=>x.l.m)).size+' phim',4:fmt(sm.click+sm.view+sm.conv)+' sự kiện',5:vnd(hh),8:vnd(paidOf(p.id))+' đã trả'})+fbar(key,{pub:false,q:false})+tabsH('apd',[['ov','Tổng quan'],['camp','Chiến dịch'],['mov','Nội dung phim'],['com','Hoa hồng'],['perf','Chỉ số sự kiện']],'ov')+body}};
+/* ================= CỔNG QUẢN TRỊ (2/2a): chiến dịch + thống kê ================= */
+const ALL0='2000-01-01';
+const ts0=s=>{const[a,b,c]=s.split('-').map(Number);return mk(a,b,c)};
+const dstr=ts=>ts?ymd(ts):'';
+function mkLink(asg,m){const id=Math.max(...LINK.map(l=>l.id))+1,code=b36();const l={id,asg:asg.id,p:asg.p,c:asg.c,m,code,url:'https://webphimai.vn/xem/'+m+'?tc='+code,nguon:SRC[id%5],st:1,w:.8};LINK.push(l);LINKm[id]=l;return l}
+RT['a-camps']={crumb:()=>[['Danh mục'],['Chiến dịch']],fn:()=>{const a=FS('a-camps').a;
+ const rows=CAMP.filter(c=>(!a.camp.length||a.camp.includes(c.id))&&(!a.st.length||a.st.includes(c.st))&&(!a.q||(c.ten+c.ma).toLowerCase().includes(a.q.toLowerCase()))).map(c=>{const L=LINK.filter(l=>l.c===c.id).map(l=>({l,...linkAgg(l,a.from,a.to)}));return{id:c.id,c,np:ASG.filter(x=>x.c===c.id&&x.st).length,nm:CM.filter(x=>x.c===c.id&&x.st).length,nr:RULES.filter(r=>r.c===c.id).length,...stdSum(L),hh:sumAgg(L,'tot')}});
+ return phead('Chiến dịch','Khai báo chiến dịch, gán publisher, cấu hình nội dung phim và quy tắc hoa hồng. Số liệu theo khoảng thời gian đã chọn, mặc định hôm nay.',`<button class="btn primary" data-act="campnew">${ic('plus','sm')} Tạo chiến dịch</button>`)+
+ (regPendN()?alertB('Có '+regPendN()+' đăng ký chạy chiến dịch chờ duyệt','Mở chiến dịch, tab “1. Gán publisher” để duyệt hoặc từ chối.','warn','info'):'')+
+ fbar('a-camps',{pub:false,mov:false,st:[{v:0,l:'Tạm dừng'},{v:1,l:'Đang chạy'},{v:2,l:'Kết thúc'}],stl:'Trạng thái chiến dịch'})+
+ dt('a-camps',[{k:'ma',t:'Mã chiến dịch',v:r=>r.c.ma,f:r=>`<span class="mono">${r.c.ma}</span>`},{k:'ten',t:'Tên chiến dịch',v:r=>r.c.ten,f:r=>`<b>${r.c.ten}</b>`},{k:'st',t:'Trạng thái',v:r=>r.c.st,f:r=>bCamp(r.c.st)},{k:'bd',t:'Bắt đầu',v:r=>r.c.bd,f:r=>ysd(r.c.bd)},{k:'kt',t:'Kết thúc',f:r=>r.c.kt?ysd(r.c.kt):'Không giới hạn'},{k:'np',t:'Publisher',r:1,f:r=>r.np},{k:'pend',t:'Đăng ký chờ duyệt',r:1,v:r=>regPendN(r.id),f:r=>regPendN(r.id)?B(regPendN(r.id),'warn'):'—'},{k:'nm',t:'Phim',r:1,f:r=>r.nm},{k:'nr',t:'Quy tắc',r:1,f:r=>r.nr},{k:'click',t:'Click',r:1,f:r=>fmt(r.click)},{k:'view',t:'View',r:1,f:r=>fmt(r.view)},{k:'conv',t:'Chuyển đổi',r:1,f:r=>fmt(r.conv)},{k:'hh',t:'Hoa hồng',r:1,f:r=>vnd(r.hh)},{k:'a',t:'',s:false,f:r=>`<button class="btn s" data-act="go" data-r="a-camp-d" data-p='{"id":${r.id}}'>Mở</button>`}],rows,{row:id=>go('a-camp-d',{id:Number(id)}),tot:(k,rs)=>['click','view','conv'].includes(k)?fmt(sumAgg(rs,k)):k==='hh'?vnd(sumAgg(rs,'hh')):''})}};
+function campForm(id){const c=id?CAMPm[id]:null;DL.ce={id:c?c.id:null,ma:c?c.ma:'',ten:c?c.ten:'',bd:c?c.bd:TODAY,kt:c&&c.kt?c.kt:'',st:c?c.st:1};DL.err={};campFormR()}
+function campFormR(){const d=DL.ce,e=DL.err||{};dlg(`<div class="dh"><h2>${d.id?'Sửa chiến dịch':'Tạo chiến dịch'}</h2><p>Sau khi tạo, gán publisher, nội dung phim và quy tắc hoa hồng trong trang chi tiết.</p></div><div class="db">
+ <div class="grid2"><div class="field"><label for="c1">Mã chiến dịch <i>*</i></label><input id="c1" class="input ${e.ma?'err':''}" data-dl="ce_ma" value="${d.ma}" ${d.id?'readonly':''} placeholder="CD-2611-TET">${e.ma?`<span class="emsg">${e.ma}</span>`:''}</div>
+ <div class="field"><label for="c5">Trạng thái <i>*</i></label><select id="c5" class="select" data-dl="ce_st">${['Tạm dừng','Đang chạy','Kết thúc'].map((l,i)=>`<option value="${i}" ${d.st==i?'selected':''}>${l}</option>`).join('')}</select></div></div>
+ <div class="field"><label for="c2">Tên chiến dịch <i>*</i></label><input id="c2" class="input ${e.ten?'err':''}" data-dl="ce_ten" value="${d.ten}">${e.ten?`<span class="emsg">${e.ten}</span>`:''}</div>
+ <div class="grid2"><div class="field"><label for="c3">Bắt đầu <i>*</i></label><input id="c3" type="date" class="input ${e.bd?'err':''}" data-dl="ce_bd" value="${d.bd}">${e.bd?`<span class="emsg">${e.bd}</span>`:''}</div>
+ <div class="field"><label for="c4">Kết thúc</label><input id="c4" type="date" class="input ${e.kt?'err':''}" data-dl="ce_kt" value="${d.kt}">${e.kt?`<span class="emsg">${e.kt}</span>`:'<span class="help">Để trống nếu không giới hạn.</span>'}</div></div></div>
+ <div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="campsave">Lưu chiến dịch</button></div>`)}
+Object.assign(act,{campnew:()=>campForm(),campedit:el=>campForm(Number(el.dataset.id)),
+ campsave:()=>{const d=DL.ce,e={};if(!d.id){if(!/^[A-Z0-9-]{4,}$/.test(d.ma))e.ma='Dùng chữ in hoa, số và dấu gạch ngang (tối thiểu 4 ký tự).';else if(CAMP.some(c=>c.ma===d.ma))e.ma='Mã chiến dịch đã tồn tại.'}
+  if(!d.ten.trim())e.ten='Nhập tên chiến dịch.';if(!d.bd)e.bd='Chọn ngày bắt đầu.';if(d.kt&&d.kt<d.bd)e.kt='Ngày kết thúc phải sau ngày bắt đầu.';DL.err=e;if(Object.keys(e).length){campFormR();return}
+  if(d.id){const c=CAMPm[d.id];Object.assign(c,{ten:d.ten,bd:d.bd,kt:d.kt||null,st:Number(d.st)})}else{const c={id:Math.max(...CAMP.map(x=>x.id))+1,ma:d.ma,ten:d.ten,bd:d.bd,kt:d.kt||null,st:Number(d.st),by:S.user.uid,mota:''};CAMP.push(c);CAMPm[c.id]=c;closeOv();toast('Đã tạo chiến dịch');go('a-camp-d',{id:c.id});return}
+  closeOv();toast('Đã lưu chiến dịch');render()},
+ campst:el=>{const c=CAMPm[el.dataset.id],st=Number(el.dataset.st);confirmDlg({title:(st===1?'Tiếp tục ':st===0?'Tạm dừng ':'Kết thúc ')+c.ten+'?',desc:st===2?'Chiến dịch kết thúc sẽ ngừng ghi nhận sự kiện mới. Không thể mở lại.':st===0?'Link theo dõi sẽ không ghi nhận sự kiện mới cho tới khi tiếp tục.':'Chiến dịch sẽ ghi nhận sự kiện trở lại.',ok:st===1?'Tiếp tục chiến dịch':st===0?'Tạm dừng':'Kết thúc chiến dịch',danger:st!==1,fn:()=>{c.st=st;toast('Đã cập nhật chiến dịch');render()}})}});
+RT['a-camp-d']={crumb:()=>[['Danh mục'],['Chiến dịch','a-camps'],[CAMPm[S.params.id].ten]],fn:()=>{const c=CAMPm[S.params.id],T=curTab('acd','pub');
+ const as=ASG.filter(x=>x.c===c.id),cms=CM.filter(x=>x.c===c.id),rules=RULES.filter(r=>r.c===c.id),L=LINK.filter(l=>l.c===c.id);const all=L.map(l=>({l,...linkAgg(l,ALL0,TODAY)}));
+ let body='';
+ if(T==='pub')body=regPendHtml(c.id)+`<div class="card"><div class="ch"><div><h2>Publisher được gán</h2><p>Mỗi lần gán sinh link theo dõi cho từng nội dung phim. Hủy gán chỉ chuyển trạng thái, không xóa dữ liệu.</p></div><button class="btn primary" data-act="asnew" data-id="${c.id}" ${c.st===2?'disabled':''}>${ic('plus','sm')} Gán publisher</button></div>`+
+  dt('acd-p',[{k:'p',t:'Publisher',v:x=>PUBm[x.p].ten,f:x=>goB('a-pub-d',{id:x.p},PUBm[x.p].ten)},{k:'ps',t:'Publisher',f:x=>bPub(PUBm[x.p].st)},{k:'st',t:'Trạng thái gán',f:x=>bAsg(x.st)},{k:'gan',t:'Ngày gán',v:x=>x.gan,f:x=>dmy(x.gan)},{k:'huy',t:'Hủy lúc',f:x=>dmy(x.huy)},{k:'rule',t:'Hoa hồng hiện hành',s:false,f:x=>rulesFor(c.id,x.p).map(r=>`<div class="sm nowrap">${EV[r.ev]}: ${ruleText(r)}${r.p?' '+B('Riêng','acc'):''}</div>`).join('')||'—'},{k:'hh',t:'Hoa hồng lũy kế',r:1,f:x=>vnd(sumA(TX.filter(t=>t.p===x.p&&t.c===c.id&&t.st!==3),t=>t.amt))},{k:'cr',t:'CR (chuyển đổi/click)',r:1,f:x=>{const l=all.filter(y=>y.l.p===x.p);return pct(sumAgg(l,'conv'),sumAgg(l,'click'))}},{k:'gk',t:'Gắn kết nguồn',r:1,f:x=>`<button class="link" data-act="attrpc" data-p="${x.p}" data-c="${c.id}">${fmt(gkCount(g=>g.asg===x.id))}</button>`},{k:'a',t:'',s:false,f:x=>x.st?`<button class="btn s" data-act="asdel" data-id="${x.id}">Hủy gán</button>`:''}],as,{size:8})+`</div>`+regHist(c.id);
+ if(T==='mov')body=`<div class="card"><div class="ch"><div><h2>Nội dung phim của chiến dịch</h2><p>Mỗi nội dung có một mã và liên kết theo dõi riêng cho từng publisher được gán. Mở rộng dòng để xem.</p></div><button class="btn primary" data-act="mvnew" data-id="${c.id}" ${c.st===2?'disabled':''}>${ic('plus','sm')} Thêm nội dung phim</button></div>`+
+  dt('acd-m',[{k:'m',t:'Nội dung phim',v:x=>MOVm[x.m].ten,f:x=>movCell(MOVm[x.m])},{k:'st',t:'Trạng thái',f:x=>x.st?B('Đang hoạt động','ok'):B('Tạm dừng','warn')},{k:'np',t:'Publisher có link',r:1,f:x=>all.filter(y=>y.l.m===x.m&&y.l.st).length},{k:'click',t:'Click',r:1,f:x=>fmt(sumAgg(all.filter(y=>y.l.m===x.m),'click'))},{k:'view',t:'View',r:1,f:x=>fmt(sumAgg(all.filter(y=>y.l.m===x.m),'view'))},{k:'conv',t:'Chuyển đổi',r:1,f:x=>fmt(sumAgg(all.filter(y=>y.l.m===x.m),'conv'))},{k:'hh',t:'Hoa hồng',r:1,f:x=>vnd(sumAgg(all.filter(y=>y.l.m===x.m),'tot'))},{k:'a',t:'',s:false,f:x=>`<button class="btn s" data-act="mvtog" data-id="${x.id}">${x.st?'Tạm dừng':'Tiếp tục'}</button>`}],cms,{expand:x=>mini([{t:'Publisher',f:y=>PUBm[y.l.p].ten},{t:'Mã theo dõi',f:y=>`<span class="mono">${y.l.code}</span>`},{t:'Liên kết',f:y=>`<span class="mono url" title="${y.l.url}">${y.l.url}</span> <button class="btn ghost i s" data-act="copy" data-v="${y.l.url}" aria-label="Sao chép">${ic('copy','sm')}</button>`},{t:'Nguồn',f:y=>y.l.nguon},{t:'Link',f:y=>bLink(y.l.st)},{t:'Click',r:1,f:y=>fmt(y.click)},{t:'View',r:1,f:y=>fmt(y.view)},{t:'Chuyển đổi',r:1,f:y=>fmt(y.conv)},{t:'Gắn kết',r:1,f:y=>fmt((GKL[y.l.id]||[]).length)}],all.filter(y=>y.l.m===x.m),'Chưa có publisher nào được gán')})+`</div>`;
+ if(T==='rule')body=`<div class="card"><div class="ch"><div><h2>Quy tắc ghi nhận hoa hồng</h2><p>Có thể có nhiều quy tắc theo loại sự kiện. Quy tắc riêng cho publisher được ưu tiên hơn quy tắc mặc định.</p></div><button class="btn primary" data-act="renew" data-id="${c.id}">${ic('plus','sm')} Thêm quy tắc</button></div>
+  <div class="cp" style="padding-bottom:0">${alertB('Giao dịch hoa hồng luôn giữ snapshot quy tắc','Khi sửa hoặc đổi quy tắc, giao dịch đã ghi nhận vẫn giữ cách tính tại thời điểm phát sinh (BR-19, BR-22). Cột “Giao dịch đã ghi” cho biết quy tắc đã được dùng bao nhiêu lần.','info','info')}</div>`+
+  dt('acd-r',[{k:'ev',t:'Sự kiện',v:r=>r.ev,f:r=>bEv(r.ev)},{k:'p',t:'Phạm vi',f:r=>r.p?PUBm[r.p].ten:B('Mặc định')},{k:'tinh',t:'Cách tính',f:r=>TINH[r.tinh]},{k:'val',t:'Giá trị',r:1,f:r=>r.tinh?r.val+'%':vnd(r.val)},{k:'coso',t:'Cơ sở tính',f:r=>r.tinh?COSO[r.coso]:`<span class="mut">${COSO[r.coso]}</span>`},{k:'dk',t:'Điều kiện / giới hạn',s:false,f:r=>[r.gx?'Xem ≥ '+r.gx+' giây':'',r.tl?'≥ '+r.tl+'% thời lượng':'',r.sl?'Tối đa '+fmt(r.sl)+' lượt':'',r.tien?'Trần '+vnd(r.tien):''].filter(Boolean).join(' · ')||'—'},{k:'from',t:'Hiệu lực từ',v:r=>r.from,f:r=>dmy(r.from)},{k:'to',t:'Đến',f:r=>r.to?dmy(r.to):'Không giới hạn'},{k:'rst',t:'Trạng thái',v:r=>r.st,f:r=>bRuleSt(r)},{k:'eff',t:'Hiệu lực',f:r=>bRuleEff(r)},{k:'n',t:'Giao dịch đã ghi',r:1,f:r=>fmt(TX.filter(t=>t.rule===r.id).length)},{k:'a',t:'',s:false,f:r=>`<button class="btn s" data-act="retg" data-id="${r.id}">${r.st===1?'Dừng':'Kích hoạt'}</button> <button class="btn s" data-act="reedit" data-id="${r.id}">Sửa</button> <button class="btn s" data-act="redel" data-id="${r.id}" aria-label="Xóa quy tắc">${ic('trash','sm')}</button>`}],rules,{size:8})+`</div>`;
+ if(T==='ev'){FS('a-ce',{});const a=FS('a-ce').a,rs=ST.filter(r=>r.c===c.id&&r.d>=a.from&&r.d<=a.to&&(!a.pub.length||a.pub.includes(r.p))&&(!a.mov.length||a.mov.includes(r.m)));
+  const rows=CM.filter(x=>x.c===c.id&&(!a.mov.length||a.mov.includes(x.m))).map(x=>{const lk=LINK.filter(l=>l.c===c.id&&l.m===x.m&&(!a.pub.length||a.pub.includes(l.p))).map(l=>({l,...linkAgg(l,a.from,a.to)}));return{id:x.m,m:x.m,...stdSum(lk),hh:sumAgg(lk,'tot')}});
+  const s1=seriesST(rs,a.from,a.to,sumF('click')),s2=seriesST(rs,a.from,a.to,sumF('view')),s3=seriesST(rs,a.from,a.to,sumF('conv'));
+  body=fbar('a-ce',{camp:false,q:false})+`<div class="two"><div class="card"><div class="ch"><h2>Click và view theo ngày</h2></div><div class="cp">${lineChart(s1.labels,[{name:'Click',data:s1.vals},{name:'View',data:s2.vals}],{title:'Click và view'})}</div></div><div class="card"><div class="ch"><h2>Chuyển đổi theo ngày</h2></div><div class="cp">${lineChart(s3.labels,[{name:'Chuyển đổi',data:s3.vals}],{title:'Chuyển đổi'})}</div></div></div>`+
+  dt('acd-e',[{k:'m',t:'Nội dung phim',v:r=>MOVm[r.m].ten,f:r=>movCell(MOVm[r.m])},{k:'click',t:'Click',r:1,f:r=>fmt(r.click)},{k:'view',t:'View',r:1,f:r=>fmt(r.view)},{k:'conv',t:'Chuyển đổi',r:1,f:r=>fmt(r.conv)},{k:'cr',t:'CR',r:1,v:r=>r.conv/Math.max(1,r.click),f:r=>pct(r.conv,r.click)},{k:'hh',t:'Hoa hồng',r:1,f:r=>vnd(r.hh)}],rows,{tot:(k,rs2)=>['click','view','conv'].includes(k)?fmt(sumAgg(rs2,k)):k==='hh'?vnd(sumAgg(rs2,'hh')):k==='cr'?pct(sumAgg(rs2,'conv'),sumAgg(rs2,'click')):''})}
+ return phead(c.ten,c.mota||'Chiến dịch mới tạo, chưa có mô tả.',goB('a-camps',{},'Quay lại','btn')+`<button class="btn" data-act="campedit" data-id="${c.id}">Sửa</button>`+(c.st===1?`<button class="btn" data-act="campst" data-id="${c.id}" data-st="0">${ic('pause','sm')} Tạm dừng</button>`:c.st===0?`<button class="btn primary" data-act="campst" data-id="${c.id}" data-st="1">${ic('play','sm')} Tiếp tục</button>`:'')+(c.st!==2?`<button class="btn" data-act="campst" data-id="${c.id}" data-st="2">Kết thúc</button>`:''))+
+ chain(1,{0:as.filter(x=>x.st).length+' publisher',2:cms.filter(x=>x.st).length+' phim',3:L.filter(l=>l.st).length+' link',5:rules.length+' quy tắc'})+
+ `<div class="card cp">${kvH([['Mã',`<span class="mono">${c.ma}</span>`],['Trạng thái',bCamp(c.st)],['Thời gian',ysd(c.bd)+' → '+(c.kt?ysd(c.kt):'không giới hạn')],['Lũy kế',`${fmt(sumAgg(all,'click'))} click · ${fmt(sumAgg(all,'view'))} view · ${fmt(sumAgg(all,'conv'))} chuyển đổi · ${vnd(sumAgg(all,'tot'))} hoa hồng`]])}</div>`+
+ tabsH('acd',[['pub','1. Gán publisher'+(regPendN(c.id)?' ('+regPendN(c.id)+' chờ duyệt)':'')],['mov','2. Nội dung phim'],['rule','3. Quy tắc hoa hồng'],['ev','4. Sự kiện theo phim']],'pub')+body}};
+/* gán publisher */
+Object.assign(act,{
+ asnew:el=>{const c=Number(el.dataset.id);DL.as={c,pubs:[]};DL.err={};asForm()},
+ asgo:()=>{if(!DL.as.pubs.length){DL.err={pubs:'Chọn ít nhất một publisher.'};asForm();return}
+  const c=CAMPm[DL.as.c],ms=CM.filter(x=>x.c===c.id&&x.st);DL.as.pubs.forEach(p=>{const a={id:Math.max(...ASG.map(x=>x.id))+1,p,c:c.id,gan:NOW,huy:null,st:1,by:S.user.uid};ASG.push(a);ms.forEach(x=>mkLink(a,x.m))});
+  closeOv();toast('Đã gán '+DL.as.pubs.length+' publisher và sinh '+DL.as.pubs.length*ms.length+' link theo dõi');render()},
+ asdel:el=>{const a=ASG.find(x=>x.id==el.dataset.id);confirmDlg({title:'Hủy gán '+PUBm[a.p].ten+'?',desc:'Chỉ chuyển trạng thái gán sang “đã hủy”, không xóa dữ liệu. Link theo dõi của publisher này sẽ ngừng ghi nhận sự kiện mới. Hoa hồng đã phát sinh vẫn giữ nguyên.',ok:'Hủy gán',danger:1,fn:()=>{a.st=0;a.huy=NOW;LINK.filter(l=>l.asg===a.id).forEach(l=>l.st=0);toast('Đã hủy gán publisher');render()}})},
+ mvnew:el=>{DL.mv={c:Number(el.dataset.id),ms:[]};DL.err={};mvForm()},
+ mvgo:()=>{if(!DL.mv.ms.length){DL.err={ms:'Chọn ít nhất một nội dung phim.'};mvForm();return}
+  const c=DL.mv.c,as=ASG.filter(x=>x.c===c&&x.st);DL.mv.ms.forEach(m=>{CM.push({id:Math.max(...CM.map(x=>x.id))+1,c,m,st:1,ngung:null});as.forEach(a=>mkLink(a,m))});closeOv();toast('Đã thêm '+DL.mv.ms.length+' nội dung và sinh link cho '+as.length+' publisher');render()},
+ mvtog:el=>{const x=CM.find(y=>y.id==el.dataset.id);const run=()=>{x.st=x.st?0:1;LINK.filter(l=>l.c===x.c&&l.m===x.m).forEach(l=>l.st=x.st&&ASG.find(a=>a.id===l.asg).st?1:0);toast('Đã cập nhật nội dung phim');render()};
+  x.st?confirmDlg({title:'Tạm dừng '+MOVm[x.m].ten+'?',desc:'Các link theo dõi của nội dung này sẽ ngừng ghi nhận sự kiện mới.',ok:'Tạm dừng',danger:1,fn:run}):run()}});
+function asForm(){const c=CAMPm[DL.as.c],used=ASG.filter(x=>x.c===c.id&&x.st).map(x=>x.p),opts=PUB.filter(p=>p.st===1&&!used.includes(p.id)).map(p=>({v:p.id,l:p.ten,s:p.ma}));
+ dlg(`<div class="dh"><h2>Gán publisher cho chiến dịch</h2><p>${c.ten}</p></div><div class="db"><div class="field"><label>Publisher <i>*</i></label>${opts.length?msel('as:pub',opts,DL.as,'pubs','Tìm và chọn publisher…'):'<div class="mut">Tất cả publisher hoạt động đã được gán.</div>'}${DL.err&&DL.err.pubs?`<span class="emsg">${DL.err.pubs}</span>`:'<span class="help">Chỉ publisher đang hoạt động và chưa được gán mới xuất hiện.</span>'}</div>${alertB('','Mỗi publisher được gán sẽ nhận một mã theo dõi cho từng nội dung phim đang hoạt động của chiến dịch.','info','info')}</div><div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="asgo">Gán publisher</button></div>`)}
+function mvForm(){const c=CAMPm[DL.mv.c],used=CM.filter(x=>x.c===c.id&&x.st).map(x=>x.m),opts=MOV.filter(m=>!used.includes(m.id)).map(m=>({v:m.id,l:m.ten,s:m.loai}));
+ dlg(`<div class="dh"><h2>Thêm nội dung phim</h2><p>${c.ten}</p></div><div class="db"><div class="field"><label>Nội dung phim <i>*</i></label>${opts.length?msel('mv:ms',opts,DL.mv,'ms','Tìm phim…'):'<div class="mut">Mọi nội dung đã có trong chiến dịch.</div>'}${DL.err&&DL.err.ms?`<span class="emsg">${DL.err.ms}</span>`:''}</div>${alertB('','Nguồn nội dung từ CMS (cms_db.noi_dung). Hệ thống sinh link theo dõi cho từng publisher đang được gán.','info','info')}</div><div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="mvgo">Thêm nội dung</button></div>`)}
+/* quy tắc hoa hồng */
+function ruleForm(id,camp){const r=id?RULEm[id]:null;DL.re=r?{id:r.id,c:r.c,ev:r.ev,p:r.p?[r.p]:[],tinh:r.tinh,val:String(r.val),coso:r.coso,sl:r.sl||'',tien:r.tien||'',gx:r.gx||'',tl:r.tl||'',from:dstr(r.from),to:dstr(r.to),st:r.st}:{id:null,c:camp,ev:2,p:[],tinh:1,val:'',coso:2,sl:'',tien:'',gx:'',tl:'',from:TODAY,to:'',st:1};DL.err={};ruleFormR()}
+function ruleFormR(){const d=DL.re,e=DL.err||{},used=d.id?TX.filter(t=>t.rule===d.id).length:0;const sel=(k,arr)=>arr.map((l,i)=>`<option value="${i}" ${d[k]==i?'selected':''}>${l}</option>`).join('');
+ dlg(`<div class="dh"><h2>${d.id?'Sửa quy tắc hoa hồng':'Thêm quy tắc hoa hồng'}</h2><p>${CAMPm[d.c].ten}</p></div><div class="db">
+ ${used?alertB('Quy tắc đã được dùng cho '+fmt(used)+' giao dịch','Thay đổi chỉ ảnh hưởng chuyển đổi phát sinh sau này. Giao dịch cũ giữ snapshot. Nên đặt ngày kết thúc và tạo quy tắc mới nếu muốn đổi mức hoa hồng.','warn','warn'):''}
+ <div class="grid2"><div class="field"><label for="r1">Loại sự kiện <i>*</i></label><select id="r1" class="select" data-dl="re_ev">${sel('ev',EV)}</select></div>
+ <div class="field"><label>Áp dụng cho publisher</label>${msel('re:p',OPT.pub(),d,'p','Mặc định: tất cả publisher',{one:true})}<button type="button" class="link" data-act="rep0">Đặt về mặc định (tất cả)</button></div></div>
+ <div class="grid3"><div class="field"><label for="r2">Cách tính <i>*</i></label><select id="r2" class="select" data-dl="re_tinh">${sel('tinh',TINH)}</select></div>
+ <div class="field"><label for="r3">Giá trị <i>*</i></label><input id="r3" class="input ${e.val?'err':''}" data-dl="re_val" value="${d.val}" inputmode="decimal" placeholder="% hoặc ₫">${e.val?`<span class="emsg">${e.val}</span>`:'<span class="help">Phần trăm hoặc số tiền ₫.</span>'}</div>
+ <div class="field"><label for="r4">Cơ sở tính <i>*</i></label><select id="r4" class="select" data-dl="re_coso">${sel('coso',COSO)}</select></div></div>
+ <div class="grid2"><div class="field"><label for="r5">Giới hạn số lượt</label><input id="r5" class="input" data-dl="re_sl" value="${d.sl}" placeholder="Không giới hạn"></div><div class="field"><label for="r6">Giới hạn số tiền (₫)</label><input id="r6" class="input" data-dl="re_tien" value="${d.tien}" placeholder="Không giới hạn"></div></div>
+ <div id="re-view" ${d.ev==1?'':'hidden'} class="grid2"><div class="field"><label for="r7">Thời gian xem tối thiểu (giây)</label><input id="r7" class="input" data-dl="re_gx" value="${d.gx}"></div><div class="field"><label for="r8">Tỷ lệ xem tối thiểu (%)</label><input id="r8" class="input" data-dl="re_tl" value="${d.tl}"></div></div>
+ <div class="field"><label for="r0">Trạng thái</label><select id="r0" class="select" data-dl="re_st"><option value="1" ${d.st==1?'selected':''}>1 · Kích hoạt (publisher nhìn thấy, được áp dụng)</option><option value="0" ${d.st==0?'selected':''}>0 · Dừng (không áp dụng, publisher không thấy)</option></select></div>
+ <div class="grid2"><div class="field"><label for="r9">Hiệu lực từ <i>*</i></label><input id="r9" type="date" class="input ${e.from?'err':''}" data-dl="re_from" value="${d.from}">${e.from?`<span class="emsg">${e.from}</span>`:''}</div><div class="field"><label for="r10">Hiệu lực đến</label><input id="r10" type="date" class="input ${e.to?'err':''}" data-dl="re_to" value="${d.to}">${e.to?`<span class="emsg">${e.to}</span>`:'<span class="help">Để trống nếu chưa kết thúc.</span>'}</div></div></div>
+ <div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="resave">Lưu quy tắc</button></div>`,1)}
+Object.assign(act,{retg:el=>{const r=RULEm[el.dataset.id];r.st=r.st===1?0:1;toast(r.st===1?'Đã kích hoạt quy tắc':'Đã dừng quy tắc: không áp dụng cho chuyển đổi mới, publisher không còn thấy');render()},renew:el=>ruleForm(null,Number(el.dataset.id)),reedit:el=>ruleForm(Number(el.dataset.id)),rep0:()=>{DL.re.p=[];ruleFormR()},
+ resave:()=>{const d=DL.re,e={},v=Number(String(d.val).replace(',','.'));if(!d.val||isNaN(v)||v<=0)e.val='Nhập giá trị lớn hơn 0.';else if(d.tinh==1&&v>100)e.val='Phần trăm không vượt quá 100.';
+  if(!d.from)e.from='Chọn ngày bắt đầu hiệu lực.';if(d.to&&d.to<d.from)e.to='Ngày kết thúc phải sau ngày bắt đầu.';DL.err=e;if(Object.keys(e).length){ruleFormR();return}
+  const o={c:d.c,p:d.p[0]||null,ev:Number(d.ev),tinh:Number(d.tinh),val:v,coso:Number(d.coso),dv:'VND',from:ts0(d.from),to:d.to?mk(...d.to.split('-').map(Number),23,59):null,sl:Number(d.sl)||null,tien:Number(d.tien)||null,gx:d.ev==1?(Number(d.gx)||null):null,tl:d.ev==1?(Number(d.tl)||null):null,by:S.user.uid,st:Number(d.st)};
+  if(d.id)Object.assign(RULEm[d.id],o);else{const r={id:Math.max(...RULES.map(x=>x.id))+1,...o};RULES.push(r);RULEm[r.id]=r}closeOv();toast('Đã lưu quy tắc hoa hồng');render()},
+ redel:el=>{const r=RULEm[el.dataset.id],n=TX.filter(t=>t.rule===r.id).length;confirmDlg({title:'Xóa quy tắc này?',desc:n?'Quy tắc đã dùng cho '+fmt(n)+' giao dịch. Xóa mềm: giao dịch cũ vẫn giữ snapshot và truy vết tới quy tắc.':'Quy tắc chưa dùng cho giao dịch nào và sẽ được xóa mềm.',ok:'Xóa quy tắc',danger:1,fn:()=>{const i=RULES.indexOf(r);RULES.splice(i,1);toast('Đã xóa quy tắc');render()}})}});
+/* ---- thống kê chi tiết ---- */
+const UA=['Chrome 128 · Android','Safari · iOS 18','Facebook in-app · iOS','TikTok in-app · Android','Chrome 129 · Windows','Zalo in-app · Android'];
+function logs(kind,rows){const out=[];let n=0;const hx=x=>(x*2654435761>>>0).toString(16).slice(0,8);
+ rows.slice().sort((a,b)=>b.d>a.d?1:-1).some(r=>{const k=Math.min(3,kind==='view'?r.view:r.click);for(let i=0;i<k;i++){const seed=r.l*131+i*17+Number(r.d.slice(8));const t=new Date(r.d+'T00:00:00').getTime()+((seed*7919)%86000)*1000;const code=LINKm[r.l].code;
+  out.push(kind==='click'?{ts:t,code,an:'an_'+hx(seed),ip:(seed%200+10)+'.'+(seed%250)+'.*.*',ua:UA[seed%6],nguon:LINKm[r.l].nguon,p:r.p,c:r.c,m:r.m}:{ts:t,code,m:r.m,p:r.p,c:r.c,sec:30+seed%900,tl:Math.min(100,15+seed%85),evt:'view-'+hx(seed)});if(++n>=40)return true}return false});return out}
+function statScreen(kind){const key='a-'+kind,T=curTab('ss'+kind,'agg'),nm={click:'Lượt nhấp',view:'Lượt xem',conv:'Chuyển đổi'}[kind];FS(key);const a=FS(key).a;
+ let rows,k1,s;if(kind==='conv'){rows=filt(CV,key);}else rows=filt(ST,key);
+ const ser=kind==='conv'?(()=>{const ds=dayRange(a.from,a.to);return{labels:ds.map(d=>d.slice(8)+'/'+d.slice(5,7)),vals:ds.map(d=>rows.filter(r=>ymd(r.ts)===d).length),val2:ds.map(d=>sumA(rows.filter(r=>ymd(r.ts)===d),r=>r.net))}})():seriesST(rows,a.from,a.to,sumF(kind));
+ const total=kind==='conv'?rows.length:sumA(rows,r=>r[kind]);const dist=f=>new Set(rows.map(f)).size;
+ const kp=kind==='click'?[kpi('Tổng lượt nhấp',fmt(total)),kpi('Click duy nhất',fmt(Math.round(total*.82)),'theo mã ẩn danh (mock)')]:kind==='view'?[kpi('Tổng lượt xem',fmt(total)),kpi('Đạt điều kiện hoa hồng',fmt(sumA(rows,r=>r.qual)),pct(sumA(rows,r=>r.qual),total)+' tổng lượt xem')]:[kpi('Tổng chuyển đổi',fmt(total)),kpi('Giá trị chuyển đổi',vnd(sumA(rows,r=>r.net)),'net')];
+ const logRows=T==='log'&&kind!=='conv'?logs(kind,rows):[];
+ let table;
+ if(kind==='conv')table=dt(key+'-t',[{k:'ts',t:'Thời gian',f:r=>dmyhm(r.ts)},{k:'p',t:'Publisher',v:r=>PUBm[r.p].ten,f:r=>PUBm[r.p].ten},{k:'c',t:'Chiến dịch',f:r=>CAMPm[r.c].ten},{k:'m',t:'Phim',f:r=>MOVm[r.m].ten},{k:'code',t:'Mã theo dõi',f:r=>`<span class="mono">${r.code}</span>`},{k:'gk',t:'Gắn kết nguồn',f:r=>`<button class="link mono" data-act="attr" data-id="${r.gk}">${GK[r.gk-1].an}</button>`},{k:'pay',t:'Mã thanh toán',hide:true,f:r=>`<span class="mono">${r.pay}</span>`},{k:'loai',t:'Loại giao dịch',f:r=>bEv(2+r.loai)},{k:'pk',t:'Gói',f:r=>r.pk.ten},{k:'gross',t:'Gross',r:1,f:r=>vnd(r.gross)},{k:'giam',t:'Giảm giá',r:1,f:r=>vnd(r.giam)},{k:'thue',t:'Thuế',r:1,hide:true,f:r=>vnd(r.thue)},{k:'net',t:'Net',r:1,f:r=>`<b>${vnd(r.net)}</b>`},{k:'st',t:'Trạng thái',f:r=>bCv(r.st)}],rows.slice().sort((x,y)=>y.ts-x.ts),{tot:k=>k==='net'?vnd(sumA(rows,r=>r.net)):k==='gross'?vnd(sumA(rows,r=>r.gross)):''});
+ else if(T==='log')table=kind==='click'?dt(key+'-l',[{k:'ts',t:'Thời gian',f:r=>dmyhm(r.ts)},{k:'code',t:'Mã theo dõi',f:r=>`<span class="mono">${r.code}</span>`},{k:'p',t:'Publisher',v:r=>PUBm[r.p].ten,f:r=>PUBm[r.p].ten},{k:'an',t:'Mã ẩn danh',f:r=>`<span class="mono">${r.an}</span>`},{k:'ip',t:'Địa chỉ IP',f:r=>`<span class="mono">${r.ip}</span>`},{k:'ua',t:'User agent',f:r=>r.ua},{k:'nguon',t:'Nguồn',f:r=>r.nguon}],logRows,{id:r=>r.an+r.ts}):dt(key+'-l',[{k:'ts',t:'Thời gian',f:r=>dmyhm(r.ts)},{k:'code',t:'Mã theo dõi',f:r=>`<span class="mono">${r.code}</span>`},{k:'p',t:'Publisher',v:r=>PUBm[r.p].ten,f:r=>PUBm[r.p].ten},{k:'m',t:'Phim',f:r=>MOVm[r.m].ten},{k:'sec',t:'Thời gian xem (giây)',r:1,f:r=>r.sec},{k:'tl',t:'Tỷ lệ xem',r:1,f:r=>r.tl+'%'},{k:'evt',t:'Mã sự kiện nguồn',f:r=>`<span class="mono">${r.evt}</span>`}],logRows,{id:r=>r.evt});
+ else table=dt(key+'-t',[{k:'d',t:'Ngày',v:r=>r.d,f:r=>ysd(r.d)},{k:'p',t:'Publisher',v:r=>PUBm[r.p].ten,f:r=>PUBm[r.p].ten},{k:'c',t:'Chiến dịch',v:r=>CAMPm[r.c].ten,f:r=>CAMPm[r.c].ten},{k:'m',t:'Nội dung phim',v:r=>MOVm[r.m].ten,f:r=>MOVm[r.m].ten},{k:'code',t:'Mã theo dõi',f:r=>`<span class="mono">${LINKm[r.l].code}</span>`},{k:'nguon',t:'Nguồn',hide:true,f:r=>LINKm[r.l].nguon},{k:kind,t:nm,r:1,f:r=>fmt(r[kind])},...(kind==='view'?[{k:'qual',t:'Đạt điều kiện',r:1,f:r=>fmt(r.qual)}]:[])],rows.slice().sort((x,y)=>y.d>x.d?1:-1),{id:r=>r.d+'-'+r.l,tot:k=>k===kind?fmt(total):k==='qual'?fmt(sumA(rows,r=>r.qual)):''});
+ return phead('Thống kê '+nm.toLowerCase(),'Số liệu theo từng sự kiện, lọc theo chiến dịch, publisher và nội dung phim. Mặc định hôm nay, tối đa 30 ngày mỗi lần tìm.')+fbar(key,{})+
+ `<div class="kpis">${kp.join('')}${kpi('Chiến dịch',dist(r=>r.c))}${kpi('Publisher',dist(r=>r.p))}${kpi('Nội dung phim',dist(r=>r.m))}</div><div class="card"><div class="ch"><h2>${nm} theo ngày</h2></div><div class="cp">${lineChart(ser.labels,[{name:nm,data:ser.vals}],{title:nm+' theo ngày'})}</div></div>`+
+ (kind==='conv'?'':tabsH('ss'+kind,[['agg','Tổng hợp theo ngày và link'],['log','Nhật ký chi tiết (mẫu 40 dòng)']],'agg'))+table}
+['click','view','conv'].forEach(k=>RT['a-'+k]={crumb:()=>[['Thống kê chi tiết'],[{click:'Lượt nhấp',view:'Lượt xem',conv:'Chuyển đổi'}[k]]],fn:()=>statScreen(k)});
+RT['a-agg']={crumb:()=>[['Thống kê tổng hợp'],['Theo chiến dịch']],fn:()=>{FS('a-agg');const a=FS('a-agg').a;
+ const rows=CAMP.filter(c=>(!a.camp.length||a.camp.includes(c.id))&&(!a.q||(c.ten+c.ma+CM.filter(x=>x.c===c.id).map(x=>MOVm[x.m].ten).join(' ')).toLowerCase().includes(a.q.toLowerCase()))).map(c=>{
+  const mv=[...new Set([...CM.filter(x=>x.c===c.id).map(x=>x.m)])].filter(m=>!a.mov.length||a.mov.includes(m)).map(m=>{const lk=LINK.filter(l=>l.c===c.id&&l.m===m&&(!a.pub.length||a.pub.includes(l.p))).map(l=>({l,...linkAgg(l,a.from,a.to)}));return{m,...stdSum(lk),hh:sumAgg(lk,'tot'),np:lk.length}});
+  return{id:c.id,c,mv,click:sumAgg(mv,'click'),view:sumAgg(mv,'view'),conv:sumAgg(mv,'conv'),hh:sumAgg(mv,'hh'),np:new Set(LINK.filter(l=>l.c===c.id&&l.st).map(l=>l.p)).size}});
+ const nested=r=>mini([{t:'Nội dung phim',f:x=>movCell(MOVm[x.m])},{t:'Click',r:1,f:x=>fmt(x.click)},{t:'View',r:1,f:x=>fmt(x.view)},{t:'Chuyển đổi',r:1,f:x=>fmt(x.conv)},{t:'CR',r:1,f:x=>pct(x.conv,x.click)},{t:'Hoa hồng',r:1,f:x=>vnd(x.hh)}],[...r.mv,{m:0,click:r.click,view:r.view,conv:r.conv,hh:r.hh,tot:1}].map(x=>x),'Chưa có nội dung').replace(/<tr><td>(<div class="cell2">.*?)<\/td>/g,(m)=>m);
+ return phead('Thống kê tổng hợp theo chiến dịch','Mở rộng từng chiến dịch để xem click, view, chuyển đổi và hoa hồng theo nội dung phim.')+fbar('a-agg',{})+
+ dt('a-agg',[{k:'c',t:'Chiến dịch',v:r=>r.c.ten,f:r=>campCell(r.c)},{k:'st',t:'Trạng thái',f:r=>bCamp(r.c.st)},{k:'np',t:'Publisher',r:1,f:r=>r.np},{k:'nm',t:'Phim',r:1,f:r=>r.mv.length},{k:'click',t:'Click',r:1,f:r=>fmt(r.click)},{k:'view',t:'View',r:1,f:r=>fmt(r.view)},{k:'conv',t:'Chuyển đổi',r:1,f:r=>fmt(r.conv)},{k:'cr',t:'CR',r:1,v:r=>r.conv/Math.max(1,r.click),f:r=>pct(r.conv,r.click)},{k:'hh',t:'Hoa hồng',r:1,f:r=>vnd(r.hh)}],rows,
+ {expand:r=>mini([{t:'Nội dung phim',f:x=>x.tot?'<b>Tổng chiến dịch</b>':movCell(MOVm[x.m])},{t:'Click',r:1,f:x=>fmt(x.click)},{t:'View',r:1,f:x=>fmt(x.view)},{t:'Chuyển đổi',r:1,f:x=>fmt(x.conv)},{t:'CR',r:1,f:x=>pct(x.conv,x.click)},{t:'Hoa hồng',r:1,f:x=>x.tot?`<b>${vnd(x.hh)}</b>`:vnd(x.hh)}],[...r.mv,{tot:1,m:0,click:r.click,view:r.view,conv:r.conv,hh:r.hh}],'Chưa có nội dung'),tot:(k,rs)=>['click','view','conv'].includes(k)?fmt(sumAgg(rs,k)):k==='hh'?vnd(sumAgg(rs,'hh')):k==='cr'?pct(sumAgg(rs,'conv'),sumAgg(rs,'click')):''})}};
+/* ================= CỔNG QUẢN TRỊ (2/2b): hoa hồng, điều chỉnh, đối soát, chi trả ================= */
+DS.forEach(d=>{const k=KYm[d.ky];if(k.khoa)d.tao=k.khoa-D1*2});
+RT['a-tx']={crumb:()=>[['Hoa hồng'],['Giao dịch hoa hồng']],fn:()=>{FS('a-tx');const rows=txRows('a-tx');
+ const cols=[...txCols(true),{k:'a',t:'',s:false,f:t=>`<div style="display:flex;gap:4px">${t.st===0?`<button class="btn s" data-act="txok" data-id="${t.id}" title="Duyệt giao dịch">Duyệt</button>`:''}<button class="btn s" data-act="txadj" data-id="${t.id}" ${t.st===3?'disabled title="Giao dịch đã bị từ chối"':t.ds!=null?'title="Điều chỉnh sau chốt kỳ: vào kỳ đối soát kế tiếp"':'title="Tạo điều chỉnh cho giao dịch này"'}>${ic(t.ds!=null?'lock':'edit','sm')}</button></div>`}];
+ return phead('Giao dịch hoa hồng','Sổ hoa hồng tạm ghi nhận cho publisher. Tạo điều chỉnh ngay trên dòng giao dịch, giao dịch gốc không bị sửa và được tô nền vàng khi có điều chỉnh.',`<button class="btn primary" data-act="txadj">${ic('plus','sm')} Tạo điều chỉnh</button>`)+
+ fbar('a-tx',{date:false,ev:evOpts,st:txStOpts,ky:true,adj:true})+
+ dt('a-tx',cols,rows,{select:true,row:id=>txSheet(Number(id)),rowCls:t=>adjOf(t.id).length?'adj':'',bulk:s=>`<button class="btn s" data-act="bulkok">${ic('check','sm')} Duyệt ${s.size} giao dịch đã chọn</button>`,
+  tot:k=>k==='amt'?vnd(sumA(rows,t=>t.amt)):k==='adj'?sgn(sumA(rows,t=>adjSum(t.id))):k==='fin'?vnd(sumA(rows,txFinal)):''})}};
+act.bulkok=()=>{const s=SEL['a-tx'];let n=0;s.forEach(id=>{const t=TXm[id];if(t&&t.st===0){t.st=1;t.by=S.user.uid;t.duyet=NOW;n++}});s.clear();toast(n?'Đã duyệt '+n+' giao dịch':'Các giao dịch đã chọn không ở trạng thái chờ duyệt');render()};
+/* ---- điều chỉnh ---- */
+function adjSheet(id){const a=ADJ.find(x=>x.id===id),t=TXm[a.tx],ds=CT.find(c=>c.adj===a.id);
+ sheet(`<div class="ch"><div><h2>Điều chỉnh <span class="mono">#${a.id}</span></h2><p>${B(ADJ_T[a.loai])} · ${dmyhm(a.ts)}</p></div><button class="btn ghost i" data-act="ovx" aria-label="Đóng">${ic('x')}</button></div><div class="cp" style="display:flex;flex-direction:column;gap:14px">
+ ${ds?lockBar('Điều chỉnh đã nằm trong bản đối soát kỳ '+kyLabel(dsOf(ds.ds).ky)+', không thể sửa hoặc xóa.'):alertB(t.ds!=null?'Điều chỉnh sau chốt kỳ '+kyLabel(dsOf(t.ds).ky):'Chưa vào đối soát','Sẽ được đưa vào kỳ đối soát '+(nextKy()?kyLabel(nextKy()):'kế tiếp')+(t.ds!=null?'. Số liệu kỳ '+kyLabel(dsOf(t.ds).ky)+' đã chốt không thay đổi.':'.')+' Không sửa hoặc xóa điều chỉnh, chỉ tạo điều chỉnh bù trừ (BR-21).','info','info')}
+ ${eqH(t.amt,a.so,t.amt+a.so,'Hoa hồng giao dịch gốc','Điều chỉnh này','Sau điều chỉnh')}
+ ${kvH([['Giao dịch gốc',`<button class="link mono" data-act="txs" data-id="${t.id}">#${t.id}</button> ${bTx(t)}`],['Publisher',goB('a-pub-d',{id:t.p},PUBm[t.p].ten)],['Chiến dịch',CAMPm[t.c].ten],['Phim',MOVm[t.m].ten],['Lý do',a.ly],['Mã tham chiếu',`<span class="mono">${a.ref}</span>`],['Người tạo',STAFF[a.by]||'Hệ thống'],['Kỳ đối soát',ds?kyLabel(dsOf(ds.ds).ky):'Chưa đối soát']])}</div>`)}
+RT['a-adj']={crumb:()=>[['Hoa hồng'],['Điều chỉnh hoa hồng']],fn:()=>{FS('a-adj');const a=FS('a-adj').a;
+ const rows=ADJ.map(x=>({...x,p:TXm[x.tx].p,c:TXm[x.tx].c,m:TXm[x.tx].m,code:TXm[x.tx].code})).filter(r=>filt([r],'a-adj',{date:false}).length&&(!a.ky.length||a.ky.includes(monthOf(TXm[r.tx].ts)))&&(!a.st.length||a.st.includes(r.loai))).sort((x,y)=>y.ts-x.ts);
+ return phead('Điều chỉnh hoa hồng','Điều chỉnh bất thường (refund, chargeback, hủy, thủ công) tham chiếu về giao dịch hoa hồng gốc. Không sửa hay xóa giao dịch gốc.',`<button class="btn primary" data-act="txadj">${ic('plus','sm')} Tạo điều chỉnh</button>`)+
+ fbar('a-adj',{date:false,ky:true,st:ADJ_T.map((l,i)=>({v:i,l})),stl:'Loại điều chỉnh'})+
+ dt('a-adj',[{k:'id',t:'Mã',f:r=>`<span class="mono">#${r.id}</span>`},{k:'ts',t:'Thời gian',f:r=>dmyhm(r.ts)},{k:'tx',t:'Giao dịch gốc',f:r=>`<button class="link mono" data-act="txs" data-id="${r.tx}">#${r.tx}</button>`},{k:'p',t:'Publisher',v:r=>PUBm[r.p].ten,f:r=>PUBm[r.p].ten},{k:'c',t:'Chiến dịch',f:r=>CAMPm[r.c].ten},{k:'m',t:'Phim',f:r=>MOVm[r.m].ten},{k:'loai',t:'Loại',f:r=>B(ADJ_T[r.loai])},{k:'org',t:'Hoa hồng gốc',r:1,f:r=>vnd(TXm[r.tx].amt)},{k:'so',t:'Điều chỉnh',r:1,f:r=>sgnC(r.so)},{k:'fin',t:'Sau điều chỉnh',r:1,f:r=>`<b>${vnd(TXm[r.tx].amt+r.so)}</b>`},{k:'ly',t:'Lý do',f:r=>`<span class="cut sm">${r.ly}</span>`},{k:'ref',t:'Mã tham chiếu',hide:true,f:r=>`<span class="mono">${r.ref}</span>`},{k:'by',t:'Người tạo',f:r=>STAFF[r.by]||'Hệ thống'},{k:'ky',t:'Đối soát',f:r=>{const c=CT.find(x=>x.adj===r.id);const t=TXm[r.tx];return c?B('Kỳ '+kyLabel(dsOf(c.ds).ky),'info')+(t.ds!=null&&dsOf(t.ds).ky<dsOf(c.ds).ky?' '+B('Sau chốt kỳ '+kyLabel(dsOf(t.ds).ky),'adj'):''):B('Chờ vào kỳ '+(nextKy()?kyLabel(nextKy()):'sau'),'warn')+(t.ds!=null?' '+B('Sau chốt kỳ '+kyLabel(dsOf(t.ds).ky),'adj'):'')}}],rows,{row:id=>adjSheet(Number(id)),rowCls:()=>'adj'})}};
+/* ---- đối soát ---- */
+const kyAgg=k=>{const tx=TX.filter(t=>t.ts>=k.tu&&t.ts<=k.den&&t.st!==3),dss=DS.filter(d=>d.ky===k.ma);return{id:k.ma,k,hh:sumA(tx,t=>t.amt),adj:sumA(kyAdjAll(k.ma),a=>a.so),n:dss.length,rec:sumA(dss,d=>dsTot(d.id).pay),paid:sumA(CHI.filter(c=>c.st===2&&dss.some(d=>d.id===c.ds)),c=>c.so)}};
+const LIFE=['Ghi nhận','Đã duyệt','Đã đối soát','Khóa kỳ','Chi trả','Đã thanh toán'];
+RT['a-rec']={crumb:()=>[['Hoa hồng'],['Tra soát']],fn:()=>{FS('a-rec');const fa=FS('a-rec').a;const sel=S.tab.recKy||'202609',K=KYm[sel],dss=DS.filter(d=>d.ky===sel&&(!fa.pub.length||fa.pub.includes(d.p))&&(!fa.st.length||fa.st.includes(d.st)));
+ return phead('Tra soát hoa hồng','Đối soát theo kỳ tháng từ chi tiết hoa hồng. Khoản đã đối soát hoặc đã chi trả không được tính lại.')+chainL(LIFE,-1)+
+ fbar('a-rec',{date:false,q:false,camp:false,mov:false,ky:true,st:DSST,stl:'Trạng thái đối soát'})+
+ dt('a-rec-k',[{k:'id',t:'Kỳ đối soát',v:r=>r.id,f:r=>`<b>${kyLabel(r.id)}</b><small class="mut" style="display:block">${dmy(r.k.tu)} → ${dmy(r.k.den)}</small>`},{k:'st',t:'Trạng thái kỳ',f:r=>bKy(r.k.st)},{k:'hh',t:'Hoa hồng ghi nhận',r:1,f:r=>vnd(r.hh)},{k:'adj',t:'Điều chỉnh',r:1,f:r=>sgnC(r.adj)},{k:'act',t:'Thực tế',r:1,f:r=>`<b>${vnd(r.hh+r.adj)}</b>`},{k:'n',t:'Bản đối soát',r:1,f:r=>r.n},{k:'rec',t:'Đã đối soát',r:1,f:r=>vnd(r.rec)},{k:'paid',t:'Đã chi trả',r:1,f:r=>vnd(r.paid)},{k:'left',t:'Còn phải trả',r:1,f:r=>`<b>${vnd(r.rec-r.paid)}</b>`},
+ {k:'a',t:'',s:false,f:r=>`<div style="display:flex;gap:4px">${r.k.st<=1?`<button class="btn s" data-act="recnew" data-ky="${r.id}">${ic('plus','sm')} Tạo đối soát</button>`:''}${r.k.st===1?`<button class="btn s" data-act="kylock" data-ky="${r.id}">${ic('lock','sm')} Khóa kỳ</button>`:''}</div>`}],KY.filter(k=>!fa.ky.length||fa.ky.includes(k.ma)).map(kyAgg).reverse(),{row:id=>{S.tab.recKy=id;render()},rowCls:r=>r.id===sel?'selrow':'',size:5})+
+ `<div class="card"><div class="ch"><div><h2>Bản đối soát kỳ ${kyLabel(sel)}</h2><p>Mỗi bản là tổng hợp hoa hồng của một publisher trong kỳ. Mở bản để xem chi tiết đối soát.</p></div>${bKy(K.st)}</div>${K.st>=2?'<div class="cp" style="padding-bottom:0">'+(K.st===3?lockBar('Kỳ đã hoàn tất: mọi bản đối soát đã thanh toán. Dữ liệu không thể chỉnh sửa.'):lockBar('Kỳ đã khóa lúc '+dmyhm(K.khoa)+'. Điều chỉnh phát sinh sau sẽ ghi vào kỳ kế tiếp.'))+'</div>':''}`+
+ (dss.length?dt('a-rec-d0',[{k:'p',t:'Publisher',v:d=>PUBm[d.p].ten,f:d=>pubAv(PUBm[d.p])},{k:'gv',t:'Tổng giá trị giao dịch',r:1,v:d=>dsTot(d.id).gv,f:d=>vnd(dsTot(d.id).gv)},{k:'hh',t:'Hoa hồng',r:1,v:d=>dsTot(d.id).hh,f:d=>vnd(dsTot(d.id).hh)},{k:'dc',t:'Điều chỉnh',r:1,v:d=>dsTot(d.id).dc,f:d=>sgnC(dsTot(d.id).dc)},{k:'pay',t:'Số tiền phải trả',r:1,v:d=>dsTot(d.id).pay,f:d=>`<b>${vnd(dsTot(d.id).pay)}</b>`},{k:'n',t:'Dòng',r:1,f:d=>dsTot(d.id).n},{k:'st',t:'Đối soát',f:d=>bDs(d.st)},{k:'chi',t:'Chi trả',f:d=>{const c=chiOf(d.id).slice(-1)[0];return c?bChi(c.st):'<span class="mut">Chưa tạo</span>'}},{k:'a',t:'',s:false,f:d=>`<div style="display:flex;gap:4px">${d.st===0?`<button class="btn s" data-act="dsok" data-id="${d.id}">Xác nhận</button>`:''}<button class="btn s" data-act="go" data-r="a-rec-d" data-p='{"ds":${d.id}}'>Mở</button></div>`}],dss,{row:id=>go('a-rec-d',{ds:Number(id)}),size:8,rowCls:d=>d.st===4?'adj':''}).replace(/^<div class="card">/,'<div style="border-top:1px solid var(--bd)">'):`<div class="empty"><b>Chưa có bản đối soát cho kỳ ${kyLabel(sel)}</b><span>Dùng “Tạo đối soát” để lấy các giao dịch đã duyệt và điều chỉnh đủ điều kiện.</span></div>`)+'</div>'}};
+function recElig(ky,pubs){const k=KYm[ky],inP=TX.filter(t=>t.ts>=k.tu&&t.ts<=k.den&&pubs.includes(t.p)),el=inP.filter(t=>t.st===1&&t.ds==null);return{el,wait:inP.filter(t=>t.st===0),done:inP.filter(t=>t.ds!=null),rej:inP.filter(t=>t.st===3),adj:pubs.flatMap(p=>adjForDS(ky,p,el.filter(t=>t.p===p)))}}
+function recPrevHtml(){const r=recElig(DL.rc.ky,DL.rc.pubs);const amt=sumA(r.el,t=>t.amt),ad=sumA(r.adj,a=>a.so);
+ return `<div class="card cp">${eqH(amt,ad,amt+ad,'Hoa hồng đủ điều kiện','Điều chỉnh','Số tiền đối soát')}<div class="mut sm" style="margin-top:8px">Đưa vào: <b>${fmt(r.el.length)}</b> giao dịch + <b>${r.adj.length}</b> điều chỉnh. Loại ra: ${fmt(r.wait.length)} chờ duyệt · ${fmt(r.done.length)} đã đối soát hoặc chi trả · ${fmt(r.rej.length)} bị từ chối.</div></div>`}
+function recForm(){const k=KYm[DL.rc.ky],opts=PUB.filter(p=>TX.some(t=>t.p===p.id&&t.ts>=k.tu&&t.ts<=k.den)).map(p=>({v:p.id,l:p.ten,s:p.ma}));
+ dlg(`<div class="dh"><h2>Tạo đối soát kỳ ${kyLabel(DL.rc.ky)}</h2><p>Tính từ chi tiết hoa hồng đủ điều kiện, từ ${dmy(k.tu)} đến ${dmy(Math.min(k.den,NOW))}.</p></div><div class="db">
+ <div class="field"><label>Publisher <i>*</i></label>${msel('rc:pubs',opts,DL.rc,'pubs','Chọn publisher cần đối soát…')}${DL.err&&DL.err.p?`<span class="emsg">${DL.err.p}</span>`:'<span class="help">Chọn tất cả hoặc từng publisher.</span>'}</div>
+ <div id="rec-prev">${recPrevHtml()}</div>${alertB('Quy tắc đối soát','Chỉ giao dịch đã duyệt mới được tính. Giao dịch đã nằm trong bản đối soát khác hoặc đã chi trả sẽ không được tính lại.','info','info')}</div>
+ <div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="recgo">Tạo đối soát</button></div>`,1)}
+Object.assign(act,{recnew:el=>{DL.rc={ky:el.dataset.ky,pubs:PUB.filter(p=>TX.some(t=>t.p===p.id&&t.st===1&&t.ds==null&&monthOf(t.ts)===el.dataset.ky)).map(p=>p.id)};DL.err={};recForm()},
+ recgo:()=>{const r=recElig(DL.rc.ky,DL.rc.pubs),n=new Set(r.el.map(t=>t.p)).size;if(!n){DL.err={p:'Chưa có publisher nào có giao dịch đủ điều kiện để đối soát.'};recForm();return}
+  const ky=DL.rc.ky,pubs=DL.rc.pubs;confirmDlg({title:'Tạo '+n+' bản đối soát kỳ '+kyLabel(ky)+'?',desc:fmt(r.el.length)+' giao dịch và '+r.adj.length+' điều chỉnh sẽ được đưa vào đối soát, không thể đưa vào bản khác nữa.',ok:'Tạo đối soát',fn:()=>{pubs.forEach(p=>buildDS(ky,p,S.user.uid));KYm[ky].st=1;S.tab.recKy=ky;toast('Đã tạo '+n+' bản đối soát');render()}})},
+ dsok:el=>{const d=dsOf(Number(el.dataset.id));d.st=1;toast('Đã xác nhận bản đối soát');render()},
+ dsbad:el=>{const d=dsOf(Number(el.dataset.id));confirmDlg({title:'Đánh dấu bản đối soát có vấn đề?',desc:'Bản đối soát có vấn đề sẽ chặn việc khóa kỳ cho tới khi được xác nhận lại.',ok:'Đánh dấu có vấn đề',danger:1,fn:()=>{d.st=4;toast('Đã đánh dấu có vấn đề');render()}})},
+ dsre:el=>{dsOf(Number(el.dataset.id)).st=1;toast('Đã xác nhận lại');render()},
+ kylock:el=>{const k=KYm[el.dataset.ky],bad=DS.filter(d=>d.ky===k.ma&&d.st!==1);
+  if(bad.length){dlg(`<div class="dh"><h2>Chưa thể khóa kỳ ${kyLabel(k.ma)}</h2></div><div class="db">${alertB('Còn '+bad.length+' bản đối soát chưa xác nhận','Xác nhận hoặc xử lý các bản sau trước khi khóa kỳ: '+bad.map(d=>PUBm[d.p].ten).join(', ')+'.','warn','warn')}</div><div class="df"><button class="btn primary" data-act="ovx">Đã hiểu</button></div>`);return}
+  confirmDlg({title:'Khóa kỳ '+kyLabel(k.ma)+'?',desc:'Sau khi khóa, số liệu kỳ không thể sửa. Điều chỉnh phát sinh sau sẽ được tạo thành bản ghi mới và vào kỳ kế tiếp (BR-25).',ok:'Khóa kỳ',danger:1,fn:()=>{k.st=2;k.khoa=NOW;k.by=S.user.uid;DS.filter(d=>d.ky===k.ma).forEach(d=>d.st=2);toast('Đã khóa kỳ '+kyLabel(k.ma));render()}})},
+ ctout:el=>{DL.ct=Number(el.dataset.id);dlg(`<div class="dh"><h2>Loại khoản này khỏi đối soát?</h2><p>Dòng bị loại không tính vào số tiền phải trả.</p></div><div class="db"><div class="field"><label for="ct-ly">Lý do <i>*</i></label><textarea id="ct-ly" class="textarea" maxlength="500"></textarea><span class="emsg" id="ct-e" hidden>Nhập lý do loại khoản này.</span></div></div><div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn destructive" data-act="ctdo">Loại khoản</button></div>`)},
+ ctdo:()=>{const v=$('#ct-ly').value.trim();if(!v){$('#ct-e').hidden=false;$('#ct-ly').classList.add('err');return}const c=CT.find(x=>x.id===DL.ct);c.st=0;c.ly=v;closeOv();toast('Đã loại khoản khỏi đối soát');render()}});
+RT['a-rec-d']={crumb:()=>[['Hoa hồng'],['Tra soát','a-rec'],[PUBm[dsOf(S.params.ds).p].ten+' · '+kyLabel(dsOf(S.params.ds).ky)]],fn:()=>{const d=dsOf(S.params.ds),p=PUBm[d.p],k=KYm[d.ky],t=dsTot(d.id),ch=chiOf(d.id);
+ const lines=dsLines(d.id).map(x=>({...x,t:x.tx&&TXm[x.tx],a:x.adj&&ADJ.find(y=>y.id===x.adj)})),idx=d.st===3?3:d.st===2?2:d.st===1?1:0;
+ const act_=d.st===0?`<button class="btn primary" data-act="dsok" data-id="${d.id}">${ic('check','sm')} Xác nhận đối soát</button><button class="btn" data-act="dsbad" data-id="${d.id}">Có vấn đề</button>`:d.st===1?`<button class="btn" data-act="dsbad" data-id="${d.id}">Đánh dấu có vấn đề</button>`:d.st===4?`<button class="btn primary" data-act="dsre" data-id="${d.id}">Xác nhận lại</button>`:d.st===2&&!ch.some(c=>c.st!==3)?`<button class="btn primary" data-act="paynew" data-id="${d.id}">${ic('wallet','sm')} Tạo chi trả</button>`:'';
+ return phead('Đối soát '+p.ten+' · kỳ '+kyLabel(d.ky),'Chi tiết các khoản hoa hồng và điều chỉnh được đưa vào bản đối soát này. '+'',goB('a-rec',{},'Quay lại','btn')+act_)+chainL(['Chờ đối soát','Đã xác nhận','Đã khóa','Đã thanh toán'],idx)+
+ (d.st===3?lockBar('Dữ liệu đã chi trả và không thể chỉnh sửa.'):d.st===2?lockBar('Bản đối soát đã khóa theo kỳ. Không thể thêm, loại hay sửa chi tiết.'):d.st===4?alertB('Có vấn đề','Bản đối soát đang bị đánh dấu có vấn đề và chặn khóa kỳ.','bad','warn'):'')+
+ `<div class="card cp">${eqH(t.hh,t.dc,t.pay,'Tổng hoa hồng','Tổng điều chỉnh','Số tiền phải trả')}<div class="mut sm" style="margin-top:8px">Tổng giá trị giao dịch (net): ${vnd(t.gv)} · ${t.n} dòng hợp lệ · ${bDs(d.st)}</div></div>`+
+ dt('a-rec-line',[{k:'loai',t:'Loại',f:c=>c.loai?B('Điều chỉnh','adj'):B('Hoa hồng','acc')},{k:'tx',t:'Giao dịch hoa hồng',f:c=>c.t?`<button class="link mono" data-act="txs" data-id="${c.t.id}">#${c.t.id}</button>`:`<button class="link mono" data-act="txs" data-id="${c.a.tx}">#${c.a.tx}</button> <span class="mut sm">điều chỉnh #${c.a.id}</span>`},{k:'ev',t:'Sự kiện',f:c=>c.t?bEv(c.t.ev):B(ADJ_T[c.a.loai])},{k:'kg',t:'Kỳ giao dịch gốc',f:c=>c.a?B('Kỳ '+kyLabel(monthOf(TXm[c.a.tx].ts)),monthOf(TXm[c.a.tx].ts)<d.ky?'adj':''):'—'},{k:'m',t:'Phim',f:c=>MOVm[(c.t||TXm[c.a.tx]).m].ten},{k:'hh',t:'Hoa hồng gốc',r:1,f:c=>vnd(c.hh)},{k:'dc',t:'Điều chỉnh',r:1,f:c=>sgnC(c.dc)},{k:'tt',t:'Thanh toán',r:1,f:c=>`<b>${vnd(c.tt)}</b>`},{k:'st',t:'Dòng',f:c=>c.st?B('Hợp lệ','ok'):B('Đã loại')},{k:'ly',t:'Lý do',f:c=>`<span class="cut sm">${c.ly||'—'}</span>`},{k:'a',t:'',s:false,f:c=>d.st<2&&c.st?`<button class="btn s" data-act="ctout" data-id="${c.id}">Loại</button>`:''}],lines,{rowCls:c=>c.loai||(c.t&&adjOf(c.t.id).length)?'adj':'',size:12})+
+ `<div class="card"><div class="ch"><h2>Lịch sử và kiểm toán</h2></div><div class="cp">${kvH([['Tạo bản đối soát',`${STAFF[lines[0]?lines[0].by:0]||STAFF[0]} · ${dmyhm(d.tao)}`],['Khóa kỳ',k.khoa?`${STAFF[k.by]} · ${dmyhm(k.khoa)}`:'Chưa khóa'],['Chi trả',ch.length?ch.map(c=>`<div>${goB('a-pay-d',{id:c.id},'CT-'+c.id)} ${bChi(c.st)} · ${vnd(c.so)} · ${dmyhm(c.yc)}</div>`).join(''):'Chưa tạo chi trả']])}</div></div>`}};
+/* ---- chi trả ---- */
+const PM={bank_transfer:'Chuyển khoản ngân hàng',momo:'Ví MoMo',zalopay:'Ví ZaloPay'};
+const dsPending=()=>DS.filter(d=>d.st===2&&!chiOf(d.id).some(c=>c.st!==3));
+RT['a-pay']={crumb:()=>[['Hoa hồng'],['Chi trả']],fn:()=>{FS('a-pay',{});const a=FS('a-pay').a;
+ const rows=CHI.filter(c=>(!a.pub.length||a.pub.includes(c.p))&&(!a.ky.length||a.ky.includes(dsOf(c.ds).ky))&&(!a.st.length||a.st.includes(c.st))).slice().reverse(),pend=dsPending();
+ return phead('Chi trả hoa hồng','Tổng hợp số hoa hồng thực tế phải trả cho publisher theo kỳ. Khoản đã chi trả bị khóa, không thể thao tác.')+
+ `<div class="kpis">${kpi('Chờ tạo chi trả',vnd(sumA(pend,d=>dsTot(d.id).pay)),pend.length+' bản đối soát đã khóa')}${kpi('Đang xử lý',vnd(sumA(CHI.filter(c=>c.st<=1),c=>c.so)),CHI.filter(c=>c.st<=1).length+' lệnh')}${kpi('Thất bại',vnd(sumA(CHI.filter(c=>c.st===3),c=>c.so)),CHI.filter(c=>c.st===3).length+' lệnh cần xử lý')}${kpi('Đã chi trả',vnd(sumA(CHI.filter(c=>c.st===2),c=>c.so)),'lũy kế')}</div>`+
+ (pend.length?`<div class="card"><div class="ch"><div><h2>Bản đối soát chờ tạo chi trả</h2><p>Đã khóa kỳ, chưa có lệnh chi trả hoạt động.</p></div></div>${mini([{t:'Kỳ',f:d=>kyLabel(d.ky)},{t:'Publisher',f:d=>PUBm[d.p].ten},{t:'Hoa hồng',r:1,f:d=>vnd(dsTot(d.id).hh)},{t:'Điều chỉnh',r:1,f:d=>sgnC(dsTot(d.id).dc)},{t:'Phải trả',r:1,f:d=>`<b>${vnd(dsTot(d.id).pay)}</b>`},{t:'',f:d=>`<button class="btn s primary" data-act="paynew" data-id="${d.id}">Tạo chi trả</button> `+goB('a-rec-d',{ds:d.id},'Xem','btn s')}],pend)}</div>`:'')+
+ fbar('a-pay',{date:false,q:false,camp:false,mov:false,ky:true,st:[0,1,2,3].map(i=>({v:i,l:chiSt[i]})),stl:'Trạng thái chi'})+
+ dt('a-pay',[{k:'id',t:'Mã chi trả',f:c=>`<span class="mono">CT-${c.id}</span>`},{k:'p',t:'Publisher',v:c=>PUBm[c.p].ten,f:c=>PUBm[c.p].ten},{k:'ky',t:'Kỳ',v:c=>dsOf(c.ds).ky,f:c=>kyLabel(dsOf(c.ds).ky)},{k:'hh',t:'Hoa hồng',r:1,f:c=>vnd(dsTot(c.ds).hh)},{k:'dc',t:'Điều chỉnh',r:1,f:c=>sgnC(dsTot(c.ds).dc)},{k:'so',t:'Số tiền phải trả',r:1,f:c=>`<b>${vnd(c.so)}</b>`},{k:'pt',t:'Phương thức',f:c=>PM[c.pt]||c.pt},{k:'st',t:'Trạng thái',f:c=>bChi(c.st)+(c.st===2?' '+ic('lock','sm'):'')},{k:'ref',t:'Mã giao dịch',f:c=>c.ref?`<span class="mono">${c.ref}</span>`:'—'},{k:'tt',t:'Chi lúc',v:c=>c.tt||0,f:c=>dmyhm(c.tt)}],rows,{row:id=>go('a-pay-d',{id:Number(id)})})}};
+Object.assign(act,{paynew:el=>{DL.pn=Number(el.dataset.id);DL.pm='bank_transfer';const d=dsOf(DL.pn),t=dsTot(d.id);dlg(`<div class="dh"><h2>Tạo chi trả cho ${PUBm[d.p].ten}</h2><p>Kỳ ${kyLabel(d.ky)}</p></div><div class="db">${eqH(t.hh,t.dc,t.pay,'Hoa hồng','Điều chỉnh','Số tiền chi trả')}<div class="field"><label for="pm">Phương thức chi trả <i>*</i></label><select id="pm" class="select" data-dl="pm">${Object.entries(PM).map(([v,l])=>`<option value="${v}">${l}</option>`).join('')}</select></div>${alertB('Lưu ý','Sau khi chi trả thành công, bản đối soát và các giao dịch liên quan bị khóa, không thể chỉnh sửa hay đưa vào đối soát lại.','warn','warn')}</div><div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="paygo">Tạo chi trả</button></div>`)},
+ paygo:()=>{const d=dsOf(DL.pn),c={id:Math.max(...CHI.map(x=>x.id))+1,ds:d.id,p:d.p,pt:DL.pm,so:dsTot(d.id).pay,dv:'VND',ref:null,st:0,yc:NOW,tt:null,ly:null};CHI.push(c);closeOv();toast('Đã tạo lệnh chi trả CT-'+c.id);go('a-pay-d',{id:c.id})},
+ paystart:el=>{const c=CHI.find(x=>x.id==el.dataset.id);confirmDlg({title:'Gửi lệnh chi CT-'+c.id+'?',desc:'Chuyển '+vnd(c.so)+' cho '+PUBm[c.p].ten+' qua '+PM[c.pt]+'. Trạng thái chuyển sang “đang xử lý”.',ok:'Gửi lệnh chi',fn:()=>{c.st=1;toast('Đã gửi lệnh chi');render()}})},
+ payok:el=>{DL.pid=Number(el.dataset.id);dlg(`<div class="dh"><h2>Xác nhận chi trả thành công</h2><p>Nhập mã giao dịch từ ngân hàng hoặc ví để đối chiếu.</p></div><div class="db"><div class="field"><label for="pr">Mã giao dịch chi trả <i>*</i></label><input id="pr" class="input" placeholder="VD: VCB99200123"><span class="emsg" id="pr-e" hidden>Nhập mã giao dịch chi trả.</span></div>${alertB('Thao tác khóa dữ liệu','Sau khi xác nhận, bản đối soát chuyển “đã thanh toán” và các giao dịch bị khóa vĩnh viễn.','warn','lock')}</div><div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="payokdo">Xác nhận đã chi</button></div>`)},
+ payokdo:()=>{const v=$('#pr').value.trim();if(!v){$('#pr-e').hidden=false;$('#pr').classList.add('err');return}const c=CHI.find(x=>x.id===DL.pid),d=dsOf(c.ds);c.st=2;c.ref=v;c.tt=NOW;d.st=3;TX.filter(t=>t.ds===d.id).forEach(t=>t.st=2);const k=KYm[d.ky];if(DS.filter(x=>x.ky===d.ky).every(x=>x.st===3)&&k.st===2)k.st=3;closeOv();toast('Đã ghi nhận chi trả thành công');render()},
+ payfail:el=>{DL.pid=Number(el.dataset.id);dlg(`<div class="dh"><h2>Ghi nhận chi trả thất bại</h2></div><div class="db"><div class="field"><label for="pf">Lý do thất bại <i>*</i></label><textarea id="pf" class="textarea" maxlength="500"></textarea><span class="emsg" id="pf-e" hidden>Nhập lý do thất bại.</span></div></div><div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn destructive" data-act="payfaildo">Ghi nhận thất bại</button></div>`)},
+ payfaildo:()=>{const v=$('#pf').value.trim();if(!v){$('#pf-e').hidden=false;$('#pf').classList.add('err');return}const c=CHI.find(x=>x.id===DL.pid);c.st=3;c.ly=v;closeOv();toast('Đã ghi nhận thất bại');render()},
+ payretry:el=>{const o=CHI.find(x=>x.id==el.dataset.id);confirmDlg({title:'Tạo lại lệnh chi trả?',desc:'Lệnh thất bại được giữ làm lịch sử. Hệ thống tạo thêm một lệnh chi mới cho cùng bản đối soát.',ok:'Tạo lệnh mới',fn:()=>{const c={...o,id:Math.max(...CHI.map(x=>x.id))+1,st:0,ref:null,tt:null,ly:null,yc:NOW};CHI.push(c);toast('Đã tạo CT-'+c.id);go('a-pay-d',{id:c.id})}})}});
+RT['a-pay-d']={crumb:()=>[['Hoa hồng'],['Chi trả','a-pay'],['CT-'+S.params.id]],fn:()=>{const c=CHI.find(x=>x.id===S.params.id),d=dsOf(c.ds),again=CHI.some(x=>x.ds===c.ds&&x.id>c.id);
+ const btns=c.st===0?`<button class="btn primary" data-act="paystart" data-id="${c.id}">Gửi lệnh chi</button>`:c.st===1?`<button class="btn primary" data-act="payok" data-id="${c.id}">${ic('check','sm')} Xác nhận thành công</button><button class="btn" data-act="payfail" data-id="${c.id}">Ghi nhận thất bại</button>`:c.st===3&&!again?`<button class="btn primary" data-act="payretry" data-id="${c.id}">Tạo lại lệnh chi</button>`:'';
+ return phead('Chi tiết chi trả CT-'+c.id,PUBm[c.p].ten+' · kỳ '+kyLabel(d.ky),goB('a-pay',{},'Quay lại','btn')+btns)+chainL(['Hoa hồng','Đối soát','Khóa kỳ','Chi trả','Đã thanh toán'],c.st===2?4:c.st===1?3:c.st===3?3:2)+
+ (c.st===2?lockBar('Dữ liệu đã chi trả và không thể chỉnh sửa. Hoa hồng, điều chỉnh và đối soát liên quan đều bị khóa.'):c.st===3?alertB('Chi trả thất bại','Lệnh chi bị từ chối. '+(again?'Đã có lệnh chi mới thay thế.':'Kiểm tra thông tin tài khoản rồi tạo lại lệnh chi.'),'bad','warn'):'')+payDetail(true)}};
+/* ================= GẮN KẾT NGUỒN (gan_ket_nguon) ================= */
+const GKL={};GK.forEach(g=>(GKL[g.l]||(GKL[g.l]=[])).push(g));
+const gkSt=g=>CV.some(c=>c.gk===g.id)?'conv':g.het>NOW?'live':'exp';
+const bGk=g=>({conv:B('Đã chuyển đổi','ok'),live:B('Còn hiệu lực','info'),exp:B('Hết hạn')})[gkSt(g)];
+const gkCount=(f)=>GK.filter(f).length;
+const toAttr=(init)=>goF(S.user.type==='pub'?'p-attr':'a-attr','a-attr',{preset:'custom',from:addDays(TODAY,-29),to:TODAY,...init});
+RT['a-attr']={crumb:()=>S.user.type==='pub'?[['Publisher'],['Gắn kết nguồn']]:[['Thống kê chi tiết'],['Gắn kết nguồn']],fn:()=>{FS('a-attr');const a=FS('a-attr').a;
+ const rows=filt(GK,'a-attr').filter(g=>!a.st.length||a.st.includes(gkSt(g))).sort((x,y)=>y.ts-x.ts);
+ return phead('Gắn kết nguồn','Mỗi mã ẩn danh được gán cho publisher có lần nhấp đầu tiên (first-click) trong cửa sổ 30 ngày. Chuyển đổi và hoa hồng phát sinh trong cửa sổ này thuộc về publisher đã chốt.')+(S.user.type==='pub'?roBanner():'')+
+ alertB('Quy tắc gán nguồn (BR-17)','Khi định danh được người dùng, hệ thống chỉ cập nhật mã người dùng, không đổi attribution first-click đã chốt. Các lần nhấp sau qua link của publisher khác không làm đổi publisher được gán.','info','info')+
+ fbar('a-attr',{ev:SRC.map(s=>({v:s,l:s})),evl:'Nguồn đầu',st:[{v:'live',l:'Còn hiệu lực'},{v:'conv',l:'Đã chuyển đổi'},{v:'exp',l:'Hết hạn'}],stl:'Trạng thái gắn kết'})+
+ `<div class="kpis">${kpi('Gắn kết trong kỳ lọc',fmt(rows.length))}${kpi('Đã chuyển đổi',fmt(rows.filter(g=>gkSt(g)==='conv').length),pct(rows.filter(g=>gkSt(g)==='conv').length,rows.length))}${kpi('Còn hiệu lực',fmt(rows.filter(g=>gkSt(g)==='live').length))}${kpi('Đã định danh người dùng',fmt(rows.filter(g=>g.user).length))}</div>`+
+ dt('a-attr',[{k:'ts',t:'Quy gán lúc',v:g=>g.ts,f:g=>dmyhm(g.ts)},{k:'an',t:'Mã ẩn danh',f:g=>`<span class="mono">${g.an}</span>`},{k:'user',t:'Người dùng',f:g=>g.user?`<span class="mono">#${g.user}</span>`:'<span class="mut">Chưa định danh</span>'},{k:'p',t:'Publisher',v:g=>PUBm[g.p].ten,f:g=>PUBm[g.p].ten},{k:'c',t:'Chiến dịch',v:g=>CAMPm[g.c].ten,f:g=>`<span class="cut">${CAMPm[g.c].ten}</span>`},{k:'m',t:'Nội dung phim (từ link)',v:g=>MOVm[g.m].ten,f:g=>MOVm[g.m].ten},{k:'code',t:'Mã theo dõi',f:g=>`<span class="mono">${g.code}</span>`},{k:'nguon',t:'Nguồn đầu',f:g=>g.nguon},{k:'mh',t:'Mô hình',hide:true,f:g=>B(g.mh)},{k:'het',t:'Hết hạn lúc',v:g=>g.het,f:g=>dmy(g.het)},{k:'st',t:'Trạng thái',v:g=>gkSt(g),f:g=>bGk(g)},{k:'cv',t:'Chuyển đổi',r:1,f:g=>CV.filter(c=>c.gk===g.id).length||'—'}],rows,{id:g=>g.id,row:id=>attrSheet(Number(id))})}};
+function attrSheet(id){const g=GK[id-1],adm=S.user.type==='admin',p=PUBm[g.p],c=CAMPm[g.c],l=LINKm[g.l],a=ASG.find(x=>x.id===g.asg),cvs=CV.filter(x=>x.gk===g.id),txs=cvs.map(x=>TX.find(t=>t.cv===x.id)).filter(Boolean);
+ const el=Math.max(0,Math.min(30,(NOW-g.ts)/D1)),others=adm?LINK.filter(x=>x.c===g.c&&x.p!==g.p&&x.m===g.m).slice(0,2):[];
+ const clicks=[{ts:g.ts,l,first:1},...others.map((x,i)=>({ts:g.ts+D1*(2+i*3)+3600000*(i+3),l:x,first:0})).filter(x=>x.ts<NOW)];
+ sheet(`<div class="ch"><div><h2>Gắn kết nguồn <span class="mono">#${g.id}</span></h2><p>${bGk(g)} · ${B(g.mh)} · ${dmyhm(g.ts)}</p></div><button class="btn ghost i" data-act="ovx" aria-label="Đóng">${ic('x')}</button></div><div class="cp" style="display:flex;flex-direction:column;gap:14px">
+ ${chainL(['Publisher','Gán chiến dịch','Link theo dõi','Gắn kết nguồn','Chuyển đổi','Hoa hồng'],3)}
+ <div><h3 style="margin-bottom:8px">Cửa sổ quy gán 30 ngày</h3><div class="prog"><i style="width:${el/30*100}%"></i></div><div class="mut sm" style="margin-top:5px">${dmy(g.ts)} → ${dmy(g.het)} · ${g.het>NOW?'còn '+Math.ceil(30-el)+' ngày':'đã hết hạn'}</div></div>
+ <div>${kvH([['Mã ẩn danh',`<span class="mono">${g.an}</span>`],['Người dùng',g.user?`<span class="mono">#${g.user}</span> <span class="mut sm">cập nhật khi định danh, không đổi attribution</span>`:'Chưa định danh'],['Publisher được gán',adm?goB('a-pub-d',{id:p.id},p.ten):p.ten],['Chiến dịch',adm?goB('a-camp-d',{id:c.id},c.ten):c.ten],['Lần gán chiến dịch',`#${a.id} · gán ${dmy(a.gan)} ${bAsg(a.st)}`],['Link tạo attribution',`<span class="mono">${l.code}</span> · ${MOVm[l.m].ten}<div class="mono sm mut" style="overflow-wrap:anywhere">${l.url}</div>`],['Nguồn đầu',g.nguon]])}</div>
+ <div><h3 style="margin-bottom:8px">${adm?'Các lần nhấp của mã ẩn danh này':'Lần nhấp qua link của bạn'}</h3>${mini([{t:'Thời gian',f:x=>dmyhm(x.ts)},{t:'Publisher',f:x=>PUBm[x.l.p].ten},{t:'Mã theo dõi',f:x=>`<span class="mono">${x.l.code}</span>`},{t:'Kết quả',f:x=>x.first?B('Chốt first-click','ok'):B('Không đổi attribution')}],clicks)}</div>
+ <div><h3 style="margin-bottom:8px">Chuyển đổi và hoa hồng (${cvs.length})</h3>${cvs.length?mini([{t:'Thời gian',f:x=>dmyhm(x.ts)},{t:'Loại',f:x=>bEv(2+x.loai)},{t:'Net',r:1,f:x=>vnd(x.net)},{t:'Hoa hồng',r:1,f:x=>{const t=TX.find(y=>y.cv===x.id);return t?`<button class="link mono" data-act="txs" data-id="${t.id}">#${t.id}</button> ${vnd(t.amt)}`:'—'}}],cvs):'<div class="mut">Chưa phát sinh chuyển đổi trong cửa sổ quy gán.</div>'}</div>
+ ${adm?`<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-act="toclick" data-id="${g.id}">${ic('click','sm')} Lượt nhấp của link này</button><button class="btn" data-act="toattrp" data-id="${g.id}">Gắn kết cùng publisher</button></div>`:''}</div>`)}
+Object.assign(act,{attr:el=>attrSheet(Number(el.dataset.id)),
+ toclick:el=>{const g=GK[el.dataset.id-1];goF('a-click','a-click',{preset:'custom',from:addDays(TODAY,-29),to:TODAY,pub:[g.p],camp:[g.c],mov:[g.m]})},
+ toattrp:el=>{const g=GK[el.dataset.id-1];toAttr({pub:[g.p],camp:[g.c]})},
+ attrpc:el=>toAttr({pub:[Number(el.dataset.p)],camp:[Number(el.dataset.c)]}),
+ attrp:el=>toAttr({pub:[Number(el.dataset.p)]})});
+
+RT['p-attr']=RT['a-attr'];
+/* ================= ĐĂNG KÝ CHẠY CHIẾN DỊCH (publisher đăng ký -> admin duyệt -> gán + sinh link) ================= */
+const REG_ST=['Chờ duyệt','Đã duyệt','Bị từ chối','Đã rút'];
+const bReg=s=>B(REG_ST[s],['warn','ok','bad',''][s]);
+const regOf=(p,c)=>REG.filter(r=>r.p===p&&r.c===c).sort((a,b)=>b.ts-a.ts)[0];
+const regPendN=c=>REG.filter(r=>r.st===0&&(c==null||r.c===c)).length;
+const regOpen=c=>c.st===1&&c.bd<=TODAY&&(!c.kt||c.kt>=TODAY);
+const regEnded=c=>c.st===2||!!(c.kt&&c.kt<TODAY);
+const regWhy=c=>c.st!==1?'Chiến dịch không ở trạng thái đang chạy.':c.bd>TODAY?'Chiến dịch bắt đầu từ '+ysd(c.bd)+', chưa tới ngày mở đăng ký.':'Chiến dịch đã kết thúc ngày '+ysd(c.kt)+'.';
+const REG_FLOW=['Xem chính sách','Gửi đăng ký','Admin duyệt','Nhận link theo dõi','Chạy và nhận hoa hồng'];
+function regState(c){const mine=myAsg().find(x=>x.c===c.id&&x.st);if(mine)return{k:'mine',idx:4,b:B('Đã được gán','ok')};const r=regOf(S.user.pid,c.id);
+ if(r&&r.st===0)return{k:'pend',idx:2,r,b:B('Chờ duyệt đăng ký','warn')};if(r&&r.st===2)return{k:'rej',idx:1,r,b:B('Đăng ký bị từ chối','bad')};return{k:'none',idx:0,r,b:regOpen(c)?B('Chưa được gán'):regEnded(c)?B('Không đăng ký'):B('Chưa mở đăng ký')}}
+function regCard(c){const s=regState(c),r=s.r;
+ return `<div class="card"><div class="ch"><div><h2>Đăng ký chạy chiến dịch</h2><p>Publisher gửi đăng ký, quản trị viên duyệt. Khi được duyệt, hệ thống gán chiến dịch và sinh link theo dõi cho từng nội dung phim.</p></div>${s.b}</div><div class="cp" style="display:flex;flex-direction:column;gap:12px">${chainL(REG_FLOW,s.idx)}
+ ${s.k==='none'?(regOpen(c)?alertB('Bạn chưa chạy chiến dịch này','Đọc chính sách hoa hồng bên dưới rồi bấm “Đăng ký chạy chiến dịch”. Quản trị viên sẽ xem xét đăng ký của bạn.','info','info'):alertB(regEnded(c)?'Bạn không đăng ký chiến dịch này':'Chiến dịch chưa mở đăng ký',regWhy(c)+' Chỉ chiến dịch đang chạy và trong thời gian hiệu lực mới nhận đăng ký.','warn','warn')):''}
+ ${s.k==='pend'?alertB('Đã gửi đăng ký lúc '+dmyhm(r.ts),'Đang chờ quản trị viên duyệt. Sau khi duyệt, link theo dõi xuất hiện ở mục “Chiến dịch đang chạy”. Bạn có thể rút đăng ký trước khi được duyệt.','warn','info'):''}
+ ${s.k==='rej'?alertB('Đăng ký bị từ chối lúc '+dmyhm(r.xl),'Lý do: '+r.ly+'. Bạn có thể chỉnh lại và đăng ký lại.','bad','warn'):''}
+ ${s.k==='mine'?alertB('Chiến dịch đã được gán cho bạn','Xem link theo dõi, lượt click/view/chuyển đổi và hoa hồng ở mục “Chiến dịch đang chạy”.','ok','check'):''}</div></div>`}
+function regBtn(c){const s=regState(c);if(s.k==='pend')return `<button class="btn" data-act="regrw" data-id="${s.r.id}">Rút đăng ký</button>`;if(regOpen(c)&&(s.k==='none'||s.k==='rej'))return `<button class="btn primary" data-act="regnew" data-id="${c.id}">${ic('plus','sm')} ${s.k==='rej'?'Đăng ký lại':'Đăng ký chạy chiến dịch'}</button>`;return''}
+function regForm(cid,err){const c=CAMPm[cid],rs=rulesFor(c.id,S.user.pid),ms=CM.filter(x=>x.c===c.id&&x.st===1);DL.rg={c:cid,note:DL.rg&&DL.rg.c===cid?DL.rg.note:''};
+ dlg(`<div class="dh"><h2>Đăng ký chạy chiến dịch</h2><p>${c.ten} · ${ysd(c.bd)} → ${c.kt?ysd(c.kt):'không giới hạn'}</p></div><div class="db">
+ ${chainL(REG_FLOW,1)}
+ <div><h3 style="margin-bottom:6px">Chính sách hoa hồng áp dụng cho bạn</h3>${rs.length?rs.map(r=>`<div class="sm" style="margin-bottom:3px">${bEv(r.ev)} ${ruleText(r)}${r.gx?' · xem ≥ '+r.gx+' giây':''}${r.tl?' · ≥ '+r.tl+'% thời lượng':''}</div>`).join(''):'<span class="mut">Chưa có quy tắc</span>'}</div>
+ <div><h3 style="margin-bottom:6px">Nội dung phim sẽ được sinh link (${ms.length})</h3><div class="sm">${ms.map(x=>MOVm[x.m].ten).join(' · ')}</div></div>
+ <div class="field"><label for="rg-n">Ghi chú cho quản trị viên</label><textarea id="rg-n" class="textarea" style="height:auto;padding:8px 10px" rows="3" data-dl="rg_note" placeholder="Kênh phân phối dự kiến, đối tượng người xem…">${DL.rg.note}</textarea></div>
+ <label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" class="cb" id="rg-ok"> <span>Tôi đã đọc và đồng ý chính sách hoa hồng của chiến dịch này.</span></label>${err?`<span class="emsg">${err}</span>`:''}</div>
+ <div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn primary" data-act="regdo">Gửi đăng ký</button></div>`,1)}
+function regPendHtml(cid){const L=REG.filter(r=>r.c===cid&&r.st===0);if(!L.length)return'';
+ return `<div class="card"><div class="ch"><div><h2>Đăng ký chờ duyệt (${L.length})</h2><p>Publisher tự đăng ký chạy chiến dịch. Duyệt để gán chiến dịch và sinh link theo dõi cho từng nội dung phim.</p></div></div>${mini([{t:'Publisher',f:r=>goB('a-pub-d',{id:r.p},PUBm[r.p].ten)},{t:'Gửi lúc',f:r=>dmyhm(r.ts)},{t:'Ghi chú',f:r=>`<span class="cut sm">${r.note||'—'}</span>`},{t:'Trạng thái',f:r=>bReg(r.st)},{t:'',f:r=>`<button class="btn s primary" data-act="regok" data-id="${r.id}">${ic('check','sm')} Duyệt và gán</button> <button class="btn s" data-act="regno" data-id="${r.id}">Từ chối</button>`}],L)}</div>`}
+function regHist(cid){const L=REG.filter(r=>r.c===cid&&r.st!==0).sort((a,b)=>b.ts-a.ts);if(!L.length)return'';
+ return `<div class="card"><div class="ch"><div><h2>Lịch sử đăng ký</h2></div></div>${mini([{t:'Publisher',f:r=>PUBm[r.p].ten},{t:'Gửi lúc',f:r=>dmyhm(r.ts)},{t:'Trạng thái',f:r=>bReg(r.st)},{t:'Xử lý lúc',f:r=>r.xl?dmyhm(r.xl):'—'},{t:'Lý do / ghi chú',f:r=>`<span class="cut sm">${r.ly||'—'}</span>`}],L)}</div>`}
+Object.assign(act,{
+ regnew:el=>regForm(Number(el.dataset.id)),
+ regdo:()=>{if(!$('#rg-ok').checked){regForm(DL.rg.c,'Cần đồng ý chính sách hoa hồng để gửi đăng ký.');return}
+  const c=DL.rg.c,note=($('#rg-n').value||'').trim();REG.push({id:Math.max(0,...REG.map(x=>x.id))+1,p:S.user.pid,c,st:0,ts:NOW,note,ly:null,xl:null,by:null,asg:null});closeOv();toast('Đã gửi đăng ký, chờ quản trị viên duyệt');render()},
+ regrw:el=>{const r=REG.find(x=>x.id==el.dataset.id);confirmDlg({title:'Rút đăng ký?',desc:'Đăng ký chạy '+CAMPm[r.c].ten+' sẽ bị hủy. Bạn có thể đăng ký lại sau.',ok:'Rút đăng ký',danger:1,fn:()=>{r.st=3;r.xl=NOW;r.ly='Publisher rút đăng ký';toast('Đã rút đăng ký');render()}})},
+ regok:el=>{const r=REG.find(x=>x.id==el.dataset.id),c=CAMPm[r.c],ms=CM.filter(x=>x.c===c.id&&x.st===1);
+  confirmDlg({title:'Duyệt và gán '+PUBm[r.p].ten+'?',desc:'Hệ thống tạo bản ghi gán chiến dịch cho publisher và sinh '+ms.length+' link theo dõi, mỗi nội dung phim một link.',ok:'Duyệt và gán',fn:()=>{
+   const a={id:Math.max(...ASG.map(x=>x.id))+1,p:r.p,c:c.id,gan:NOW,huy:null,st:1,by:S.user.uid};ASG.push(a);ms.forEach(x=>mkLink(a,x.m));
+   r.st=1;r.xl=NOW;r.by=S.user.uid;r.asg=a.id;r.ly='Đã gán chiến dịch';toast('Đã gán chiến dịch và sinh '+ms.length+' link theo dõi');render()}})},
+ regno:el=>{DL.rj={id:Number(el.dataset.id),ly:''};regRej()},
+ rejdo:()=>{const d=DL.rj,ly=($('#rj-l').value||'').trim();if(!ly){regRej('Nhập lý do từ chối để publisher biết cần chỉnh gì.');return}
+  const r=REG.find(x=>x.id===d.id);r.st=2;r.xl=NOW;r.by=S.user.uid;r.ly=ly;closeOv();toast('Đã từ chối đăng ký');render()}});
+function regRej(err){const r=REG.find(x=>x.id===DL.rj.id);dlg(`<div class="dh"><h2>Từ chối đăng ký</h2><p>${PUBm[r.p].ten} · ${CAMPm[r.c].ten}</p></div><div class="db"><div class="field"><label for="rj-l">Lý do <i>*</i></label><textarea id="rj-l" class="textarea ${err?'err':''}" style="height:auto;padding:8px 10px" rows="3">${DL.rj.ly}</textarea>${err?`<span class="emsg">${err}</span>`:''}</div></div><div class="df"><button class="btn" data-act="ovx">Hủy</button><button class="btn destructive" data-act="rejdo">Từ chối</button></div>`)}
+render();
+</script>
+</body>
+</html>

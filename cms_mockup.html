@@ -1,0 +1,946 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Màn Chiếu CMS — Mockup cms_db (góp ý lần 1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#172033;--muted:#647086;--paper:#f3f4f8;--white:#fff;--line:#e2e6ee;--navy:#18233a;--navy2:#26344f;--violet:#7652e6;--violet-d:#5f3fc9;--aqua:#1fa99d;--orange:#d9822b;--red:#d64b5c;--yellow:#edc84b;--fk:#4a56d8;--fk-bg:#eef0ff;--ext:#c26d12;--ext-bg:#fff3e2;--r:12px;--sans:Manrope,system-ui,sans-serif;--mono:'DM Mono',ui-monospace,monospace}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 var(--sans)}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+.app{display:grid;grid-template-columns:272px 1fr;min-height:100vh}
+.side{background:var(--navy);color:#cfd6e6;position:sticky;top:0;height:100vh;overflow:auto;padding:20px 12px 24px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;font-size:17px;padding:2px 10px 18px;letter-spacing:-.4px}
+.brand i{width:26px;height:26px;border:2px solid #fff;border-radius:8px;display:grid;place-items:center}.brand i:after{content:"";width:7px;height:7px;border-radius:50%;background:#a58bf5}
+.brand em{font:italic 600 17px 'Playfair Display',serif;color:#b3a4f0}
+.side a.home{display:flex;gap:10px;padding:9px 11px;border-radius:9px;color:#fff;text-decoration:none;font-weight:700;margin-bottom:6px}
+.grp{margin-top:14px}
+.grp>button{width:100%;text-align:left;background:none;border:0;color:#8e9bb5;font-weight:700;font-size:12px;padding:4px 11px;display:flex;justify-content:space-between}
+.grp>div{display:grid;gap:1px}
+.grp.shut>div{display:none}
+.nav{display:flex;flex-direction:column;text-decoration:none;color:#c3ccdd;padding:7px 11px;border-radius:8px;font-weight:600;font-size:13px;line-height:1.25}
+.nav small{font:400 10.5px var(--mono);color:#7d8aa6;margin-top:1px}
+.nav:hover,.home:hover{background:var(--navy2)}
+.nav.on,.home.on{background:#2f3f5f;color:#fff;box-shadow:inset 3px 0 #a78bfa}
+main{min-width:0}
+.top{height:60px;background:#ffffffe6;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;position:sticky;top:0;z-index:5}
+.crumb{font-size:13px;color:var(--muted)}.crumb b{color:var(--ink)}
+.top .r{display:flex;gap:12px;align-items:center}
+.top select{border:1px solid #d6dbe7;border-radius:8px;padding:6px 9px;background:#fff;font-weight:700;font-size:12px}
+.av{width:30px;height:30px;border-radius:50%;background:#e8dfff;color:#5a3cb5;display:grid;place-items:center;font-weight:800;font-size:11px}
+.page{padding:26px 32px 70px;max-width:1500px;margin:auto}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.head h1{font-size:25px;letter-spacing:-.8px;margin:0;line-height:1.2}
+.head p{margin:5px 0 0;color:var(--muted);font-size:13px;max-width:70ch}
+.head .acts{display:flex;gap:8px}
+.btn{border:1px solid #d3d9e5;background:#fff;color:#27314a;font-weight:700;border-radius:9px;padding:9px 14px;font-size:13px}
+.btn:hover{background:#f6f7fb}
+.btn.p{background:var(--violet);border-color:var(--violet);color:#fff;box-shadow:0 3px 10px #7652e638}.btn.p:hover{background:var(--violet-d)}
+.btn.d{color:var(--red);border-color:#f0c9cf}
+.btn.sm{padding:5px 10px;font-size:12px;border-radius:7px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r)}
+.pad{padding:18px 20px}
+h3.t{font-size:13.5px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+code,.mono{font-family:var(--mono);font-size:11px}
+.pill{font:700 11px var(--mono);padding:3px 8px;border-radius:99px;white-space:nowrap;display:inline-block}
+.c0{background:#edf0f5;color:#5d687b}.c1{background:#fff1d6;color:#9a6410}.c2{background:#dff5ef;color:#177a68}.c3{background:#ddeafd;color:#2557a7}.c4{background:#fbe6e9;color:#a8404e}.cx{background:var(--ext-bg);color:var(--ext)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.lg{width:22px;height:14px;border:1px solid #cfd6e3;border-radius:4px;background:#fff}.lg.fk{border-color:var(--fk);background:var(--fk-bg)}.lg.ext{border-color:var(--ext);background:var(--ext-bg)}.lg.ro{background:#f1f3f7}
+/* tables */
+.tbl-wrap{overflow:auto}
+table.g{width:100%;border-collapse:collapse;min-width:640px}
+.g th{background:#f8f9fc;text-align:left;font-weight:700;font-size:12px;color:#6b768b;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+.g th code{display:block;font-weight:400;color:#9aa4b8;font-size:10px}
+.g td{padding:10px 14px;border-bottom:1px solid #eef0f5;font-size:13px;vertical-align:middle}
+.g tr.row{cursor:pointer}.g tr.row:hover td{background:#fafaff}
+.g tr.del td{opacity:.45;text-decoration:line-through}
+.g td.act{white-space:nowrap;text-align:right}
+.lk{display:inline-flex;gap:5px;align-items:center;background:var(--fk-bg);color:var(--fk);border-radius:6px;padding:2px 8px;font-weight:600;font-size:12px;text-decoration:none;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lk.ext{background:var(--ext-bg);color:var(--ext)}
+.lk:hover{filter:brightness(.95)}
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.tool{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.tool input,.tool select{border:1px solid #d9dfea;border-radius:9px;background:#fff;padding:8px 11px;font-size:13px}
+.tool input[type=search]{width:260px}
+.tool label{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.metaline{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;align-items:center;font-size:12px;color:var(--muted)}
+.chipx{border:1px solid var(--line);background:#fff;border-radius:99px;padding:2px 10px;font-size:12px;text-decoration:none;color:#4a556b}
+a.chipx:hover{border-color:var(--violet);color:var(--violet)}
+/* forms */
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.field.wide{grid-column:1/-1}.field.hide{display:none}
+.field>label{display:flex;gap:4px;font-weight:700;font-size:12.5px;margin-bottom:2px}
+.field>label i{color:var(--red);font-style:normal}
+.fm{font-size:10.5px;color:#8b95a9;margin-bottom:5px;font-family:var(--mono);display:flex;gap:6px;flex-wrap:wrap}
+.fm b{font-weight:500;color:var(--fk)}.fm b.x{color:var(--ext)}.fm u{text-decoration:none;color:#8a6fd8}
+.field input[type=text],.field input[type=number],.field input[type=date],.field input[type=datetime-local],.field input[type=password],.field select,.field textarea,.combo{width:100%;border:1px solid #d5dbe7;border-radius:8px;background:#fff;padding:8px 10px;font-size:13px}
+.field textarea{min-height:84px;resize:vertical}
+.field input:read-only,.field.ro input,.field.ro select{background:#f1f3f7;color:#566178}
+.hint{font-size:11.5px;color:var(--muted);margin-top:4px}
+.err{border-color:var(--red)!important}
+.errm{color:var(--red);font-size:11.5px;margin-top:3px}
+.combo{position:relative;display:flex;align-items:center;gap:6px;padding:0 6px 0 8px;border-color:#b7bef2;background:var(--fk-bg)}
+.combo.ext{border-color:#e8bd88;background:var(--ext-bg)}
+.combo .ci{color:var(--fk);font-size:13px}.combo.ext .ci{color:var(--ext)}
+.combo-in{flex:1;border:0!important;background:transparent!important;padding:8px 2px!important;outline:none;min-width:0;font-size:13px;font-weight:600}
+.combo.dis{opacity:.75}.combo.dis .combo-in{cursor:not-allowed}
+.combo-go{border:0;background:none;color:var(--fk);font-weight:800;padding:4px 6px;border-radius:6px}.combo-go:hover{background:#fff}
+.combo-list{display:none;position:absolute;left:-1px;right:-1px;top:calc(100% + 4px);background:#fff;border:1px solid #c7cdf0;border-radius:9px;box-shadow:0 12px 30px #1b244a2a;z-index:30;max-height:240px;overflow:auto;padding:4px}
+.combo.open .combo-list{display:block}
+.opt{padding:7px 9px;border-radius:6px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--ink);font-weight:500}
+.opt:hover,.opt.hi{background:var(--fk-bg)}.opt small{color:var(--muted);font-size:11px}
+.opt.none{color:var(--muted)}
+.sw{display:flex;align-items:center;gap:9px;cursor:pointer;font-size:13px;padding:6px 0}
+.sw input{position:absolute;opacity:0}
+.sw i{width:36px;height:20px;border-radius:99px;background:#cdd3df;position:relative;transition:.15s}
+.sw i:after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;left:2px;top:2px;transition:.15s}
+.sw input:checked+i{background:var(--aqua)}.sw input:checked+i:after{left:18px}
+.sw input:focus-visible+i{outline:2px solid var(--violet);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;border:1px solid #d5dbe7;border-radius:8px;padding:5px 7px;background:#fff}
+.chip{background:#edf0f9;color:#454a94;padding:2px 4px 2px 9px;border-radius:6px;font-size:12px;font-weight:700;display:inline-flex;gap:5px;align-items:center}
+.chip b{cursor:pointer;color:#8a90c2;padding:0 4px}
+.chips input{border:0!important;outline:none;flex:1;min-width:110px;padding:3px!important;font-size:13px}
+.filebox{display:flex;gap:8px}.filebox input{flex:1}
+.sys{margin-top:16px;border-top:1px dashed var(--line);padding-top:10px}
+.sys summary{cursor:pointer;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:10px}
+.savebar{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+/* relations */
+.rel h4{font-size:12px;margin:14px 0 6px;color:#6b768b}.rel h4:first-child{margin-top:0}
+.rel li{list-style:none;display:flex;justify-content:space-between;gap:8px;align-items:center;padding:6px 0;border-top:1px solid #f0f2f6;font-size:12.5px}
+.rel ul{margin:0;padding:0}
+.rel .card-n{font:11px var(--mono);color:#8a6fd8;margin-left:4px}
+.rel button.lnk{background:none;border:0;padding:0;text-align:left;color:var(--fk);font-weight:700;font-size:12.5px}
+.rel button.lnk:hover{text-decoration:underline}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow:auto;margin-top:22px}
+.tabs button{border:0;background:none;padding:10px 13px;font-weight:700;font-size:13px;color:#6a7589;border-bottom:2px solid transparent;white-space:nowrap;margin-bottom:-1px}
+.tabs button.on{color:var(--violet-d);border-color:var(--violet)}
+.tabs button span{background:#e9ecf3;border-radius:99px;font:600 10.5px var(--mono);padding:1px 7px;margin-left:5px}
+.tabs button.on span{background:#e8e0ff}
+.tabbody{border:1px solid var(--line);border-top:0;background:#fff;border-radius:0 0 var(--r) var(--r)}
+.tabhead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;gap:12px;flex-wrap:wrap}
+.tabhead p{margin:0;font-size:12.5px;color:var(--muted)}
+/* workflow */
+.steps{display:flex;gap:4px;margin:2px 0 14px}
+.st{flex:1;text-align:center;font-size:10.5px;font-weight:700;color:#8a95a9;padding-top:8px;border-top:4px solid #e2e6ee;border-radius:2px}
+.st.done{border-color:#8fd5c9;color:#1b7e70}.st.cur{border-color:var(--violet);color:var(--violet-d)}
+.chk li{list-style:none;display:flex;gap:8px;padding:6px 0;font-size:12.5px;align-items:flex-start}
+.chk ul{margin:0;padding:0}
+.chk .ok{color:var(--aqua);font-weight:800}.chk .no{color:var(--red);font-weight:800}
+.chk small{display:block;color:var(--muted);font-size:11px}
+.acts2{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+/* modal / drawer */
+.scrim{position:fixed;inset:0;background:#10182a66;z-index:40;display:none}
+.scrim.on{display:block}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(620px,100%);background:#fff;z-index:41;transform:translateX(105%);transition:transform .22s;box-shadow:-18px 0 50px #10182a33;display:flex;flex-direction:column}
+#drawer.on{transform:none}
+#drawer header{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+#drawer header h2{margin:0;font-size:16px}
+#drawer .body{padding:18px 20px;overflow:auto;flex:1}
+#modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(480px,92vw);background:#fff;border-radius:14px;z-index:42;padding:22px;box-shadow:0 30px 80px #10182a55;display:none}
+#modal.on{display:block}
+#modal h2{margin:0 0 6px;font-size:17px}
+#modal .field{margin:12px 0}
+.toast{position:fixed;bottom:22px;right:22px;background:#1c2943;color:#fff;padding:12px 16px;border-radius:9px;font-size:13px;transform:translateY(100px);transition:.25s;z-index:60;max-width:380px}
+.toast.on{transform:none}
+/* map */
+.map{overflow:auto;background:#fff}
+.map svg{display:block;width:100%;height:auto;min-width:980px}
+.node rect{fill:#fff;stroke:#c9d0df;stroke-width:1.2;rx:8}
+.node text{font:600 12px var(--sans);fill:#27314a;pointer-events:none}
+.node text.s{font:400 9.5px var(--mono);fill:#8b95a9}
+.node{cursor:pointer}
+.node.ext rect{stroke:var(--ext);stroke-dasharray:4 3;fill:var(--ext-bg)}
+.node.core rect{fill:#2b1f66;stroke:#2b1f66}.node.core text{fill:#fff}.node.core text.s{fill:#b9aef0}
+.edge{fill:none;stroke:#b3bbd0;stroke-width:1.2}
+.edge.ext{stroke:var(--ext);stroke-dasharray:4 3}
+.map.f .edge{opacity:.12}.map.f .node{opacity:.35}
+.map.f .edge.hl{opacity:1;stroke:var(--violet);stroke-width:2}.map.f .node.hl{opacity:1}
+.map.f .node.hl rect{stroke:var(--violet);stroke-width:2}
+.gh{font:700 11px var(--sans);fill:#8b95a9}
+.idx{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.idx a{display:block;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-decoration:none}
+.idx a:hover{border-color:var(--violet)}
+.idx b{display:block;font-size:13.5px}.idx code{color:#8b95a9}
+.idx p{margin:6px 0 0;font-size:11.5px;color:var(--muted)}
+.banner{background:#f7f4ff;border:1px solid #ddd3fb;border-radius:10px;padding:10px 14px;font-size:12.5px;color:#4b3a8f;margin-bottom:14px}
+.banner.w{background:#fff8e9;border-color:#f3dba5;color:#7a5a1d}
+@media(max-width:1000px){.app{grid-template-columns:1fr}.side{position:static;height:auto;max-height:300px}.layout{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}.page{padding:18px 14px 60px}.top{padding:0 14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.kidchips{display:flex;flex-wrap:wrap;gap:6px}.kidchips .chipx{background:#fff;cursor:pointer;font:600 12px var(--sans);color:var(--fk);border-color:#cfd3f5}.kidchips .chipx b{font:600 10.5px var(--mono);background:var(--fk-bg);border-radius:99px;padding:0 6px;margin-left:3px}.kidchips .chipx.z{color:#8a94a8;border-color:var(--line)}.kidchips .chipx:hover{background:var(--fk-bg)}
+
+.mwrap{position:relative}
+.msel-box{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-height:42px;border:1px solid #b7bef2;background:var(--fk-bg);border-radius:8px;padding:5px 7px;cursor:text}
+.msel.open .msel-box{box-shadow:0 0 0 2px #cfd3f7}
+.mchip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #c3c9f3;color:var(--fk);border-radius:6px;padding:3px 4px 3px 9px;font-size:12.5px;font-weight:700}
+.mchip b{cursor:pointer;color:#8b93d8;border-radius:4px;padding:0 5px;font-size:14px;line-height:1.2}.mchip b:hover{background:var(--fk-bg);color:var(--red)}
+.msel-in{flex:1;min-width:160px;border:0;outline:none;background:transparent;font-size:13px;padding:5px 3px}
+.msel-list{display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid #c7cdf0;border-radius:9px;box-shadow:0 12px 30px #1b244a2a;z-index:30;max-height:260px;overflow:auto;padding:4px}
+.msel.open .msel-list{display:block}
+.msel-bar{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px}.mdiff{font-size:12px;color:var(--muted)}
+.single{max-width:900px}
+.rcard{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 16px;background:#fff}
+.rcard:focus-within{border-color:#c9bdf3;box-shadow:0 0 0 3px #7652e61a}
+.rhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.rhead b{font-size:13.5px}
+.rbar{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #eef0f5}
+.cards .empty{padding:26px}
+.gated{grid-column:1/-1;margin-top:14px}.gated.hide{display:none}
+.roles{display:grid;gap:8px;margin-top:10px}
+.rolerow{display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:10px;align-items:center;font-size:12.5px}
+.rolerow input{border:1px solid #d5dbe7;border-radius:8px;padding:7px 10px;font-size:13px}
+.defbox{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end;padding:16px;border-bottom:1px solid var(--line)}
+.msel.dis .msel-box{background:#f1f3f7;cursor:not-allowed}
+.tabs button[style*="none"]{display:none}
+[inert]{opacity:.7}
+.mp h3.t{margin:0 0 4px}.mp .sub{font-size:12px;color:var(--muted);margin:0 0 10px}
+.mp .verdict{display:flex;gap:10px;align-items:flex-start;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:13px}
+.mp .verdict.ok{background:#eefaf2;border:1px solid #bfe6cc;color:#1d6b3c}.mp .verdict.no{background:#fff8e9;border:1px solid #f3dba5;color:#7a5a1d}
+.mp .verdict ul{margin:4px 0 0 16px;padding:0}
+.mp table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:12px}.mp th{text-align:left;color:var(--muted);font-weight:600;padding:5px 8px;border-bottom:1px solid #e3e8f2}
+.mp td{padding:6px 8px;border-bottom:1px solid #eef1f7;vertical-align:top}.mp td code{font-size:11.5px;word-break:break-all}
+.mp .vrow{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 10px;border:1px solid #e3e8f2;border-radius:10px;margin-bottom:8px}
+.mp .vrow b{font-size:13px}.mp .vrow small{display:block;color:var(--muted);font-size:11.5px}
+[inert] .savebar,[inert] .rbar,[inert] .radd,[inert] .tabhead .btn,[inert] .btn.up{display:none}
+.field[inert]{opacity:.65}
+</style></head><body>
+<div class="app"><aside class="side"><div class="brand"><i></i><div>Màn <em>chiếu</em> CMS</div></div><nav id="nav" aria-label="Chức năng"></nav></aside>
+<main><header class="top"><div class="crumb" id="crumb"></div><div class="r"><label style="font-size:12px;color:var(--muted)">Xem với vai trò <select id="role"><option value="ADMIN">Quản trị viên CMS</option><option value="EDITOR">Biên tập viên</option><option value="QC">Kiểm duyệt viên</option><option value="PROVIDER">Nhà cung cấp</option></select></label><div class="av" title="Lê Thu">LT</div></div></header>
+<div class="page" id="view"></div></main></div>
+<div class="scrim" id="scrim"></div><div class="scrim" id="scrim2" style="z-index:41"></div><aside id="drawer" aria-label="Biểu mẫu"></aside><div id="modal" role="dialog"></div><div class="toast" id="toast" role="status"></div>
+<script>
+const NOW='2026-10-06T17:00', ME=2;
+const f=(k,label,t,o={})=>Object.assign({k,label,t},o);
+const ST_ACT=[[0,'Khóa','c0'],[1,'Hoạt động','c2']];
+const AUD={
+ F:[f('ngay_tao','Ngày tạo','datetime',{ro:1,sql:'TIMESTAMPTZ'}),f('ngay_cap_nhat','Ngày cập nhật','datetime',{ro:1,sql:'TIMESTAMPTZ'}),f('nguoi_tao','Người tạo','fk',{ref:'tai_khoan_he_thong',ro:1,sql:'BIGINT',audit:1}),f('da_xoa','Đã xóa (xóa mềm)','bool',{sql:'BOOLEAN'})],
+ L:[f('ngay_tao','Ngày tạo','datetime',{ro:1,sql:'TIMESTAMPTZ'}),f('nguoi_tao','Người tạo','fk',{ref:'tai_khoan_he_thong',ro:1,sql:'BIGINT',audit:1})],
+ Q:[f('ngay_tao','Ngày tạo','datetime',{ro:1,sql:'TIMESTAMPTZ'}),f('ngay_cap_nhat','Ngày cập nhật','datetime',{ro:1,sql:'TIMESTAMPTZ'})],
+ N:[]};
+const FREEZE=[['FREE'],['VIP'],['VIP_PRO']];
+const T={
+tai_khoan_he_thong:{vi:'Tài khoản hệ thống',ic:'👤',aud:'F',cols:['ten_dang_nhap','ho_ten','email','loai','ma_nha_cung_cap','trang_thai'],filters:['loai','trang_thai'],
+ label:r=>r.ho_ten+' · '+r.ten_dang_nhap,
+ desc:'Nhân sự nội bộ và tài khoản nhà cung cấp đăng nhập CMS.',
+ fields:[f('ten_dang_nhap','Tên đăng nhập','text',{req:1,uk:1,sql:'VARCHAR(50)',hint:'3–50 ký tự: chữ, số, dấu chấm, gạch dưới, gạch ngang. Không phân biệt hoa thường.'}),f('email','Email liên hệ','text',{sql:'VARCHAR(255)',hint:'Chỉ dùng để liên hệ, không dùng để đăng nhập.'}),f('mat_khau_hash','Mật khẩu','password',{req:1,sql:'VARCHAR(255)',hint:'Hệ thống lưu dạng băm, không hiển thị lại.'}),f('ho_ten','Họ tên','text',{req:1,sql:'VARCHAR(150)'}),
+ f('loai','Loại tài khoản','enum',{req:1,opts:[[0,'Nội bộ','c3'],[1,'Nhà cung cấp','c1']],sql:'SMALLINT'}),
+ f('ma_nha_cung_cap','Nhà cung cấp','fk',{ref:'nha_cung_cap_noi_dung',sql:'BIGINT',showIf:['loai',1],hint:'Chỉ áp dụng cho tài khoản nhà cung cấp; để trống nếu là nội bộ.'}),
+ f('trang_thai','Trạng thái','enum',{req:1,opts:ST_ACT,sql:'SMALLINT'})]},
+vai_tro:{vi:'Vai trò',ic:'🛡',aud:'F',cols:['ma_vai_tro','ten','mo_ta'],label:r=>r.ma_vai_tro+' · '+r.ten,desc:'Nhóm quyền gán cho tài khoản (RBAC).',
+ fields:[f('ma_vai_tro','Mã vai trò','text',{req:1,uk:1,sql:'VARCHAR(50)'}),f('ten','Tên vai trò','text',{req:1,sql:'VARCHAR(150)'}),f('mo_ta','Mô tả','textarea',{wide:1,sql:'VARCHAR(500)'})]},
+he_thong:{vi:'Hệ thống',ic:'🧩',aud:'F',cols:['ma_he_thong','ten','trang_thai','khoa_dich_vu_luc'],filters:['trang_thai'],label:r=>r.ma_he_thong+' · '+r.ten,desc:'CMS là nơi phân quyền tập trung cho CMS, OTT backend, Affiliate API. Mỗi hệ thống có cây quyền / menu riêng và một khóa dịch vụ để backend của nó gọi API kiểm tra quyền (chỉ lưu SHA-256, khóa thô chỉ hiện một lần lúc cấp).',
+ fields:[f('ma_he_thong','Mã hệ thống','text',{req:1,uk:1,sql:'VARCHAR(30)',hint:'Chữ hoa, không đổi. Mã quyền của hệ thống khác CMS phải bắt đầu bằng mã này viết thường, ví dụ ott.user.xem.'}),f('ten','Tên hệ thống','text',{req:1,sql:'VARCHAR(150)'}),f('mo_ta','Mô tả','textarea',{wide:1,sql:'VARCHAR(500)'}),
+ f('trang_thai','Trạng thái','enum',{req:1,opts:ST_ACT,sql:'SMALLINT',hint:'Tạm ngưng: menu trả 403, kiểm tra quyền trả SYSTEM_DISABLED, khóa dịch vụ bị từ chối.'}),
+ f('khoa_dich_vu_hash','Khóa dịch vụ (SHA-256)','text',{sql:'VARCHAR(64)',hint:'Cấp / cấp lại / thu hồi bằng POST và DELETE /systems/{id}/service-key; khóa cũ mất hiệu lực ngay.'}),f('khoa_dich_vu_luc','Cấp khóa lúc','datetime',{sql:'TIMESTAMPTZ'})]},
+phien_he_thong:{vi:'Phiên đăng nhập',ic:'🔐',aud:'N',cols:['ma_he_thong','ma_phien','ma_tai_khoan_he_thong','trang_thai','ly_do_ket_thuc','bat_dau_luc','het_han_luc'],filters:['ma_he_thong','trang_thai'],label:r=>r.ma_he_thong+' · '+r.ma_phien,desc:'Sổ phiên đăng nhập của mọi hệ thống (CMS, OTT, Affiliate). Mỗi hệ thống tự quản lý phiên và token của nó rồi báo cho CMS qua Kafka session-events; CMS chỉ ghi nhận định danh phiên, không giữ token. Chỉ quản trị viên xem và thu hồi (POST /sessions/{id}/revoke); phiên của hệ thống khác bị hủy khi hệ thống đó nhận authz.session.revoked.',
+ fields:[f('ma_he_thong','Hệ thống','fk',{ref:'he_thong',ro:1,sql:'BIGINT'}),f('ma_phien','Mã phiên (sid)','text',{ro:1,uk:1,sql:'VARCHAR(64)',hint:'Do hệ thống đó cấp; duy nhất theo từng hệ thống.'}),f('ma_tai_khoan_he_thong','Tài khoản','fk',{ref:'tai_khoan_he_thong',ro:1,sql:'BIGINT'}),
+  f('trang_thai','Trạng thái','enum',{ro:1,opts:[[1,'Đang hoạt động','c2'],[2,'Đã kết thúc','c0']],sql:'SMALLINT',hint:'Phiên quá hạn mà chưa nhận sự kiện kết thúc được hiển thị là hết hạn.'}),f('ly_do_ket_thuc','Lý do kết thúc','text',{ro:1,sql:'VARCHAR(40)',hint:'LOGOUT, PASSWORD_CHANGED, PASSWORD_RESET, ACCOUNT_LOCKED, ACCOUNT_DELETED, REFRESH_REUSE_DETECTED, REVOKED_BY_ADMIN.'}),
+  f('ip','IP','text',{ro:1,sql:'VARCHAR(64)'}),f('user_agent','Thiết bị','text',{ro:1,sql:'VARCHAR(500)'}),f('bat_dau_luc','Bắt đầu lúc','datetime',{ro:1,sql:'TIMESTAMPTZ'}),f('het_han_luc','Hết hạn lúc','datetime',{ro:1,sql:'TIMESTAMPTZ'}),f('ket_thuc_luc','Kết thúc lúc','datetime',{ro:1,sql:'TIMESTAMPTZ'})]},
+quyen_han:{vi:'Quyền hạn & menu',ic:'🔑',aud:'F',cols:['ma_he_thong','ma_quyen','ten','la_menu','ma_quyen_cha','http_method','mau_duong_dan','duong_dan'],filters:['ma_he_thong','la_menu'],label:r=>r.ma_quyen,sub:r=>r.ten,desc:'Quyền hoặc menu của một hệ thống (CMS, OTT, Affiliate). Menu có đường dẫn giao diện; quyền API có thể khai báo HTTP method + mẫu đường dẫn để backend kiểm tra theo đường dẫn. Cả hai tạo thành cây cha–con trong cùng hệ thống.',
+ fields:[f('ma_he_thong','Hệ thống','fk',{ref:'he_thong',req:1,sql:'BIGINT',hint:'Không đổi sau khi tạo.'}),f('ma_quyen','Mã quyền','text',{req:1,uk:1,sql:'VARCHAR(100)',hint:'Ví dụ noi_dung.tao; hệ thống khác CMS: ott.user.xem'}),f('ten','Tên quyền','text',{req:1,sql:'VARCHAR(150)'}),f('duong_dan','Đường dẫn giao diện (menu)','text',{sql:'VARCHAR(500)',hint:'Bắt buộc với menu, ví dụ /catalog/titles'}),
+ f('la_menu','Loại','enum',{opts:[[0,'API','c3'],[1,'Menu chức năng','c2']],sql:'SMALLINT'}),
+ f('ma_quyen_cha','Quyền / menu cha','fk',{ref:'quyen_han',sql:'BIGINT',scope:(r,c)=>r.id!==c.self.id,hint:'Cùng hệ thống; menu chỉ có thể là con của menu.'}),
+ f('http_method','HTTP method (quyền API)','enum',{opts:[['GET','GET','c3'],['POST','POST','c2'],['PUT','PUT','c1'],['PATCH','PATCH','c1'],['DELETE','DELETE','c4'],['*','Mọi method','c3']],sql:'VARCHAR(10)'}),f('mau_duong_dan','Mẫu đường dẫn API','text',{sql:'VARCHAR(500)',hint:'Cú pháp PathPattern: /users/{id}, /reports/**. Khai báo cùng HTTP method hoặc bỏ trống cả hai.'}),
+ f('thu_tu','Thứ tự hiển thị','number',{sql:'INT'}),f('bieu_tuong','Biểu tượng menu','text',{sql:'VARCHAR(50)'}),f('mo_ta','Mô tả','textarea',{wide:1,sql:'VARCHAR(500)'})]},
+tai_khoan_vai_tro:{vi:'Gán vai trò cho tài khoản',ic:'🔗',aud:'L',cols:['ma_tai_khoan_he_thong','ma_vai_tro'],filters:['ma_tai_khoan_he_thong','ma_vai_tro'],unique:[['ma_tai_khoan_he_thong','ma_vai_tro']],desc:'Bảng nối N–N giữa tài khoản và vai trò.',label:r=>'#'+r.id,
+ fields:[f('ma_tai_khoan_he_thong','Tài khoản','fk',{ref:'tai_khoan_he_thong',req:1,sql:'BIGINT'}),f('ma_vai_tro','Vai trò','fk',{ref:'vai_tro',req:1,sql:'BIGINT'})]},
+vai_tro_quyen_han:{vi:'Gán quyền cho vai trò',ic:'🔗',aud:'L',cols:['ma_vai_tro','ma_quyen_han'],filters:['ma_vai_tro'],unique:[['ma_vai_tro','ma_quyen_han']],desc:'Bảng nối N–N giữa vai trò và quyền hạn.',label:r=>'#'+r.id,
+ fields:[f('ma_vai_tro','Vai trò','fk',{ref:'vai_tro',req:1,sql:'BIGINT'}),f('ma_quyen_han','Quyền hạn','fk',{ref:'quyen_han',req:1,sql:'BIGINT'})]},
+nha_cung_cap_noi_dung:{vi:'Nhà cung cấp nội dung',ic:'🏢',aud:'F',cols:['ten','loai','lien_he','trang_thai'],filters:['loai','trang_thai'],label:r=>r.ten,desc:'Studio, creator hoặc đội nội bộ cung cấp phim.',
+ fields:[f('ten','Tên nhà cung cấp','text',{req:1,sql:'VARCHAR(255)'}),f('loai','Loại','enum',{opts:[['studio','Studio','c3'],['creator','Creator','c1'],['in_house','Nội bộ','c2']],sql:'VARCHAR(50)'}),f('lien_he','Thông tin liên hệ','text',{sql:'VARCHAR(255)'}),f('trang_thai','Trạng thái','enum',{req:1,opts:[[0,'Ngừng hợp tác','c0'],[1,'Hoạt động','c2']],sql:'SMALLINT'})]},
+ngon_ngu:{vi:'Ngôn ngữ',ic:'🌐',aud:'F',cols:['ma_ngon_ngu','ten','trang_thai','thu_tu'],filters:['trang_thai'],label:r=>r.ma_ngon_ngu+' · '+r.ten,desc:'Danh mục ngôn ngữ dùng chung cho bản dịch, phụ đề và ảnh.',
+ fields:[f('ma_ngon_ngu','Mã ngôn ngữ','text',{req:1,uk:1,sql:'VARCHAR(10)',hint:'vi, en, ko…'}),f('ten','Tên ngôn ngữ','text',{req:1,sql:'VARCHAR(100)'}),f('trang_thai','Trạng thái','enum',{req:1,opts:[[0,'Ngừng sử dụng','c0'],[1,'Đang sử dụng','c2']],sql:'SMALLINT'}),f('thu_tu','Thứ tự hiển thị','number',{sql:'SMALLINT'})]},
+noi_dung:{vi:'Nội dung',ic:'🎬',aud:'F',cols:['tieu_de','loai','ma_nha_cung_cap','trang_thai','nam_phat_hanh'],filters:['loai','trang_thai','ma_nha_cung_cap'],label:r=>r.tieu_de,sub:r=>['Phim lẻ','Series','Tập'][r.loai],
+ desc:'Phim lẻ, series hoặc tập phim. Trạng thái đổi qua quy trình duyệt, không sửa trực tiếp.',
+ fields:[f('tieu_de','Tiêu đề mặc định','text',{req:1,sql:'VARCHAR(500)',hint:'Dùng khi chưa có bản dịch cho ngôn ngữ người xem.'}),
+ f('loai','Loại nội dung','enum',{req:1,opts:[[0,'Phim lẻ','c3'],[1,'Series','c4'],[2,'Tập phim','c1']],sql:'SMALLINT'}),
+ f('ma_nha_cung_cap','Nhà cung cấp','fk',{ref:'nha_cung_cap_noi_dung',req:1,sql:'BIGINT'}),f('nam_phat_hanh','Năm phát hành','number',{sql:'SMALLINT'}),
+ f('ma_noi_dung_cha','Series chứa tập','fk',{ref:'noi_dung',sql:'BIGINT',showIf:['loai',2],scope:r=>r.loai===1,hint:'Chỉ chọn nội dung loại Series.'}),
+ f('ma_mua_phim','Mùa phim','fk',{ref:'mua_phim',sql:'BIGINT',showIf:['loai',2],scope:(r,c)=>{const v=c.vals().ma_noi_dung_cha;return !v||r.ma_noi_dung===v}}),
+ f('so_tap','Số tập','number',{sql:'INT',hint:'Với tập phim: thứ tự tập; với Series: tổng số tập.'}),
+ f('ma_phien_ban_mac_dinh','Phiên bản media đang phục vụ','fk',{ref:'phien_ban_noi_dung',sql:'BIGINT',scope:(r,c)=>r.ma_noi_dung===c.self.id,hint:'Chọn trong các phiên bản của chính nội dung này (BR-12).'}),
+ f('trang_thai','Trạng thái','enum',{ro:1,opts:[[0,'Bản nháp','c0'],[1,'Chờ QC','c1'],[2,'Sẵn sàng','c2'],[3,'Đã xuất bản','c3'],[4,'Gỡ xuất bản','c4']],sql:'SMALLINT',hint:'Chỉ đổi bằng các nút quy trình bên phải (BR-11).'}),
+ f('trace_id','Trace ID','text',{ro:1,sql:'UUID',hint:'Theo dõi toàn bộ xử lý khi gửi sang Media API.'}),
+ f('mo_ta','Mô tả mặc định','textarea',{wide:1,sql:'TEXT'})]},
+mua_phim:{vi:'Mùa phim',ic:'🗂',aud:'F',cols:['ma_noi_dung','so_mua','tieu_de','nam_phat_hanh'],filters:['ma_noi_dung'],unique:[['ma_noi_dung','so_mua']],label:r=>'Mùa '+r.so_mua+' · '+(lbl('noi_dung',r.ma_noi_dung)),desc:'Mùa của một Series; tập phim thuộc về mùa.',
+ fields:[f('ma_noi_dung','Series','fk',{ref:'noi_dung',req:1,sql:'BIGINT',scope:r=>r.loai===1}),f('so_mua','Số mùa','number',{req:1,sql:'INT'}),f('tieu_de','Tiêu đề mùa','text',{sql:'VARCHAR(500)'}),f('nam_phat_hanh','Năm phát hành','number',{sql:'SMALLINT'}),f('mo_ta','Mô tả','textarea',{wide:1,sql:'TEXT'})]},
+noi_dung_da_ngon_ngu:{vi:'Bản dịch nội dung',ic:'🈯',aud:'F',cols:['ma_noi_dung','ma_ngon_ngu','tieu_de','mo_ta_ngan'],filters:['ma_noi_dung','ma_ngon_ngu'],unique:[['ma_noi_dung','ma_ngon_ngu']],label:r=>r.tieu_de,desc:'Tiêu đề và mô tả theo từng ngôn ngữ (BR-05).',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('ma_ngon_ngu','Ngôn ngữ','fk',{ref:'ngon_ngu',req:1,sql:'BIGINT'}),f('tieu_de','Tiêu đề','text',{req:1,wide:1,sql:'VARCHAR(500)'}),f('mo_ta_ngan','Mô tả ngắn','text',{wide:1,sql:'VARCHAR(1000)'}),f('mo_ta','Mô tả chi tiết','textarea',{wide:1,sql:'TEXT'})]},
+thong_tin_noi_dung:{vi:'Thông tin chi tiết nội dung',ic:'ℹ️',aud:'F',cols:['ma_noi_dung','quoc_gia','ma_ngon_ngu_goc','thoi_luong_phut','xep_hang'],filters:['ma_noi_dung'],one:1,label:r=>'Thông tin · '+lbl('noi_dung',r.ma_noi_dung),desc:'Metadata 1–1 với nội dung: quốc gia, ngôn ngữ gốc, thể loại, thời lượng, độ tuổi.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,uk:1,sql:'BIGINT'}),f('quoc_gia','Quốc gia sản xuất','text',{sql:'VARCHAR(100)'}),f('ma_ngon_ngu_goc','Ngôn ngữ gốc','fk',{ref:'ngon_ngu',req:1,sql:'BIGINT'}),f('thoi_luong_phut','Thời lượng (phút)','number',{sql:'INT'}),f('do_tuoi','Độ tuổi tối thiểu','number',{sql:'SMALLINT'}),f('xep_hang','Xếp hạng','text',{sql:'VARCHAR(20)',hint:'Ví dụ T13, T16, T18'}),f('the_loai_tag','Thể loại (tag)','tags',{wide:1,sql:'JSONB',hint:'Gõ tên thể loại rồi nhấn Enter.'})]},
+dao_dien:{vi:'Đạo diễn',ic:'🎥',aud:'F',cols:['ho_ten','ten_khac','quoc_tich','ngay_sinh'],label:r=>r.ho_ten,desc:'Hồ sơ đạo diễn dùng chung cho nhiều nội dung.',
+ fields:[f('ho_ten','Họ tên','text',{req:1,sql:'VARCHAR(255)'}),f('ten_khac','Tên khác / bí danh','text',{sql:'VARCHAR(255)'}),f('quoc_tich','Quốc tịch','text',{sql:'VARCHAR(100)'}),f('ngay_sinh','Ngày sinh','date',{sql:'DATE'}),f('anh_dai_dien','Ảnh đại diện','file',{wide:1,sql:'VARCHAR(255)',prefix:'people/directors/'}),f('gioi_thieu','Tiểu sử / giới thiệu','textarea',{wide:1,sql:'TEXT'})]},
+dien_vien:{vi:'Diễn viên',ic:'🎭',aud:'F',cols:['ho_ten','ten_khac','quoc_tich','ngay_sinh'],label:r=>r.ho_ten,desc:'Hồ sơ diễn viên dùng chung cho nhiều nội dung.',
+ fields:[f('ho_ten','Họ tên','text',{req:1,sql:'VARCHAR(255)'}),f('ten_khac','Tên khác / bí danh','text',{sql:'VARCHAR(255)'}),f('quoc_tich','Quốc tịch','text',{sql:'VARCHAR(100)'}),f('ngay_sinh','Ngày sinh','date',{sql:'DATE'}),f('anh_dai_dien','Ảnh đại diện','file',{wide:1,sql:'VARCHAR(255)',prefix:'people/actors/'}),f('gioi_thieu','Tiểu sử / giới thiệu','textarea',{wide:1,sql:'TEXT'})]},
+noi_dung_dao_dien:{vi:'Đạo diễn của nội dung',ic:'🔗',aud:'L',cols:['ma_noi_dung','ma_dao_dien','thu_tu'],filters:['ma_noi_dung','ma_dao_dien'],unique:[['ma_noi_dung','ma_dao_dien']],label:r=>'#'+r.id,desc:'Bảng nối N–N giữa nội dung và đạo diễn.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('ma_dao_dien','Đạo diễn','fk',{ref:'dao_dien',req:1,sql:'BIGINT'}),f('thu_tu','Thứ tự hiển thị','number',{sql:'SMALLINT'})]},
+noi_dung_dien_vien:{vi:'Diễn viên của nội dung',ic:'🔗',aud:'L',cols:['ma_noi_dung','ma_dien_vien','vai_dien','thu_tu'],filters:['ma_noi_dung','ma_dien_vien'],unique:[['ma_noi_dung','ma_dien_vien']],label:r=>'#'+r.id,desc:'Bảng nối N–N giữa nội dung và diễn viên, kèm vai diễn.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('ma_dien_vien','Diễn viên','fk',{ref:'dien_vien',req:1,sql:'BIGINT'}),f('vai_dien','Vai diễn','text',{sql:'VARCHAR(255)'}),f('thu_tu','Thứ tự hiển thị','number',{sql:'SMALLINT'})]},
+phien_ban_noi_dung:{vi:'Phiên bản media',ic:'🎞',aud:'L',cols:['ma_noi_dung','so_phien_ban','ma_tai_nguyen_media','ghi_chu'],filters:['ma_noi_dung'],unique:[['ma_noi_dung','so_phien_ban']],label:r=>'v'+r.so_phien_ban+' · '+lbl('noi_dung',r.ma_noi_dung),sub:r=>r.ghi_chu,
+ desc:'Mỗi lần encode lại sinh một phiên bản mới (BR-12). Tài nguyên media nằm ở media_db.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('so_phien_ban','Số phiên bản','number',{req:1,sql:'INT'}),f('ma_tai_nguyen_media','Tài nguyên media','fk',{ref:'@media',sql:'BIGINT',hint:'Khóa logic sang media_db.tai_nguyen_media — không có khóa ngoại vật lý.'}),f('ghi_chu','Ghi chú phiên bản','text',{wide:1,sql:'VARCHAR(500)'})]},
+danh_muc:{vi:'Danh mục',ic:'📚',aud:'F',cols:['ten','ma_danh_muc_cha','mo_ta'],filters:['ma_danh_muc_cha'],label:r=>(r.ma_danh_muc_cha?lbl('danh_muc',r.ma_danh_muc_cha)+' › ':'')+r.ten,desc:'Cây phân loại chính thức, ví dụ Phim › Hàn Quốc.',
+ fields:[f('ten','Tên mặc định','text',{req:1,sql:'VARCHAR(150)'}),f('ma_danh_muc_cha','Danh mục cha','fk',{ref:'danh_muc',sql:'BIGINT',scope:(r,c)=>r.id!==c.self.id,hint:'Để trống nếu là danh mục gốc.'}),f('mo_ta','Mô tả mặc định','textarea',{wide:1,sql:'TEXT'})]},
+danh_muc_da_ngon_ngu:{vi:'Bản dịch danh mục',ic:'🈯',aud:'F',cols:['ma_danh_muc','ma_ngon_ngu','ten'],filters:['ma_danh_muc','ma_ngon_ngu'],unique:[['ma_danh_muc','ma_ngon_ngu']],label:r=>r.ten,desc:'Tên và mô tả danh mục theo ngôn ngữ.',
+ fields:[f('ma_danh_muc','Danh mục','fk',{ref:'danh_muc',req:1,sql:'BIGINT'}),f('ma_ngon_ngu','Ngôn ngữ','fk',{ref:'ngon_ngu',req:1,sql:'BIGINT'}),f('ten','Tên theo ngôn ngữ','text',{req:1,wide:1,sql:'VARCHAR(150)'}),f('mo_ta','Mô tả','textarea',{wide:1,sql:'TEXT'})]},
+noi_dung_danh_muc:{vi:'Gán danh mục cho nội dung',ic:'🔗',aud:'L',cols:['ma_noi_dung','ma_danh_muc'],filters:['ma_noi_dung','ma_danh_muc'],unique:[['ma_noi_dung','ma_danh_muc']],label:r=>'#'+r.id,desc:'Bảng nối N–N giữa nội dung và danh mục.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('ma_danh_muc','Danh mục','fk',{ref:'danh_muc',req:1,sql:'BIGINT'})]},
+phu_de:{vi:'Phụ đề',ic:'💬',aud:'F',cols:['ma_noi_dung','ma_ngon_ngu','dinh_dang','loai_phu_de','khoa_tep'],filters:['ma_noi_dung','ma_ngon_ngu'],label:r=>lbl('ngon_ngu',r.ma_ngon_ngu)+' · '+r.dinh_dang,desc:'Tệp phụ đề lưu trên R2, theo từng ngôn ngữ.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('ma_ngon_ngu','Ngôn ngữ phụ đề','fk',{ref:'ngon_ngu',req:1,sql:'BIGINT'}),
+ f('dinh_dang','Định dạng','enum',{req:1,opts:[['SRT','SRT'],['VTT','VTT'],['TTML','TTML']],sql:'VARCHAR(10)'}),f('loai_phu_de','Loại phụ đề','enum',{req:1,opts:[['NORMAL','NORMAL'],['FORCED','FORCED'],['SDH','SDH']],sql:'VARCHAR(20)',def:'NORMAL'}),
+ f('khoa_tep','Khóa tệp trên R2','file',{req:1,wide:1,sql:'VARCHAR(255)',prefix:'subtitles/'})]},
+anh_bia:{vi:'Ảnh bìa',ic:'🖼',aud:'F',cols:['ma_noi_dung','loai','ten_tep','ma_ngon_ngu','la_mac_dinh'],filters:['ma_noi_dung','loai'],label:r=>r.ten_tep||('#'+r.id),desc:'Poster, thumbnail, backdrop của nội dung.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('loai','Loại ảnh','enum',{req:1,opts:[[0,'Poster','c3'],[1,'Thumbnail','c0'],[2,'Backdrop','c1']],sql:'SMALLINT'}),
+ f('khoa_tep','Khóa tệp trên R2','file',{req:1,wide:1,sql:'VARCHAR(255)',prefix:'images/'}),f('ten_tep','Tên tệp','text',{sql:'VARCHAR(255)'}),f('mime_type','MIME type','text',{sql:'VARCHAR(100)'}),
+ f('kich_thuoc','Kích thước (byte)','number',{sql:'BIGINT'}),f('checksum','Checksum','text',{sql:'VARCHAR(128)'}),f('chieu_rong','Chiều rộng (px)','number',{sql:'INT'}),f('chieu_cao','Chiều cao (px)','number',{sql:'INT'}),
+ f('ma_ngon_ngu','Ngôn ngữ của ảnh','fk',{ref:'ngon_ngu',sql:'BIGINT',hint:'Để trống nếu ảnh dùng chung mọi ngôn ngữ.'}),f('la_mac_dinh','Ảnh mặc định của loại này','bool',{sql:'BOOLEAN'})]},
+quy_trinh_noi_dung:{vi:'Quy trình hiện tại',ic:'🧭',aud:'Q',cols:['ma_noi_dung','buoc','trang_thai','ma_nguoi_phu_trach'],filters:['buoc','trang_thai','ma_nguoi_phu_trach'],one:1,label:r=>'Quy trình · '+lbl('noi_dung',r.ma_noi_dung),desc:'Bước xử lý hiện tại của từng nội dung (1–1) và người phụ trách.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,uk:1,sql:'BIGINT'}),f('buoc','Bước hiện tại','enum',{req:1,opts:[['BAN_NHAP','Bản nháp','c0'],['QC','QC','c1'],['DUYET','Duyệt','c3'],['XUAT_BAN','Xuất bản','c2'],['GO_XUAT_BAN','Gỡ xuất bản','c4']],sql:'VARCHAR(50)'}),
+ f('trang_thai','Trạng thái bước','enum',{req:1,opts:[[0,'Đang xử lý','c1'],[1,'Hoàn tất','c2'],[2,'Trả lại','c4']],sql:'SMALLINT'}),f('ma_nguoi_phu_trach','Người phụ trách','fk',{ref:'tai_khoan_he_thong',sql:'BIGINT',scope:r=>r.loai===0})]},
+lich_su_quy_trinh:{vi:'Lịch sử quy trình',ic:'📜',aud:'N',append:1,cols:['thoi_diem','ma_noi_dung','buoc_tu','buoc_den','ma_nguoi_thuc_hien','ghi_chu'],filters:['ma_noi_dung','ma_nguoi_thuc_hien'],label:r=>'#'+r.id,desc:'Chỉ ghi thêm, không sửa hoặc xóa (BR-13, BR-20). Dòng mới được tạo khi bấm nút chuyển bước.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('buoc_tu','Từ bước','text',{sql:'VARCHAR(50)'}),f('buoc_den','Đến bước','text',{req:1,sql:'VARCHAR(50)'}),f('ma_nguoi_thuc_hien','Người thực hiện','fk',{ref:'tai_khoan_he_thong',sql:'BIGINT'}),f('thoi_diem','Thời điểm','datetime',{req:1,sql:'TIMESTAMPTZ'}),f('ghi_chu','Ghi chú','text',{wide:1,sql:'VARCHAR(500)'})]},
+lich_phat_hanh:{vi:'Lịch phát hành',ic:'📅',aud:'F',cols:['ma_noi_dung','phat_hanh_luc','het_hieu_luc_luc','trang_thai'],filters:['ma_noi_dung','trang_thai'],label:r=>lbl('noi_dung',r.ma_noi_dung)+' · '+fmt(r.phat_hanh_luc),desc:'Khoảng thời gian nội dung được hiển thị ở OTT (BR-11).',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('trang_thai','Trạng thái lịch','enum',{req:1,opts:[[0,'Chờ','c1'],[1,'Đang hiệu lực','c2'],[2,'Đã gỡ','c4']],sql:'SMALLINT'}),f('phat_hanh_luc','Phát hành lúc','datetime',{req:1,sql:'TIMESTAMPTZ'}),f('het_hieu_luc_luc','Hết hiệu lực lúc','datetime',{sql:'TIMESTAMPTZ',hint:'Để trống nếu không giới hạn.'})]},
+ban_quyen_noi_dung:{vi:'Bản quyền nội dung',ic:'©️',aud:'F',cols:['ma_noi_dung','bat_dau_luc','ket_thuc_luc','lanh_tho'],filters:['ma_noi_dung'],label:r=>'Bản quyền · '+lbl('noi_dung',r.ma_noi_dung),desc:'Thời hạn và lãnh thổ được phân phối; OTT dùng để kiểm tra khi phát (BR-09).',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT',wide:1}),f('bat_dau_luc','Bắt đầu lúc','datetime',{req:1,sql:'TIMESTAMPTZ'}),f('ket_thuc_luc','Kết thúc lúc','datetime',{sql:'TIMESTAMPTZ'}),f('lanh_tho','Lãnh thổ được phép','tags',{wide:1,sql:'JSONB',upper:1,hint:'Mã quốc gia 2 ký tự (VN, KH, LA…). Gõ rồi nhấn Enter.'})]},
+cap_quyen_xem:{vi:'Cấp quyền xem',ic:'⭐',aud:'F',cols:['ma_cap_quyen','thu_tu','trang_thai'],label:r=>r.ma_cap_quyen,sub:r=>'cấp '+r.thu_tu,desc:'Danh mục cấp quyền: cấp cao kế thừa quyền của cấp thấp (FREE → VIP → VIP_PRO, BR-06).',
+ fields:[f('ma_cap_quyen','Mã cấp quyền','text',{req:1,uk:1,sql:'VARCHAR(50)'}),f('thu_tu','Thứ tự cấp','number',{req:1,uk:1,sql:'SMALLINT'}),f('trang_thai','Trạng thái','enum',{req:1,opts:[[0,'Ngừng','c0'],[1,'Hoạt động','c2']],sql:'SMALLINT'})]},
+chinh_sach_quyen_xem:{vi:'Chính sách quyền xem',ic:'🎟',aud:'F',cols:['ma_noi_dung','ma_cap_quyen','duoc_xem','chat_luong_toi_da','so_tap_toi_da','trang_thai'],filters:['ma_noi_dung','ma_cap_quyen'],label:r=>lbl('noi_dung',r.ma_noi_dung)+' · '+lbl('cap_quyen_xem',r.ma_cap_quyen),desc:'Mỗi nội dung yêu cầu cấp quyền nào và được xem thế nào (BR-06, BR-07). Không hard-code trong API.',
+ fields:[f('ma_noi_dung','Nội dung','fk',{ref:'noi_dung',req:1,sql:'BIGINT'}),f('ma_cap_quyen','Cấp quyền','fk',{ref:'cap_quyen_xem',req:1,sql:'BIGINT'}),f('duoc_xem','Được xem','bool',{sql:'BOOLEAN',def:true}),
+ f('chat_luong_toi_da','Chất lượng tối đa','enum',{opts:[['240p','240p'],['360p','360p'],['480p','480p'],['720p','720p'],['1080p','1080p'],['2160p','2160p']],sql:'VARCHAR(20)'}),
+ f('so_tap_toi_da','Số tập tối đa','number',{sql:'INT',hint:'Để trống = không giới hạn. Dùng cho Series (ví dụ FREE xem 2 tập đầu).'}),
+ f('trang_thai','Trạng thái','enum',{req:1,opts:[[0,'Không áp dụng','c0'],[1,'Áp dụng','c2']],sql:'SMALLINT'}),
+ f('ngay_bat_dau','Bắt đầu hiệu lực','datetime',{sql:'TIMESTAMPTZ'}),f('ngay_ket_thuc','Kết thúc hiệu lực','datetime',{sql:'TIMESTAMPTZ'})]}
+};
+const GROUPS=[
+ ['Quản trị / RBAC','rbac',['he_thong','phien_he_thong','tai_khoan_he_thong','vai_tro','quyen_han','tai_khoan_vai_tro','vai_tro_quyen_han']],
+ ['Nhà cung cấp','ncc',['nha_cung_cap_noi_dung']],
+ ['Nội dung','content',['noi_dung','mua_phim','noi_dung_da_ngon_ngu','thong_tin_noi_dung','phien_ban_noi_dung','dao_dien','dien_vien','noi_dung_dao_dien','noi_dung_dien_vien']],
+ ['Phân loại & ngôn ngữ','cat',['danh_muc','danh_muc_da_ngon_ngu','noi_dung_danh_muc','ngon_ngu']],
+ ['Media metadata','media',['phu_de','anh_bia']],
+ ['Workflow','wf',['quy_trinh_noi_dung','lich_su_quy_trinh']],
+ ['Phát hành & bản quyền','rel',['lich_phat_hanh','ban_quyen_noi_dung','cap_quyen_xem','chinh_sach_quyen_xem']]];
+const ROLES={ADMIN:['rbac','ncc','content','cat','media','wf','rel'],EDITOR:['content','cat','media'],QC:['content','media','wf','rel'],PROVIDER:['content','wf']};
+const EXT=[{id:19001,name:'qua-nhung-mua-mua_v1.mov',st:'SAN_SANG'},{id:19002,name:'qua-nhung-mua-mua_v2.mov',st:'SAN_SANG'},{id:19003,name:'qua-nhung-mua-mua_v3.mov',st:'SAN_SANG'},{id:19004,name:'gio-tu-bo-xa_ep05.mov',st:'SAN_SANG'},{id:19273,name:'gio-tu-bo-xa_ep06.mov',st:'XAC_MINH'},{id:19005,name:'vet-nang-cuoi-ngay.mov',st:'LOI'}];
+const DB={
+tai_khoan_he_thong:[
+ {id:1,ten_dang_nhap:'admin',email:'admin@manchieu.vn',mat_khau_hash:'x',ho_ten:'Quản trị hệ thống',loai:0,ma_nha_cung_cap:null,trang_thai:1},
+ {id:2,ten_dang_nhap:'le.thu',email:'le.thu@manchieu.vn',mat_khau_hash:'x',ho_ten:'Lê Thu',loai:0,ma_nha_cung_cap:null,trang_thai:1},
+ {id:3,ten_dang_nhap:'ha.nguyen',email:'ha.nguyen@manchieu.vn',mat_khau_hash:'x',ho_ten:'Hà Nguyễn',loai:0,ma_nha_cung_cap:null,trang_thai:1},
+ {id:4,ten_dang_nhap:'mocstudio',email:'contact@mocstudio.vn',mat_khau_hash:'x',ho_ten:'Mộc Studio',loai:1,ma_nha_cung_cap:1,trang_thai:1},
+ {id:5,ten_dang_nhap:'huongfilms',email:'ops@huongfilms.vn',mat_khau_hash:'x',ho_ten:'Hương Films',loai:1,ma_nha_cung_cap:2,trang_thai:0}],
+vai_tro:[{id:1,ma_vai_tro:'ADMIN',ten:'Quản trị viên CMS',mo_ta:'Toàn quyền nội dung, quy trình, tài khoản và vai trò.'},{id:2,ma_vai_tro:'EDITOR',ten:'Biên tập viên',mo_ta:'Sửa metadata, phụ đề, ảnh bìa, gán danh mục.'},{id:3,ma_vai_tro:'QC',ten:'Kiểm duyệt viên',mo_ta:'Duyệt hoặc trả lại nội dung, khởi tạo transcode/DRM.'},{id:4,ma_vai_tro:'PROVIDER',ten:'Nhà cung cấp nội dung',mo_ta:'Tạo nội dung, tải video gốc, xem trạng thái nội dung của mình.'}],
+phien_he_thong:[{id:1,ma_he_thong:1,ma_phien:'f3b1…a9',ma_tai_khoan_he_thong:1,trang_thai:1,ly_do_ket_thuc:null,ip:'10.0.0.5',user_agent:'Chrome 126',bat_dau_luc:'2026-10-06T08:30',het_han_luc:'2026-10-13T08:30',ket_thuc_luc:null},{id:2,ma_he_thong:2,ma_phien:'ott-7c21…',ma_tai_khoan_he_thong:2,trang_thai:1,ly_do_ket_thuc:null,ip:'203.0.113.9',user_agent:'OTT web',bat_dau_luc:'2026-10-06T09:10',het_han_luc:'2026-10-13T09:10',ket_thuc_luc:null},{id:3,ma_he_thong:2,ma_phien:'ott-1d90…',ma_tai_khoan_he_thong:2,trang_thai:2,ly_do_ket_thuc:'LOGOUT',ip:'203.0.113.9',user_agent:'OTT app',bat_dau_luc:'2026-10-05T20:00',het_han_luc:'2026-10-12T20:00',ket_thuc_luc:'2026-10-05T21:30'}],
+he_thong:[{id:1,ma_he_thong:'CMS',ten:'CMS',mo_ta:'Hệ thống quản trị nội dung',trang_thai:1,khoa_dich_vu_hash:null,khoa_dich_vu_luc:null},{id:2,ma_he_thong:'OTT',ten:'OTT backend',mo_ta:'Backend nền tảng OTT',trang_thai:1,khoa_dich_vu_hash:'9f2c…e1',khoa_dich_vu_luc:'2026-10-01T09:00'},{id:3,ma_he_thong:'AFFILIATE',ten:'Affiliate API',mo_ta:'API tiếp thị liên kết',trang_thai:1,khoa_dich_vu_hash:null,khoa_dich_vu_luc:null}],
+quyen_han:[
+ {id:1,ma_he_thong:1,ma_quyen:'menu.noi_dung',ten:'Menu Nội dung',duong_dan:'/noi-dung',la_menu:1,ma_quyen_cha:null,http_method:null,mau_duong_dan:null,thu_tu:1,bieu_tuong:null,mo_ta:''},
+ {id:2,ma_he_thong:1,ma_quyen:'noi_dung.xem',ten:'Xem nội dung',duong_dan:'',la_menu:0,ma_quyen_cha:1,http_method:'GET',mau_duong_dan:'/api/noi-dung',thu_tu:2,bieu_tuong:null,mo_ta:''},
+ {id:3,ma_he_thong:1,ma_quyen:'noi_dung.tao',ten:'Tạo nội dung',duong_dan:'',la_menu:0,ma_quyen_cha:1,http_method:'POST',mau_duong_dan:'/api/noi-dung',thu_tu:3,bieu_tuong:null,mo_ta:''},
+ {id:4,ma_he_thong:1,ma_quyen:'noi_dung.sua',ten:'Sửa nội dung',duong_dan:'',la_menu:0,ma_quyen_cha:1,http_method:'PUT',mau_duong_dan:'/api/noi-dung/{id}',thu_tu:4,bieu_tuong:null,mo_ta:''},
+ {id:5,ma_he_thong:1,ma_quyen:'noi_dung.duyet',ten:'Duyệt / trả lại nội dung',duong_dan:'',la_menu:0,ma_quyen_cha:1,http_method:'POST',mau_duong_dan:'/api/noi-dung/{id}/duyet',thu_tu:5,bieu_tuong:null,mo_ta:'Bước QC'},
+ {id:6,ma_he_thong:1,ma_quyen:'noi_dung.xuat_ban',ten:'Xuất bản / gỡ xuất bản',duong_dan:'',la_menu:0,ma_quyen_cha:1,http_method:'POST',mau_duong_dan:'/api/noi-dung/{id}/xuat-ban',thu_tu:6,bieu_tuong:null,mo_ta:''},
+ {id:7,ma_he_thong:1,ma_quyen:'media.transcode',ten:'Khởi tạo transcode + DRM',duong_dan:'',la_menu:0,ma_quyen_cha:1,http_method:'POST',mau_duong_dan:'/media/jobs',thu_tu:7,bieu_tuong:null,mo_ta:''},
+ {id:8,ma_he_thong:1,ma_quyen:'menu.quan_tri',ten:'Menu Quản trị',duong_dan:'/quan-tri',la_menu:1,ma_quyen_cha:null,http_method:null,mau_duong_dan:null,thu_tu:8,bieu_tuong:null,mo_ta:''},
+ {id:9,ma_he_thong:1,ma_quyen:'tai_khoan.quan_ly',ten:'Quản lý tài khoản',duong_dan:'/quan-tri/tai-khoan',la_menu:1,ma_quyen_cha:8,http_method:null,mau_duong_dan:null,thu_tu:9,bieu_tuong:null,mo_ta:''},
+ {id:10,ma_he_thong:1,ma_quyen:'vai_tro.quan_ly',ten:'Quản lý vai trò',duong_dan:'/quan-tri/vai-tro',la_menu:1,ma_quyen_cha:8,http_method:null,mau_duong_dan:null,thu_tu:10,bieu_tuong:null,mo_ta:''},
+ {id:11,ma_he_thong:2,ma_quyen:'ott.menu.catalog',ten:'Menu Catalog OTT',duong_dan:'/catalog',la_menu:1,ma_quyen_cha:null,http_method:null,mau_duong_dan:null,thu_tu:1,bieu_tuong:'film',mo_ta:''},
+ {id:12,ma_he_thong:2,ma_quyen:'ott.menu.titles',ten:'Danh sách title',duong_dan:'/catalog/titles',la_menu:1,ma_quyen_cha:11,http_method:null,mau_duong_dan:null,thu_tu:1,bieu_tuong:null,mo_ta:''},
+ {id:13,ma_he_thong:2,ma_quyen:'ott.titles.xem',ten:'Xem title',duong_dan:'',la_menu:0,ma_quyen_cha:12,http_method:'GET',mau_duong_dan:'/titles/{id}',thu_tu:1,bieu_tuong:null,mo_ta:''},
+ {id:14,ma_he_thong:2,ma_quyen:'ott.titles.sua',ten:'Sửa title',duong_dan:'',la_menu:0,ma_quyen_cha:12,http_method:'PUT',mau_duong_dan:'/titles/{id}',thu_tu:2,bieu_tuong:null,mo_ta:''},
+ {id:15,ma_he_thong:3,ma_quyen:'affiliate.menu.campaigns',ten:'Menu Chiến dịch',duong_dan:'/campaigns',la_menu:1,ma_quyen_cha:null,http_method:null,mau_duong_dan:null,thu_tu:1,bieu_tuong:'megaphone',mo_ta:''},
+ {id:16,ma_he_thong:3,ma_quyen:'affiliate.campaigns.xem',ten:'Xem chiến dịch',duong_dan:'',la_menu:0,ma_quyen_cha:15,http_method:'GET',mau_duong_dan:'/campaigns/**',thu_tu:1,bieu_tuong:null,mo_ta:''}],
+tai_khoan_vai_tro:[[1,1],[2,3],[3,2],[4,4],[5,4]].map((p,i)=>({id:i+1,ma_tai_khoan_he_thong:p[0],ma_vai_tro:p[1]})),
+vai_tro_quyen_han:[[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7],[1,8],[1,9],[1,10],[2,1],[2,2],[2,3],[2,4],[3,1],[3,2],[3,5],[3,6],[3,7],[4,1],[4,2],[4,3]].map((p,i)=>({id:i+1,ma_vai_tro:p[0],ma_quyen_han:p[1]})),
+nha_cung_cap_noi_dung:[{id:1,ten:'Mộc Studio',loai:'studio',lien_he:'contact@mocstudio.vn',trang_thai:1},{id:2,ten:'Hương Films',loai:'studio',lien_he:'ops@huongfilms.vn',trang_thai:1},{id:3,ten:'Kỳ Nam Pictures',loai:'studio',lien_he:'0903 555 012',trang_thai:1},{id:4,ten:'Bluefin Studio',loai:'creator',lien_he:'hello@bluefin.studio',trang_thai:0},{id:5,ten:'Màn Chiếu Originals',loai:'in_house',lien_he:'content@manchieu.vn',trang_thai:1}],
+ngon_ngu:[{id:1,ma_ngon_ngu:'vi',ten:'Tiếng Việt',trang_thai:1,thu_tu:1},{id:2,ma_ngon_ngu:'en',ten:'English',trang_thai:1,thu_tu:2},{id:3,ma_ngon_ngu:'ko',ten:'한국어',trang_thai:1,thu_tu:3},{id:4,ma_ngon_ngu:'ja',ten:'日本語',trang_thai:0,thu_tu:4}],
+noi_dung:[
+ {id:1,ma_nha_cung_cap:1,tieu_de:'Qua những mùa mưa',mo_ta:'Giữa những cơn mưa kéo dài, An trở về quê nhà và lần theo những lá thư chưa kịp gửi.',loai:0,ma_noi_dung_cha:null,ma_mua_phim:null,so_tap:null,trang_thai:3,ma_phien_ban_mac_dinh:3,nam_phat_hanh:2026,trace_id:'0d5f9e1a-7b0c-4c11-9a42-3f6e1a2b7c10'},
+ {id:2,ma_nha_cung_cap:2,tieu_de:'Gió từ bờ xa',mo_ta:'Một thị trấn ven biển và những bí mật của ba gia đình.',loai:1,ma_noi_dung_cha:null,ma_mua_phim:null,so_tap:10,trang_thai:3,ma_phien_ban_mac_dinh:null,nam_phat_hanh:2026,trace_id:'6c2a1b90-1d2e-4f3a-8b7c-90a1b2c3d4e5'},
+ {id:3,ma_nha_cung_cap:2,tieu_de:'Gió từ bờ xa · Tập 06',mo_ta:'Chuyến tàu đêm mang theo một tin không ai muốn nghe.',loai:2,ma_noi_dung_cha:2,ma_mua_phim:1,so_tap:6,trang_thai:1,ma_phien_ban_mac_dinh:null,nam_phat_hanh:2026,trace_id:'a81f0c33-52de-4b61-a0f4-0d5fe91a7b0c'},
+ {id:4,ma_nha_cung_cap:3,tieu_de:'Vệt nắng cuối ngày',mo_ta:'',loai:0,ma_noi_dung_cha:null,ma_mua_phim:null,so_tap:null,trang_thai:0,ma_phien_ban_mac_dinh:null,nam_phat_hanh:2026,trace_id:'f3b2c1d0-9e8f-47a6-b5c4-d3e2f1a0b9c8'},
+ {id:5,ma_nha_cung_cap:4,tieu_de:'Mật mã đại dương',mo_ta:'Loạt phim khoa học viễn tưởng dưới đáy biển.',loai:1,ma_noi_dung_cha:null,ma_mua_phim:null,so_tap:8,trang_thai:4,ma_phien_ban_mac_dinh:null,nam_phat_hanh:2024,trace_id:'1b2c3d4e-5f60-4718-92a3-b4c5d6e7f809'},
+ {id:6,ma_nha_cung_cap:2,tieu_de:'Gió từ bờ xa · Tập 05',mo_ta:'',loai:2,ma_noi_dung_cha:2,ma_mua_phim:1,so_tap:5,trang_thai:3,ma_phien_ban_mac_dinh:4,nam_phat_hanh:2026,trace_id:'7e8f9a0b-1c2d-4e3f-8a4b-5c6d7e8f9a0b'}],
+mua_phim:[{id:1,ma_noi_dung:2,so_mua:1,tieu_de:'Mùa 1: Bờ xa',mo_ta:'',nam_phat_hanh:2026},{id:2,ma_noi_dung:5,so_mua:1,tieu_de:'Mùa 1',mo_ta:'',nam_phat_hanh:2024}],
+noi_dung_da_ngon_ngu:[[1,1,'Qua những mùa mưa','Chuyện về những lá thư chưa gửi.'],[1,2,'Through the Seasons of Rain','Letters that never got sent.'],[2,1,'Gió từ bờ xa','Bí mật của ba gia đình ven biển.'],[2,2,'Winds from the Far Shore','Three families, one coastal town.'],[3,1,'Gió từ bờ xa · Tập 06','Chuyến tàu đêm.'],[6,1,'Gió từ bờ xa · Tập 05','']].map((p,i)=>({id:i+1,ma_noi_dung:p[0],ma_ngon_ngu:p[1],tieu_de:p[2],mo_ta_ngan:p[3],mo_ta:''})),
+thong_tin_noi_dung:[{id:1,ma_noi_dung:1,quoc_gia:'Việt Nam',ma_ngon_ngu_goc:1,the_loai_tag:['Chính kịch','Lãng mạn'],thoi_luong_phut:108,do_tuoi:13,xep_hang:'T13'},{id:2,ma_noi_dung:2,quoc_gia:'Việt Nam',ma_ngon_ngu_goc:1,the_loai_tag:['Gia đình','Bí ẩn'],thoi_luong_phut:null,do_tuoi:13,xep_hang:'T13'},{id:3,ma_noi_dung:3,quoc_gia:'Việt Nam',ma_ngon_ngu_goc:1,the_loai_tag:['Bí ẩn'],thoi_luong_phut:44,do_tuoi:13,xep_hang:'T13'},{id:4,ma_noi_dung:4,quoc_gia:'Việt Nam',ma_ngon_ngu_goc:1,the_loai_tag:['Tâm lý'],thoi_luong_phut:96,do_tuoi:16,xep_hang:'T16'}],
+dao_dien:[{id:1,ho_ten:'Trần Minh Anh',ten_khac:'',quoc_tich:'Việt Nam',ngay_sinh:'1983-04-12',gioi_thieu:'Đạo diễn phim điện ảnh, nhiều năm làm phim độc lập.',anh_dai_dien:'people/directors/tran-minh-anh.jpg'},{id:2,ho_ten:'Nguyễn Hoài Phương',ten_khac:'Phương Nguyễn',quoc_tich:'Việt Nam',ngay_sinh:'1979-11-03',gioi_thieu:'',anh_dai_dien:''},{id:3,ho_ten:'Park Joon-ho',ten_khac:'',quoc_tich:'Hàn Quốc',ngay_sinh:'1975-02-20',gioi_thieu:'',anh_dai_dien:''}],
+dien_vien:[{id:1,ho_ten:'Lan Anh',ten_khac:'',quoc_tich:'Việt Nam',ngay_sinh:'1992-06-18',gioi_thieu:'',anh_dai_dien:'people/actors/lan-anh.jpg'},{id:2,ho_ten:'Quốc Huy',ten_khac:'',quoc_tich:'Việt Nam',ngay_sinh:'1989-01-30',gioi_thieu:'',anh_dai_dien:''},{id:3,ho_ten:'Thu Hà',ten_khac:'',quoc_tich:'Việt Nam',ngay_sinh:'1995-09-09',gioi_thieu:'',anh_dai_dien:''},{id:4,ho_ten:'Kim Seo-yeon',ten_khac:'',quoc_tich:'Hàn Quốc',ngay_sinh:'1994-12-01',gioi_thieu:'',anh_dai_dien:''}],
+noi_dung_dao_dien:[[1,1,1],[2,2,1],[4,1,1],[5,3,1]].map((p,i)=>({id:i+1,ma_noi_dung:p[0],ma_dao_dien:p[1],thu_tu:p[2]})),
+noi_dung_dien_vien:[[1,1,1,'An'],[1,2,2,'Khoa'],[2,3,1,'Mai'],[2,2,2,'Bình'],[4,1,1,'Lam']].map((p,i)=>({id:i+1,ma_noi_dung:p[0],ma_dien_vien:p[1],thu_tu:p[2],vai_dien:p[3]})),
+phien_ban_noi_dung:[[1,1,19001,'Encode lần đầu 720p'],[1,2,19002,'Thêm audio 5.1'],[1,3,19003,'1080p HLS/DASH + DRM'],[6,1,19004,'1080p HLS/DASH'],[3,1,19273,'Đang xác minh đầu ra'],[4,1,19005,'Encode lỗi, cần chạy lại']].map((p,i)=>({id:i+1,ma_noi_dung:p[0],so_phien_ban:p[1],ma_tai_nguyen_media:p[2],ghi_chu:p[3]})),
+danh_muc:[{id:1,ten:'Phim',mo_ta:'',ma_danh_muc_cha:null},{id:2,ten:'Việt Nam',mo_ta:'',ma_danh_muc_cha:1},{id:3,ten:'Hàn Quốc',mo_ta:'',ma_danh_muc_cha:1},{id:4,ten:'Series',mo_ta:'',ma_danh_muc_cha:null},{id:5,ten:'Chính kịch',mo_ta:'',ma_danh_muc_cha:null}],
+danh_muc_da_ngon_ngu:[[1,1,'Phim'],[1,2,'Movies'],[2,1,'Việt Nam'],[2,2,'Vietnam'],[3,1,'Hàn Quốc'],[3,2,'Korea'],[4,1,'Series'],[4,2,'TV series']].map((p,i)=>({id:i+1,ma_danh_muc:p[0],ma_ngon_ngu:p[1],ten:p[2],mo_ta:''})),
+noi_dung_danh_muc:[[1,2],[1,5],[2,4],[2,2],[3,4],[6,4],[4,2]].map((p,i)=>({id:i+1,ma_noi_dung:p[0],ma_danh_muc:p[1]})),
+phu_de:[[1,1,'subtitles/c1/v3/vi.vtt','VTT','NORMAL'],[1,2,'subtitles/c1/v3/en.vtt','VTT','NORMAL'],[3,1,'subtitles/c3/v1/vi.vtt','VTT','NORMAL'],[3,2,'subtitles/c3/v1/en.vtt','VTT','SDH']].map((p,i)=>({id:i+1,ma_noi_dung:p[0],ma_ngon_ngu:p[1],khoa_tep:p[2],dinh_dang:p[3],loai_phu_de:p[4]})),
+anh_bia:[[1,0,'qua-mua-mua-poster.jpg',1200,1800,true,null],[1,2,'qua-mua-mua-backdrop.jpg',1920,1080,true,null],[1,1,'qua-mua-mua-thumb.jpg',640,360,true,null],[2,0,'gio-bo-xa-poster-vi.jpg',1200,1800,true,1],[3,1,'gio-bo-xa-t06-thumb.jpg',640,360,true,null]].map((p,i)=>({id:i+1,ma_noi_dung:p[0],loai:p[1],khoa_tep:'images/c'+p[0]+'/'+p[2],ten_tep:p[2],mime_type:'image/jpeg',kich_thuoc:420000+i*37000,chieu_rong:p[3],chieu_cao:p[4],checksum:'sha256:9f2c…'+i,ma_ngon_ngu:p[6],la_mac_dinh:p[5]})),
+quy_trinh_noi_dung:[[1,'XUAT_BAN',1,2],[2,'XUAT_BAN',1,2],[3,'QC',0,2],[4,'BAN_NHAP',0,3],[5,'GO_XUAT_BAN',1,2],[6,'XUAT_BAN',1,2]].map((p,i)=>({id:i+1,ma_noi_dung:p[0],buoc:p[1],trang_thai:p[2],ma_nguoi_phu_trach:p[3]})),
+lich_su_quy_trinh:[[1,null,'BAN_NHAP',4,'2026-09-28T09:02','Nhà cung cấp tạo nội dung'],[1,'BAN_NHAP','QC',3,'2026-10-06T10:11','Gửi QC'],[1,'QC','DUYET',2,'2026-10-06T12:58','Media v3 đã sẵn sàng'],[1,'DUYET','XUAT_BAN',2,'2026-10-06T13:40','Xuất bản'],[4,'QC','BAN_NHAP',2,'2026-10-06T16:42','Trả lại: thiếu lãnh thổ phát hành'],[3,'BAN_NHAP','QC',3,'2026-10-06T16:20','Gửi QC']].map((p,i)=>({id:i+1,ma_noi_dung:p[0],buoc_tu:p[1],buoc_den:p[2],ma_nguoi_thuc_hien:p[3],thoi_diem:p[4],ghi_chu:p[5]})),
+lich_phat_hanh:[{id:1,ma_noi_dung:1,phat_hanh_luc:'2026-10-06T20:00',het_hieu_luc_luc:null,trang_thai:1},{id:2,ma_noi_dung:3,phat_hanh_luc:'2026-10-08T20:00',het_hieu_luc_luc:null,trang_thai:0},{id:3,ma_noi_dung:6,phat_hanh_luc:'2026-10-01T20:00',het_hieu_luc_luc:null,trang_thai:1},{id:4,ma_noi_dung:2,phat_hanh_luc:'2026-09-24T20:00',het_hieu_luc_luc:null,trang_thai:1}],
+ban_quyen_noi_dung:[{id:1,ma_noi_dung:1,bat_dau_luc:'2026-01-01T00:00',ket_thuc_luc:'2028-12-31T23:59',lanh_tho:['VN','LA','KH']},{id:2,ma_noi_dung:2,bat_dau_luc:'2026-01-01T00:00',ket_thuc_luc:null,lanh_tho:['VN']},{id:3,ma_noi_dung:3,bat_dau_luc:'2026-01-01T00:00',ket_thuc_luc:null,lanh_tho:['VN']},{id:4,ma_noi_dung:6,bat_dau_luc:'2026-01-01T00:00',ket_thuc_luc:null,lanh_tho:['VN']}],
+cap_quyen_xem:[{id:1,ma_cap_quyen:'FREE',thu_tu:1,trang_thai:1},{id:2,ma_cap_quyen:'VIP',thu_tu:2,trang_thai:1},{id:3,ma_cap_quyen:'VIP_PRO',thu_tu:3,trang_thai:1}],
+chinh_sach_quyen_xem:[[1,1,'480p',null],[1,2,'1080p',null],[1,3,'1080p',null],[2,1,'480p',2],[2,2,'1080p',null],[2,3,'1080p',null],[3,2,'1080p',null],[6,2,'1080p',null]].map((p,i)=>({id:i+1,ma_noi_dung:p[0],ma_cap_quyen:p[1],duoc_xem:true,chat_luong_toi_da:p[2],so_tap_toi_da:p[3],ngay_bat_dau:null,ngay_ket_thuc:null,trang_thai:1}))
+};
+for(const k in DB)DB[k].forEach(r=>{r.da_xoa=false;r.ngay_tao='2026-09-28T09:00';r.ngay_cap_nhat=null;r.nguoi_tao=r.nguoi_tao||1});
+/* ===== Góp ý lần 1: chỉnh cấu hình menu & trường ===== */
+const COUNTRIES=[['VN','Việt Nam'],['LA','Lào'],['KH','Campuchia'],['TH','Thái Lan'],['SG','Singapore'],['MY','Malaysia'],['ID','Indonesia'],['PH','Philippines'],['KR','Hàn Quốc'],['JP','Nhật Bản'],['US','Hoa Kỳ'],['GB','Anh'],['AU','Úc']];
+Object.assign(T.ngon_ngu,{vi:'Danh mục ngôn ngữ'});Object.assign(T.danh_muc,{vi:'Danh mục phim'});Object.assign(T.dao_dien,{vi:'Danh mục đạo diễn'});Object.assign(T.dien_vien,{vi:'Danh mục diễn viên'});
+Object.assign(T.nha_cung_cap_noi_dung,{vi:'Danh sách nhà cung cấp'});Object.assign(T.phien_ban_noi_dung,{vi:'Phiên bản nội dung',desc:'Phiên bản media của tất cả các phim. Mỗi lần encode lại sinh một phiên bản mới (BR-12); tài nguyên media nằm ở media_db.'});
+Object.assign(T.noi_dung_da_ngon_ngu,{vi:'Nội dung đa ngôn ngữ'});Object.assign(T.thong_tin_noi_dung,{vi:'Thông tin nội dung'});Object.assign(T.danh_muc_da_ngon_ngu,{vi:'Bản dịch danh mục'});
+Object.assign(T.noi_dung_danh_muc,{vi:'Danh mục của nội dung'});
+const mkMulti=(k,label,ref,pivot,hint)=>f(k,label,'multi',{virtual:1,wide:1,ref,pivot,hint});
+T.tai_khoan_he_thong.fields.push(mkMulti('_vai_tro','Vai trò','vai_tro',{t:'tai_khoan_vai_tro',own:'ma_tai_khoan_he_thong',other:'ma_vai_tro'},'Một tài khoản có nhiều vai trò. Gõ để tìm và chọn nhiều vai trò.'));
+T.vai_tro.fields.push(mkMulti('_quyen_han','Quyền hạn & menu','quyen_han',{t:'vai_tro_quyen_han',own:'ma_vai_tro',other:'ma_quyen_han'},'Gõ mã quyền để tìm và chọn nhiều quyền cho vai trò.'));
+const nd=T.noi_dung;
+const fnd=k=>nd.fields.find(x=>x.k===k);
+Object.assign(fnd('ma_noi_dung_cha'),{label:'Series',hint:'Chọn series trước, danh sách mùa phim sẽ tải theo series đã chọn.'});
+Object.assign(fnd('ma_mua_phim'),{hint:'Chỉ hiển thị các mùa của series đã chọn.',scope:(r,c)=>{const v=c.vals().ma_noi_dung_cha;return !!v&&r.ma_noi_dung===v}});
+fnd('ma_phien_ban_mac_dinh').hideMain=1;
+const mo=nd.fields.pop(); // mo_ta xuống cuối
+nd.fields.push(mkMulti('_dao_dien','Đạo diễn','dao_dien',{t:'noi_dung_dao_dien',own:'ma_noi_dung',other:'ma_dao_dien'},'Gõ để tìm và chọn nhiều đạo diễn.'));
+nd.fields.push(mkMulti('_dien_vien','Diễn viên','dien_vien',{t:'noi_dung_dien_vien',own:'ma_noi_dung',other:'ma_dien_vien'},'Gõ để tìm và chọn nhiều diễn viên, rồi nhập vai diễn bên dưới.'));
+nd.fields.push(mo);
+const lt=T.ban_quyen_noi_dung.fields.find(x=>x.k==='lanh_tho');Object.assign(lt,{t:'multi',options:COUNTRIES,hint:'Gõ mã hoặc tên quốc gia để tìm và chọn nhiều.',sql:'JSONB'});
+T.noi_dung_danh_muc.fields.push(f('_ngon_ngu','Ngôn ngữ hiển thị','fk',{ref:'ngon_ngu',virtual:1,req:1,hint:'Chọn ngôn ngữ trước, danh sách danh mục sẽ hiển thị theo ngôn ngữ này.'}));
+T.quy_trinh_noi_dung.fields.find(x=>x.k==='ma_nguoi_phu_trach').scope=r=>r.loai===0;
+const GROUPS2=[
+ ['Nội dung','content',['noi_dung']],
+ ['Tài khoản hệ thống','rbac',['tai_khoan_he_thong','vai_tro','quyen_han','he_thong']],
+ ['Danh mục hệ thống','cat',['danh_muc','ngon_ngu','dao_dien','dien_vien','nha_cung_cap_noi_dung','phien_ban_noi_dung']],
+ ['Workflow','wf',['quy_trinh_noi_dung','lich_su_quy_trinh']],
+ ['Phát hành & bản quyền','rel',['lich_phat_hanh','ban_quyen_noi_dung','cap_quyen_xem','chinh_sach_quyen_xem']]];
+GROUPS.length=0;GROUPS2.forEach(g=>GROUPS.push(g));
+for(const k in ROLES)delete ROLES[k];
+Object.assign(ROLES,{ADMIN:['content','rbac','cat','wf','rel'],EDITOR:['content','cat'],QC:['content','wf','rel'],PROVIDER:['content','wf']});
+/* bảng không còn menu riêng: nằm trong màn hình khác */
+const HOST={
+ mua_phim:['Nội dung › tab Mùa phim','#/t/noi_dung',r=>'#/t/noi_dung/'+r.ma_noi_dung],
+ thong_tin_noi_dung:['Nội dung › tab Thông tin nội dung','#/t/noi_dung',r=>'#/t/noi_dung/'+r.ma_noi_dung],
+ noi_dung_da_ngon_ngu:['Nội dung › tab Nội dung đa ngôn ngữ','#/t/noi_dung',r=>'#/t/noi_dung/'+r.ma_noi_dung],
+ noi_dung_dao_dien:['Nội dung › trường Đạo diễn','#/t/noi_dung',r=>'#/t/noi_dung/'+r.ma_noi_dung],
+ noi_dung_dien_vien:['Nội dung › trường Diễn viên','#/t/noi_dung',r=>'#/t/noi_dung/'+r.ma_noi_dung],
+ noi_dung_danh_muc:['Nội dung › tab Danh mục đa ngôn ngữ','#/t/noi_dung',r=>'#/t/noi_dung/'+r.ma_noi_dung],
+ phu_de:['Nội dung › tab Phụ đề','#/t/noi_dung',r=>'#/t/noi_dung/'+r.ma_noi_dung],
+ anh_bia:['Nội dung › tab Ảnh bìa','#/t/noi_dung',r=>'#/t/noi_dung/'+r.ma_noi_dung],
+ danh_muc_da_ngon_ngu:['Danh mục phim › tab Bản dịch danh mục','#/t/danh_muc',r=>'#/t/danh_muc/'+r.ma_danh_muc],
+ tai_khoan_vai_tro:['Tài khoản hệ thống › trường Vai trò','#/t/tai_khoan_he_thong',r=>'#/t/tai_khoan_he_thong/'+r.ma_tai_khoan_he_thong],
+ vai_tro_quyen_han:['Vai trò › trường Quyền hạn','#/t/vai_tro',r=>'#/t/vai_tro/'+r.ma_vai_tro]};
+const $=(s,e=document)=>e.querySelector(s), $$=(s,e=document)=>[...e.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').toLowerCase();
+const S={role:'ADMIN',flt:{}};
+function fmt(v){if(!v)return '—';const [d,t]=v.split('T');const [y,m,dd]=d.split('-');return dd+'/'+m+'/'+y+(t?', '+t:'')}
+const find=(t,id)=>DB[t].find(r=>r.id==id);
+const live=t=>DB[t].filter(r=>!r.da_xoa);
+const mediaSt={SAN_SANG:['SẴN SÀNG','c2'],XAC_MINH:['ĐANG XÁC MINH','c1'],LOI:['LỖI','c4']};
+const href=(tn,id)=>{const h=HOST[tn];if(h){const r=find(tn,id);return r?h[2](r):h[1]}return `#/t/${tn}/${id}`};
+const hostList=tn=>HOST[tn]?HOST[tn][1]:'#/t/'+tn;
+function lbl(ref,id){if(id==null||id==='')return '—';if(ref==='@media'){const m=EXT.find(x=>x.id==id);return m?`MR-${id} · ${m.name}`:'MR-'+id}const r=find(ref,id);return r?T[ref].label(r):'#'+id}
+const fieldOf=(tn,k)=>T[tn].fields.find(x=>x.k===k);
+const allFields=tn=>T[tn].fields.concat(AUD[T[tn].aud]);
+const dflt=(tn,k)=>fieldOf(tn,k)&&fieldOf(tn,k).def;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2800)}
+const parentsOf=tn=>T[tn].fields.filter(f=>f.t==='fk'&&!f.audit&&!f.virtual);
+function childrenOf(tn){const out=[];for(const c in T)for(const f of T[c].fields)if(f.t==='fk'&&f.ref===tn&&!f.audit&&!f.virtual)out.push({t:c,k:f.k,f});return out}
+const cardOf=c=>T[c.t].one&&c.k==='ma_noi_dung'?'1–1':'1–N';
+/* ---------- cells ---------- */
+function cell(tn,f,r){const v=r[f.k];
+ if(f.t==='fk'){if(v==null)return '<span style="color:#9aa4b8">—</span>';if(f.ref==='@media'){const m=EXT.find(x=>x.id==v);const s=m?mediaSt[m.st]:null;return `<span class="lk ext">${esc(lbl('@media',v))}</span> ${s?`<span class="pill ${s[1]}">${s[0]}</span>`:''}`}return `<a class="lk" href="${href(f.ref,v)}" onclick="event.stopPropagation()">${esc(lbl(f.ref,v))}</a>`}
+ if(f.t==='enum'){const o=f.opts.find(o=>o[0]===v);return o?`<span class="pill ${o[2]||'c0'}">${esc(o[1])}</span>`:'—'}
+ if(f.t==='bool')return v?'✓':'—';
+ if(f.t==='datetime')return fmt(v);
+ if(f.t==='date')return v?fmt(v):'—';
+ if(f.t==='tags'||f.t==='multi')return (v||[]).map(x=>`<span class="chip" style="padding:2px 8px">${esc(x)}</span>`).join(' ')||'—';
+ if(f.k==='thoi_diem')return fmt(v);
+ if(f.t==='password')return '••••••';
+ return v==null||v===''?'—':esc(v)}
+/* ---------- combobox (khóa ngoại / khóa logic) ---------- */
+function options(f,ctx){
+ if(f.ref==='@media')return EXT.map(m=>({id:m.id,label:`MR-${m.id} · ${m.name}`,sub:mediaSt[m.st][0]}));
+ let rows=live(f.ref);if(f.scope)rows=rows.filter(r=>f.scope(r,ctx));
+ return rows.map(r=>({id:r.id,label:T[f.ref].label(r),sub:T[f.ref].sub?T[f.ref].sub(r):''}))}
+function comboHtml(f,val,dis){
+ const ext=f.ref==='@media';
+ return `<div class="combo ${ext?'ext':''} ${dis?'dis':''}" data-k="${f.k}"><span class="ci">${ext?'◈':'⛓'}</span><input class="combo-in" autocomplete="off" role="combobox" aria-label="${esc(f.label)}" placeholder="${f.req?'Chọn…':'(không chọn)'}" value="${esc(val!=null?lbl(f.ref,val):'')}" ${dis?'disabled':''}><input type="hidden" name="${f.k}" value="${val??''}">${ext||f.virtual?'':`<button type="button" class="combo-go" title="Mở bản ghi liên quan" aria-label="Mở bản ghi liên quan">↗</button>`}<div class="combo-list"></div></div>`}
+const fOfCombo=c=>{const form=c.closest('form');return fieldOf(form.dataset.t,c.dataset.k)||AUD[T[form.dataset.t].aud].find(x=>x.k===c.dataset.k)};
+function openCombo(c){
+ $$('.combo.open').forEach(x=>x!==c&&closeCombo(x));
+ const form=c.closest('form'),f=fOfCombo(c);
+ const q=norm($('.combo-in',c).dataset.q||'');const cur=$('input[type=hidden]',c).value;
+ const ctx={vals:()=>collect(form),self:form._row||{}};
+ let o=options(f,ctx).filter(x=>norm(x.label+' '+x.sub).includes(q));
+ let h=f.req?'':`<div class="opt none" data-id="">(Không chọn)</div>`;
+ h+=o.map(x=>`<div class="opt ${x.id==cur?'hi':''}" data-id="${x.id}" role="option"><span>${esc(x.label)}</span><small>${esc(x.sub)}</small></div>`).join('')||'<div class="opt none">Không có bản ghi phù hợp</div>';
+ $('.combo-list',c).innerHTML=h;c.classList.add('open')}
+function closeCombo(c){c.classList.remove('open');const i=$('.combo-in',c);delete i.dataset.q;const f=fOfCombo(c);const v=$('input[type=hidden]',c).value;i.value=v?lbl(f.ref,v):''}
+document.addEventListener('focusin',e=>{const i=e.target.closest('.combo-in');if(i&&!i.disabled)openCombo(i.closest('.combo'))});
+document.addEventListener('click',e=>{
+ const i=e.target.closest('.combo-in');if(i&&!i.disabled){openCombo(i.closest('.combo'));return}
+ const o=e.target.closest('.combo .opt');if(o&&o.dataset.id!==undefined){const c=o.closest('.combo');$('input[type=hidden]',c).value=o.dataset.id;c.classList.remove('open');closeCombo(c);syncForm(c.closest('form'),c.dataset.k);return}
+ const g=e.target.closest('.combo-go');if(g){const c=g.closest('.combo');const v=$('input[type=hidden]',c).value;if(v){closeDrawer();location.hash=href(fOfCombo(c).ref,v)}else toast('Chưa chọn bản ghi để mở');return}
+ if(!e.target.closest('.combo'))$$('.combo.open').forEach(closeCombo)});
+document.addEventListener('input',e=>{const i=e.target.closest('.combo-in');if(i){i.dataset.q=i.value;openCombo(i.closest('.combo'))}});
+/* ---------- chọn nhiều (select2 multiple, có tìm kiếm) ---------- */
+const MS={};let msN=0;
+const mchip=(k,x,el)=>`<span class="mchip" data-id="${esc(x)}"><span>${esc(MS[k].labelOf(x,el))}</span><b title="Bỏ chọn" aria-label="Bỏ chọn">×</b></span>`;
+function msHtml(o){const k='m'+(++msN);MS[k]=o;
+ return `<div class="msel ${o.disabled?'dis':''}" data-ms="${k}" data-name="${esc(o.name||'')}"><div class="mwrap"><div class="msel-box">${o.sel.map(x=>mchip(k,x)).join('')}<input class="msel-in" placeholder="${esc(o.ph||'Gõ để tìm và chọn nhiều…')}" aria-label="${esc(o.aria||'Chọn nhiều')}" autocomplete="off" ${o.disabled?'disabled':''}></div><div class="msel-list"></div></div></div>`}
+const mselSel=m=>{const o=MS[m.dataset.ms];return $$('.mchip',m).map(x=>o.num?+x.dataset.id:x.dataset.id)};
+function mselRender(m){const o=MS[m.dataset.ms];const sel=mselSel(m).map(String);const q=norm($('.msel-in',m).value);
+ const list=o.opts(m).filter(x=>!sel.includes(String(x.id))&&norm(x.label+' '+(x.sub||'')).includes(q));
+ $('.msel-list',m).innerHTML=list.map(x=>`<div class="opt" data-id="${esc(x.id)}" role="option"><span>${esc(x.label)}</span><small>${esc(x.sub||'')}</small></div>`).join('')||'<div class="opt none">'+(q?'Không có kết quả phù hợp':'Đã chọn hết các mục')+'</div>';m.classList.add('open')}
+const mselFire=m=>m.dispatchEvent(new CustomEvent('mschange',{bubbles:true}));
+function mselAdd(m,id){const k=m.dataset.ms;const d=document.createElement('div');d.innerHTML=mchip(k,id,m);$('.msel-box',m).insertBefore(d.firstChild,$('.msel-in',m));$('.msel-in',m).value='';m._skip=true;m.classList.remove('open');$('.msel-in',m).focus();m._skip=false;mselFire(m)}
+function mselRefresh(m){const o=MS[m.dataset.ms];$$('.mchip',m).forEach(c=>{c.firstChild.textContent=o.labelOf(o.num?+c.dataset.id:c.dataset.id,m)})}
+document.addEventListener('focusin',e=>{const i=e.target.closest('.msel-in');if(i&&!i.closest('.msel')._skip)mselRender(i.closest('.msel'))});
+document.addEventListener('input',e=>{const i=e.target.closest('.msel-in');if(i)mselRender(i.closest('.msel'))});
+document.addEventListener('click',e=>{const m=e.target.closest('.msel');$$('.msel.open').forEach(x=>{if(x!==m)x.classList.remove('open')});if(!m)return;
+ const op=e.target.closest('.msel-list .opt');if(op&&op.dataset.id!==undefined&&!op.classList.contains('none')){const o=MS[m.dataset.ms];mselAdd(m,o.num?+op.dataset.id:op.dataset.id);return}
+ const x=e.target.closest('.mchip b');if(x){x.parentNode.remove();mselFire(m);if(m.classList.contains('open'))mselRender(m);return}
+ if(e.target.closest('.msel-box')&&!m.classList.contains('dis'))$('.msel-in',m).focus()});
+document.addEventListener('keydown',e=>{const i=e.target.closest&&e.target.closest('.msel-in');if(!i)return;const m=i.closest('.msel');
+ if(e.key==='Backspace'&&!i.value){const c=$$('.mchip',m).pop();if(c){c.remove();mselFire(m);mselRender(m)}}
+ if(e.key==='Enter'){e.preventDefault();const f=$('.msel-list .opt[data-id]:not(.none)',m);if(f){const o=MS[m.dataset.ms];mselAdd(m,o.num?+f.dataset.id:f.dataset.id)}}
+ if(e.key==='Escape')m.classList.remove('open')});
+document.addEventListener('mschange',e=>{const form=e.target.closest('form.frm');if(form&&form._onms)form._onms(e.target)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$$('.combo.open').forEach(closeCombo);closeDrawer();closeModal()}
+ const ci=e.target.closest&&e.target.closest('.chips input');if(ci&&e.key==='Enter'){e.preventDefault();const box=ci.closest('.chips');let v=ci.value.trim();if(v){const hid=$('input[type=hidden]',box.parentNode);const a=JSON.parse(hid.value||'[]');if(!a.includes(v))a.push(v);hid.value=JSON.stringify(a);ci.value='';renderChips(box)}}});
+document.addEventListener('click',e=>{const b=e.target.closest('.chip b');if(b){const box=b.closest('.chips');const hid=$('input[type=hidden]',box.parentNode);const a=JSON.parse(hid.value||'[]');a.splice(+b.dataset.i,1);hid.value=JSON.stringify(a);renderChips(box)}
+ const u=e.target.closest('.up');if(u){const inp=$('input',u.parentNode);inp.value=(u.dataset.prefix||'')+'upload-'+Math.random().toString(36).slice(2,8)+'.bin';toast('Đã tải lên R2 (mô phỏng): khóa tệp được điền tự động')}});
+function renderChips(box){const hid=$('input[type=hidden]',box.parentNode);const a=JSON.parse(hid.value||'[]');$$('.chip',box).forEach(x=>x.remove());const inp=$('input',box);a.forEach((x,i)=>{const s=document.createElement('span');s.className='chip';s.innerHTML=`${esc(x)}<b data-i="${i}" title="Xóa">×</b>`;box.insertBefore(s,inp)})}
+/* ---------- form ---------- */
+function fieldHtml(tn,f,v,o){
+ const lock=o.lock&&Object.prototype.hasOwnProperty.call(o.lock,f.k);const ro=f.ro||lock||o.ro||o.forceRo;
+ let c='';const nm=`name="${f.k}"`;
+ if(f.t==='text')c=`<input type="text" ${nm} value="${esc(v)}" ${ro?'readonly':''}>`;
+ else if(f.t==='password')c=`<input type="password" ${nm} value="" placeholder="${v?'•••••••• (giữ nguyên nếu để trống)':'Nhập mật khẩu'}">`;
+ else if(f.t==='number')c=`<input type="number" ${nm} value="${esc(v)}" ${ro?'readonly':''}>`;
+ else if(f.t==='date')c=`<input type="date" ${nm} value="${esc(v)}">`;
+ else if(f.t==='datetime')c=`<input type="datetime-local" ${nm} value="${esc(v)}" ${ro?'readonly':''}>`;
+ else if(f.t==='textarea')c=`<textarea ${nm} ${ro?'readonly':''}>${esc(v)}</textarea>`;
+ else if(f.t==='bool')c=`<label class="sw"><input type="checkbox" ${nm} ${v?'checked':''} ${ro?'disabled':''}><i></i><span>${v?'Có':'Không'}</span></label>`;
+ else if(f.t==='enum')c=`<select ${nm} ${ro?'disabled':''}>${f.req?'':'<option value="">(không chọn)</option>'}${f.opts.map(op=>`<option value="${esc(op[0])}" ${String(v)===String(op[0])?'selected':''}>${esc(op[1])}</option>`).join('')}</select>${ro?`<input type="hidden" ${nm} value="${esc(v)}">`:''}`;
+ else if(f.t==='fk')c=comboHtml(f,v,ro);
+ else if(f.t==='multi'){const stat=!!f.options;c=msHtml({name:f.k,num:!stat,sel:v||[],disabled:ro,aria:f.label,
+   opts:()=>stat?f.options.map(([id,l])=>({id,label:id+' · '+l})):options({ref:f.ref},{vals:()=>({}),self:{}}),
+   labelOf:x=>stat?x:lbl(f.ref,x)})+(f.k==='_dien_vien'?'<div class="roles"></div>':'')}
+ else if(f.t==='tags')c=`<div class="chips"><input placeholder="Thêm…" aria-label="${esc(f.label)}"></div><input type="hidden" ${nm} value='${esc(JSON.stringify(v||[]))}'>`;
+ else if(f.t==='file')c=`<div class="filebox"><input type="text" ${nm} value="${esc(v)}" placeholder="${f.prefix||''}…"><button type="button" class="btn sm up" data-prefix="${f.prefix||''}">Tải lên R2</button></div>`;
+ let ref='';
+ if(f.t==='fk'&&!f.virtual)ref=f.ref==='@media'?`<b class="x">khóa logic → media_db.tai_nguyen_media</b>`:`<b>FK → ${f.ref}</b>`;
+ if(f.t==='multi'&&f.pivot)ref=`<span>bảng nối ${f.pivot.t}</span><b>N–N → ${f.ref}</b>`;
+ const si=f.showIf?` data-showif='${JSON.stringify(f.showIf)}'`:'';
+ return `<div class="field ${f.wide?'wide':''} ${ro?'ro':''}" data-f="${f.k}"${si}><label>${esc(f.label)}${f.req?'<i>*</i>':''}</label><div class="fm">${f.virtual&&f.pivot?'':`<span>${f.k}</span><span>${f.sql||''}</span>`}${f.uk?'<u>UNIQUE</u>':''}${ref}</div>${c}${f.hint?`<div class="hint">${esc(f.hint)}</div>`:''}</div>`}
+function formHtml(tn,row,o={}){
+ const vals=Object.assign({},o.prefill,row||{});const t=T[tn];const hide=o.hide||[];
+ const mk=f=>{if(hide.includes(f.k))return `<input type="hidden" name="${f.k}" value="${esc(vals[f.k]??'')}">`;
+  let v=vals[f.k];if(v===undefined)v=vals.id==null?dflt(tn,f.k):null;
+  if(f.pivot)v=vals.id?live(f.pivot.t).filter(r=>r[f.pivot.own]==vals.id).sort((a,b)=>(a.thu_tu||0)-(b.thu_tu||0)).map(r=>r[f.pivot.other]):[];
+  return fieldHtml(tn,f,v,Object.assign({},o,{forceRo:!!(o.roKeys&&o.roKeys.includes(f.k))}))};
+ const main=t.fields.filter(f=>!f.hideMain);let body;
+ if(o.gate){const g=main.find(f=>f.k===o.gate);body=mk(g)+`<div class="gated ${vals[o.gate]?'':'hide'}"><div class="grid2">${main.filter(f=>f.k!==o.gate).map(mk).join('')}</div></div>`}
+ else body=main.map(mk).join('');
+ const aud=AUD[t.aud].filter(a=>!hide.includes('*aud'));
+ const sys=aud.length&&!o.noSys?`<details class="sys"><summary>Thông tin hệ thống (${aud.map(a=>a.k).join(', ')})</summary><div class="grid2">${aud.map(f=>fieldHtml(tn,f,vals[f.k]??(f.k==='da_xoa'?false:null),{ro:f.k!=='da_xoa'})).join('')}</div></details>`:'';
+ return `<form class="frm" data-t="${tn}" ${o.gate?`data-gate="${o.gate}"`:''} novalidate><div class="grid2">${body}</div>${sys}</form>`}
+function collect(form){const tn=form.dataset.t;const o={};
+ for(const f of allFields(tn)){let v;
+  if(f.t==='multi'){const m=form.querySelector(`.msel[data-name="${f.k}"]`);if(!m)continue;v=mselSel(m)}
+  else{const el=form.querySelector(`[name="${f.k}"]`);if(!el)continue;
+   if(f.t==='bool')v=el.checked;else{v=el.value;if(f.t==='tags')v=JSON.parse(v||'[]');else if(v===''||v==null)v=null;else if(f.t==='number'||f.t==='fk')v=Number(v);else if(f.t==='enum'&&typeof f.opts[0][0]==='number')v=Number(v)}}
+  o[f.k]=v}return o}
+function syncForm(form,changed){
+ const vals=collect(form);if(form._onchange&&changed)form._onchange(changed,vals);
+ $$('.field[data-showif]',form).forEach(d=>{const [k,eq]=JSON.parse(d.dataset.showif);d.classList.toggle('hide',vals[k]!==eq)});
+ if(form.dataset.gate){const g=$('.gated',form);g&&g.classList.toggle('hide',!vals[form.dataset.gate])}
+ if(changed==='ma_noi_dung_cha'){const h=form.querySelector('[name="ma_mua_phim"]');if(h){h.value='';const i=$('.combo-in',h.closest('.combo'));if(i)i.value=''}}
+ $$('.sw',form).forEach(s=>{$('span',s).textContent=$('input',s).checked?'Có':'Không'})}
+document.addEventListener('change',e=>{const form=e.target.closest('form.frm');if(form&&e.target.name!==undefined)syncForm(form,e.target.name)});
+function validate(form,id){const tn=form.dataset.t;const v=collect(form);let ok=true;$$('.errm',form).forEach(x=>x.remove());$$('.err',form).forEach(x=>x.classList.remove('err'));
+ const bad=(k,m)=>{ok=false;const d=form.querySelector(`.field[data-f="${k}"]`);if(!d)return;const el=$('.combo,input,select,textarea',d);el&&el.classList.add('err');d.insertAdjacentHTML('beforeend',`<div class="errm">${m}</div>`)};
+ for(const f of T[tn].fields){if(f.t==='multi')continue;const d=form.querySelector(`.field[data-f="${f.k}"]`);if(d&&d.classList.contains('hide'))continue;if(!d&&!form.querySelector(`[name="${f.k}"]`))continue;if(f.req&&!(f.t==='password'&&id)&&(v[f.k]==null||v[f.k]===''))bad(f.k,f.t==='fk'?'Chọn một giá trị trong danh sách.':'Trường này bắt buộc.')}
+ for(const u of T[tn].unique||[]){const dup=live(tn).find(r=>r.id!=id&&u.every(k=>r[k]==v[k]&&v[k]!=null));if(dup)bad(u[1],'Đã tồn tại bản ghi có cùng '+u.join(' + ')+' (ràng buộc UNIQUE).')}
+ for(const f of T[tn].fields)if(f.uk&&v[f.k]!=null&&v[f.k]!==''){const dup=live(tn).find(r=>r.id!=id&&r[f.k]==v[f.k]);if(dup)bad(f.k,'Giá trị đã được dùng ở bản ghi khác (UNIQUE).')}
+ return ok?v:null}
+function nid(t){return Math.max(0,...DB[t].map(r=>r.id))+1}
+function uuid(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c=='x'?r:(r&3|8)).toString(16)})}
+function applyPivot(f,ownerId,ids,form){const p=f.pivot;const rows=live(p.t).filter(x=>x[p.own]==ownerId);
+ rows.filter(x=>!ids.includes(x[p.other])).forEach(x=>DB[p.t].splice(DB[p.t].indexOf(x),1));
+ const roles={};$$('.roleinp',form).forEach(i=>roles[i.dataset.id]=i.value);
+ ids.forEach((id,i)=>{let x=rows.find(y=>y[p.other]==id);if(!x){x={id:nid(p.t),[p.own]:ownerId,[p.other]:id,ngay_tao:NOW,nguoi_tao:ME};DB[p.t].push(x)}
+  if(fieldOf(p.t,'thu_tu'))x.thu_tu=i+1;if(fieldOf(p.t,'vai_dien')&&roles[id]!==undefined)x.vai_dien=roles[id]})}
+function saveRec(tn,id,form){
+ const v=validate(form,id);if(!v){toast('Chưa lưu: kiểm tra các trường báo lỗi.');return null}
+ const virt=new Set(allFields(tn).filter(f=>f.virtual).map(f=>f.k));let r;
+ if(id){r=find(tn,id);for(const k in v){if(virt.has(k))continue;if(k==='mat_khau_hash'&&v[k]==null)continue;if(['ngay_tao','nguoi_tao'].includes(k))continue;if(T[tn].fields.find(f=>f.k===k&&f.ro&&k!=='ma_noi_dung'))continue;r[k]=v[k]}r.ngay_cap_nhat=NOW}
+ else{r=Object.assign({},v,{id:nid(tn),da_xoa:false,ngay_tao:NOW,ngay_cap_nhat:null,nguoi_tao:ME});virt.forEach(k=>delete r[k]);
+  if(tn==='noi_dung'){r.trang_thai=0;r.trace_id=uuid()}
+  if(tn==='tai_khoan_he_thong'&&!r.mat_khau_hash)r.mat_khau_hash='x';
+  DB[tn].push(r);
+  if(tn==='noi_dung'){DB.quy_trinh_noi_dung.push({id:nid('quy_trinh_noi_dung'),ma_noi_dung:r.id,buoc:'BAN_NHAP',trang_thai:0,ma_nguoi_phu_trach:ME,da_xoa:false,ngay_tao:NOW,ngay_cap_nhat:null});
+   DB.lich_su_quy_trinh.push({id:nid('lich_su_quy_trinh'),ma_noi_dung:r.id,buoc_tu:null,buoc_den:'BAN_NHAP',ma_nguoi_thuc_hien:ME,thoi_diem:NOW,ghi_chu:'Tạo nội dung',da_xoa:false});
+   toast('Đã tạo nội dung. Hệ thống tự sinh quy trình (BAN_NHAP) và dòng lịch sử đầu tiên.')}}
+ for(const f of T[tn].fields)if(f.pivot&&v[f.k])applyPivot(f,r.id,v[f.k],form);
+ return r}
+/* ---------- drawer / modal ---------- */
+function openDrawer(title,html,onSave,saveLabel='Lưu'){
+ $('#drawer').innerHTML=`<header><h2>${esc(title)}</h2><button class="btn sm" id="dx">Đóng</button></header><div class="body">${html}</div><div class="savebar" style="margin:0;padding:14px 20px"><button class="btn" id="dc">Hủy</button><button class="btn p" id="ds">${saveLabel}</button></div>`;
+ $('#drawer').classList.add('on');$('#scrim').classList.add('on');
+ const form=$('#drawer form');if(form)syncForm(form);
+ $('#dx').onclick=$('#dc').onclick=closeDrawer;$('#ds').onclick=()=>onSave(form)}
+function closeDrawer(){$('#drawer').classList.remove('on');$('#scrim').classList.remove('on')}
+function openModal(html){$('#modal').innerHTML=html;$('#modal').classList.add('on');$('#scrim2').classList.add('on')}
+function closeModal(){$('#modal').classList.remove('on');$('#scrim2').classList.remove('on')}
+function editChild(tn,id,lock,after){
+ const row=id?find(tn,id):null;const ro=T[tn].append&&id;
+ openDrawer((id?'Sửa · ':'Thêm · ')+T[tn].vi,`${T[tn].append?'<div class="banner w">Bảng chỉ ghi thêm: bản ghi đã tạo không được sửa hoặc xóa (BR-13).</div>':''}${formHtml(tn,row,{lock,prefill:lock,ro})}`,form=>{const r=saveRec(tn,id,form);if(r){closeDrawer();toast((id?'Đã cập nhật ':'Đã thêm ')+'bản ghi');after&&after(r)}},ro?'Đóng':'Lưu');
+ const f=$('#drawer form');if(f)f._row=row||Object.assign({},lock);
+ if(ro)$('#ds').style.display='none'}
+const everPublished=nd=>!!nd&&(nd.da_tung_xuat_ban||nd.trang_thai>=3||DB.lich_su_quy_trinh.some(h=>h.ma_noi_dung===nd.id&&h.buoc_den==='XUAT_BAN'));
+function removeRec(tn,id,after,extraNote){
+ if(tn==='noi_dung'&&everPublished(find('noi_dung',id))){openModal('<h2>Không thể xóa nội dung đã xuất bản</h2><p style="color:var(--muted)">Nội dung đã từng xuất bản chỉ được gỡ xuất bản (ẩn với người dùng) và kích hoạt lại, không được xóa (BR-11a).</p><div class="savebar"><button class="btn p" onclick="closeModal()">Đã hiểu</button></div>');return}
+ const r=find(tn,id);const deps=childrenOf(tn).map(c=>({c,n:live(c.t).filter(x=>x[c.k]==id).length})).filter(x=>x.n);
+ const soft0=AUD[T[tn].aud].some(a=>a.k==='da_xoa');
+ /* BR-11e: noi dung nhap chua tung gui duyet thi xoa han; da qua duyet thi xoa mem. Luon don tep tren R2 + tai nguyen media. */
+ const isNd=tn==='noi_dung';const never=isNd&&r.trang_thai===0&&DB.lich_su_quy_trinh.filter(h=>h.ma_noi_dung===r.id).length<=1;
+ const soft=isNd?!never:soft0;
+ const fileNote=isNd?'<div class="banner w" style="margin-top:10px">'+(never?'Nội dung nháp chưa gửi duyệt nên được <b>xóa hẳn</b> khỏi cơ sở dữ liệu.':'Nội dung đã qua bước duyệt nên chỉ được <b>xóa mềm</b> để giữ dấu vết.')+'<br>Toàn bộ tệp của nội dung (video gốc, phụ đề, ảnh bìa) trên <b>Cloudflare R2</b> và tài nguyên media tương ứng sẽ bị xóa theo, không khôi phục được.</div>':'';
+ openModal(`<h2>${soft?'Xóa mềm bản ghi?':'Xóa bản ghi?'}</h2><p style="color:var(--muted);margin:0 0 10px">${esc(T[tn].label(r))}</p>${deps.length?`<div class="banner w">Còn dữ liệu tham chiếu tới bản ghi này:<br>${deps.map(d=>`• ${d.n} bản ghi ở <b>${T[d.c.t].vi}</b> (<code>${d.c.k}</code>)`).join('<br>')}</div>`:''}<p style="font-size:12.5px;color:var(--muted)">${soft?'Bản ghi chỉ được đánh dấu <code>da_xoa = true</code> (BR-20).':'Bảng này không có cột da_xoa nên bản ghi bị xóa hẳn.'}</p>${fileNote}<div class="savebar" style="margin-top:12px"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn d" id="mok">Xóa</button></div>`);
+ $('#mok').onclick=()=>{if(soft)r.da_xoa=true;else DB[tn].splice(DB[tn].indexOf(r),1);closeModal();toast('Đã xóa');after()}}
+/* ---------- grid ---------- */
+function gridHtml(tn,rows,o={}){
+ const t=T[tn];const cols=t.cols.filter(k=>!(o.hide||[]).includes(k)).map(k=>allFields(tn).find(f=>f.k===k));
+ if(!rows.length)return `<div class="empty">Chưa có bản ghi nào.</div>`;
+ return `<div class="tbl-wrap"><table class="g"><thead><tr>${cols.map(f=>`<th>${esc(f.label)}<code>${f.k}</code></th>`).join('')}<th></th></tr></thead><tbody>${rows.map(r=>`<tr class="row ${r.da_xoa?'del':''}" data-id="${r.id}">${cols.map(f=>`<td>${cell(tn,f,r)}</td>`).join('')}<td class="act">${o.noact?'<span style="color:#9aa4b8">›</span>':t.append?'<span class="pill c0">chỉ ghi thêm</span>':`<button class="btn sm" data-a="edit">${o.embedded?'Sửa':'Mở'}</button> <button class="btn sm d" data-a="del" ${r.da_xoa?'disabled':''}>Xóa</button>`}</td></tr>`).join('')}</tbody></table></div>`}
+/* ---------- list view ---------- */
+function viewList(tn){
+ const t=T[tn];const st=S.flt[tn]||(S.flt[tn]={q:'',f:{},del:false});
+ const par=parentsOf(tn),kids=childrenOf(tn);const filt=t.filters||[];
+ const h=`<div class="head"><div><h1>${t.vi}</h1><p>${t.desc}</p></div><div class="acts"><button class="btn p" id="addbtn">+ Thêm mới</button></div></div>
+ <div class="metaline"><code>cms_db.${tn}</code><span>${allFields(tn).filter(f=>!f.virtual).length} trường</span>${t.append?'<span class="pill c1">chỉ ghi thêm</span>':''}${t.one?'<span class="pill c3">quan hệ 1–1 với nội dung</span>':''}
+  ${par.length?'<span>Tham chiếu tới:</span>'+par.map(f=>`<a class="chipx" href="${f.ref==='@media'?'#/t/'+tn:hostList(f.ref)}">${f.ref==='@media'?'◈ media_db (khóa logic)':T[f.ref].vi}</a>`).join(''):''}
+  ${kids.length?'<span>Được tham chiếu bởi:</span>'+kids.slice(0,6).map(c=>`<a class="chipx" href="${hostList(c.t)}">${T[c.t].vi}</a>`).join('')+(kids.length>6?`<span>+${kids.length-6}</span>`:''):''}</div>
+ <div class="tool"><input type="search" id="q" placeholder="Tìm kiếm…" value="${esc(st.q)}" aria-label="Tìm kiếm">
+ ${filt.map(k=>{const f=fieldOf(tn,k);const opts=f.t==='fk'?options(f,{vals:()=>({}),self:{}}).map(o=>[o.id,o.label]):f.opts.map(o=>[o[0],o[1]]);return `<select data-fk="${k}" aria-label="${esc(f.label)}"><option value="">${esc(f.label)}: tất cả</option>${opts.map(o=>`<option value="${esc(o[0])}" ${String(st.f[k])===String(o[0])?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`}).join('')}
+ ${AUD[t.aud].some(a=>a.k==='da_xoa')?`<label><input type="checkbox" id="showdel" ${st.del?'checked':''}> Hiện bản ghi đã xóa</label>`:''}</div>
+ <div class="card" id="gridbox"></div>`;
+ return {html:h,after(){
+  const draw=()=>{let rows=DB[tn].filter(r=>st.del||!r.da_xoa);
+   for(const k in st.f)if(st.f[k]!==''&&st.f[k]!=null)rows=rows.filter(r=>String(r[k])===String(st.f[k]));
+   if(st.q){const q=norm(st.q);rows=rows.filter(r=>norm(allFields(tn).filter(f=>!f.virtual).map(f=>f.t==='fk'?lbl(f.ref,r[f.k]):r[f.k]).join(' ')).includes(q))}
+   if(tn==='lich_su_quy_trinh')rows=rows.slice().sort((a,b)=>b.thoi_diem.localeCompare(a.thoi_diem));
+   $('#gridbox').innerHTML=gridHtml(tn,rows)};
+  draw();
+  $('#q').oninput=e=>{st.q=e.target.value;draw()};
+  $$('[data-fk]').forEach(s=>s.onchange=()=>{st.f[s.dataset.fk]=s.value;draw()});
+  const sd=$('#showdel');if(sd)sd.onchange=()=>{st.del=sd.checked;draw()};
+  $('#addbtn').onclick=()=>location.hash=`#/t/${tn}/new`;
+  $('#gridbox').onclick=e=>{const tr=e.target.closest('tr.row');if(!tr)return;const id=+tr.dataset.id;const a=e.target.closest('[data-a]');
+   if(a&&a.dataset.a==='del'){removeRec(tn,id,draw);return}
+   location.hash=`#/t/${tn}/${id}`}}}}
+/* ---------- quy trình duyệt ---------- */
+const FLOW=[['BAN_NHAP','Bản nháp'],['QC','Chờ QC'],['DUYET','Sẵn sàng'],['XUAT_BAN','Đã xuất bản'],['GO_XUAT_BAN','Gỡ xuất bản']];
+const TRANS={0:[[1,'Gửi QC','p']],1:[[2,'Duyệt','p'],[0,'Trả lại','d']],2:[[3,'Xuất bản','p']],3:[[4,'Gỡ xuất bản','d']],4:[[3,'Kích hoạt lại (xuất bản)','p']]};
+const BUOC={0:'BAN_NHAP',1:'QC',2:'DUYET',3:'XUAT_BAN',4:'GO_XUAT_BAN'};
+function checks(nd){
+ const now=NOW;const out=[];
+ if(nd.loai===1)out.push([true,'Series không có media riêng','Media nằm ở từng tập phim.']);
+ else{const pb=nd.ma_phien_ban_mac_dinh&&find('phien_ban_noi_dung',nd.ma_phien_ban_mac_dinh);const m=pb&&EXT.find(x=>x.id==pb.ma_tai_nguyen_media);
+  out.push([!!(m&&m.st==='SAN_SANG'),'Phiên bản đang phục vụ có media sẵn sàng',!pb?'Chưa chọn phiên bản mặc định (tab Phiên bản nội dung).':!m?'Phiên bản chưa gắn tài nguyên media.':m.st==='SAN_SANG'?'v'+pb.so_phien_ban+' · '+m.name:'Media ở trạng thái '+mediaSt[m.st][0].toLowerCase()+' (BR-16).'])}
+ const cs=live('chinh_sach_quyen_xem').filter(x=>x.ma_noi_dung===nd.id&&x.trang_thai===1);
+ out.push([cs.length>0,'Có chính sách quyền xem',cs.length?cs.map(x=>lbl('cap_quyen_xem',x.ma_cap_quyen)).join(', '):'Thêm ở menu Chính sách quyền xem.']);
+ const lp=live('lich_phat_hanh').filter(x=>x.ma_noi_dung===nd.id);
+ out.push([lp.length>0,'Có lịch phát hành',lp.length?fmt(lp[0].phat_hanh_luc):'Thêm ở tab Lịch phát hành.']);
+ const bq=live('ban_quyen_noi_dung').filter(x=>x.ma_noi_dung===nd.id&&x.bat_dau_luc<=now&&(!x.ket_thuc_luc||x.ket_thuc_luc>now)&&(x.lanh_tho||[]).length);
+ out.push([bq.length>0,'Bản quyền còn hiệu lực, có lãnh thổ',bq.length?'Lãnh thổ: '+bq[0].lanh_tho.join(', '):'Thêm ở tab Bản quyền nội dung.']);
+ const vi=live('noi_dung_da_ngon_ngu').find(x=>x.ma_noi_dung===nd.id&&x.ma_ngon_ngu===1);
+ out.push([!!vi,'Có bản dịch tiếng Việt',vi?'':'Thêm ở tab Nội dung đa ngôn ngữ.']);
+ const po=live('anh_bia').find(x=>x.ma_noi_dung===nd.id&&x.loai===0&&x.la_mac_dinh);
+ out.push([!!po,'Có poster mặc định',po?po.ten_tep:'Thêm ở tab Ảnh bìa.']);
+ return out}
+function transition(nd,to){
+ openModal(`<h2>${TRANS[nd.trang_thai].find(x=>x[0]===to)[1]}</h2><p style="color:var(--muted);margin:0">${esc(nd.tieu_de)}: ${FLOW[nd.trang_thai][1]} → ${FLOW[to][1]}</p><div class="field"><label>Ghi chú</label><textarea id="gn" style="width:100%;border:1px solid #d5dbe7;border-radius:8px;padding:8px;min-height:70px"></textarea></div>${to===0&&nd.trang_thai===1?'<div class="banner w" style="margin-top:10px">Nhà cung cấp sẽ tải lại thông tin. Khi họ tải tệp mới, <b>các tệp cũ trên R2 bị xóa</b> (video gốc, phụ đề, ảnh bìa bị thay).</div>':''}<div class="hint">Thao tác tạo một dòng mới ở <code>lich_su_quy_trinh</code> và cập nhật <code>quy_trinh_noi_dung</code>, <code>noi_dung.trang_thai</code>.</div><div class="savebar"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn p" id="mok">Xác nhận</button></div>`);
+ $('#mok').onclick=()=>{const from=BUOC[nd.trang_thai];nd.trang_thai=to;if(to===3)nd.da_tung_xuat_ban=true;nd.ngay_cap_nhat=NOW;
+  const q=DB.quy_trinh_noi_dung.find(x=>x.ma_noi_dung===nd.id);if(q){q.buoc=BUOC[to];q.trang_thai=to===0&&from!=='BAN_NHAP'?2:(to===3||to===4)?1:0;q.ngay_cap_nhat=NOW}
+  DB.lich_su_quy_trinh.push({id:nid('lich_su_quy_trinh'),ma_noi_dung:nd.id,buoc_tu:from,buoc_den:BUOC[to],ma_nguoi_thuc_hien:ME,thoi_diem:NOW,ghi_chu:$('#gn').value||null,da_xoa:false});
+  closeModal();toast(to===3?'Đã xuất bản. Nội dung hiển thị ở OTT theo lịch phát hành.':'Đã chuyển sang “'+FLOW[to][1]+'” và ghi lịch sử.');route.keep=true;route();route.keep=false}}
+
+/* ---------- panel Media & tệp trên Cloudflare R2 ---------- */
+const verOf=nd=>live('phien_ban_noi_dung').filter(v=>v.ma_noi_dung===nd.id).sort((a,b)=>b.so_phien_ban-a.so_phien_ban);
+const extOf=v=>EXT.find(x=>x.id===v.ma_tai_nguyen_media);
+/* Media đầy đủ khi phiên bản phục vụ đã SẴN SÀNG (series: media nằm ở từng tập) */
+function mediaOk(nd){if(nd.loai===1)return true;const v=nd.ma_phien_ban_mac_dinh&&find('phien_ban_noi_dung',nd.ma_phien_ban_mac_dinh);const e=v&&extOf(v);return !!(e&&e.st==='SAN_SANG')}
+function mediaMissing(nd){const out=[];if(nd.loai===1)return ['Series không có media riêng; kiểm tra media của từng tập phim'];
+ const vs=verOf(nd);if(!vs.length)return ['Chưa có phiên bản nào'];
+ const v=nd.ma_phien_ban_mac_dinh&&find('phien_ban_noi_dung',nd.ma_phien_ban_mac_dinh);
+ if(!v){out.push('Chưa chọn phiên bản phục vụ');vs.forEach(x=>{const e=extOf(x);if(e&&e.st==='XAC_MINH')out.push('Phiên bản v'+x.so_phien_ban+' đang được xử lý media')});return out}
+ const e=extOf(v);if(!e)out.push('Phiên bản phục vụ v'+v.so_phien_ban+' chưa gắn tài nguyên media');
+ else if(e.st!=='SAN_SANG')out.push('Phiên bản phục vụ v'+v.so_phien_ban+': '+mediaSt[e.st][0].toLowerCase());
+ return out}
+function mediaPanelHtml(nd){
+ const vs=verOf(nd);const miss=mediaMissing(nd);const ok=mediaOk(nd);const prefix='c'+nd.id+'/';
+ const canTranscode=S.role!=='PROVIDER'&&nd.trang_thai===1;
+ const verdict=nd.loai===1?'<div class="verdict ok"><span>ℹ</span><div>Series không có media riêng. Kiểm tra media ở từng tập phim.</div></div>'
+  :ok?'<div class="verdict ok"><span>✓</span><div><b>Media đầy đủ.</b> Phiên bản phục vụ đã sẵn sàng; QC có thể bấm “Duyệt”.</div></div>'
+  :'<div class="verdict no"><span>!</span><div><b>Media chưa đầy đủ.</b><ul>'+miss.map(m=>'<li>'+esc(m)+'</li>').join('')+'</ul></div></div>';
+ const vrows=vs.map(v=>{const e=extOf(v);const st=e?mediaSt[e.st]:['CHƯA CÓ NGUỒN','c0'];const serving=nd.ma_phien_ban_mac_dinh===v.id;
+  const canRun=canTranscode&&e&&e.st!=='SAN_SANG'&&e.st!=='XAC_MINH';
+  return '<div class="vrow"><div><b>v'+v.so_phien_ban+'</b> '+(serving?'<span class="pill c2">Đang phục vụ</span> ':'')+'<span class="pill '+st[1]+'">'+st[0]+'</span><small>'+esc(v.ghi_chu||'')+'</small></div>'
+   +'<div>'+(e&&e.st==='SAN_SANG'?'<small>HLS · DASH · 1080p, 720p</small>':'')
+   +(canRun?'<button class="btn sm p" data-transcode="'+v.id+'">'+(e.st==='LOI'?'Transcode lại':'Transcode')+'</button>':'')+'</div></div>'}).join('')||'<div class="empty">Chưa có phiên bản nào.</div>';
+ const files=[];
+ vs.forEach(v=>{const e=extOf(v);if(e)files.push([prefix+'v'+v.so_phien_ban+'/source/'+e.name,'Video gốc','Đã gắn']);
+  if(e&&e.st==='SAN_SANG'){files.push([prefix+'v'+v.so_phien_ban+'/hls/master.m3u8','Đầu ra HLS (Media API báo)','Media API']);files.push([prefix+'v'+v.so_phien_ban+'/dash/manifest.mpd','Đầu ra DASH (Media API báo)','Media API'])}});
+ live('phu_de').filter(x=>x.ma_noi_dung===nd.id).forEach(x=>files.push([prefix+'subtitles/'+x.khoa_tep.split('/').pop(),'Phụ đề '+lbl('ngon_ngu',x.ma_ngon_ngu),'Đã gắn']));
+ live('anh_bia').filter(x=>x.ma_noi_dung===nd.id).forEach(x=>files.push([prefix+'covers/'+x.ten_tep,'Ảnh bìa · '+['Poster','Thumbnail','Backdrop'][x.loai],'Đã gắn']));
+ const frows=files.map(f=>'<tr><td><code>'+esc(f[0])+'</code></td><td>'+esc(f[1])+'</td><td><span class="pill '+(f[2]==='Đã gắn'?'c2':'c1')+'">'+f[2]+'</span></td></tr>').join('')||'<tr><td colspan="3"><div class="empty">Chưa có tệp nào.</div></td></tr>';
+ return '<div class="mp"><h3 class="t">Media &amp; tệp trên Cloudflare R2</h3><p class="sub">Bucket <code>original-private</code>, thư mục <code>'+prefix+'</code>. Nhà cung cấp tải tệp lên bằng presigned URL; nội dung vẫn ở bước Bản nháp cho đến khi bấm “Gửi QC”. Video lớn hơn 5 GiB được tải lên nhiều phần (mỗi phần có URL riêng, mất mạng chỉ phải tải lại phần lỗi, có thể hủy lượt tải).</p>'
+  +verdict+'<h4>Phiên bản và trạng thái media</h4>'+vrows
+  +'<h4 style="margin-top:14px">Danh sách tệp</h4><table><thead><tr><th>Khóa tệp</th><th>Loại</th><th>Trạng thái</th></tr></thead><tbody>'+frows+'</tbody></table>'
+  +'<div class="hint">Tệp đầu ra HLS / DASH nằm ở bucket streaming do Media API quản lý; CMS chỉ hiển thị thông tin Media API báo về. Khi nhà cung cấp tải lại tệp, các tệp cũ trên R2 bị xóa.</div></div>'}
+function bindMediaPanel(nd){
+ $$('#mp [data-transcode]').forEach(b=>b.onclick=()=>{const v=find('phien_ban_noi_dung',+b.dataset.transcode);const e=extOf(v);if(!e)return;
+  e.st='XAC_MINH';toast('Đã gửi yêu cầu transcode v'+v.so_phien_ban+' tới Media API');route.keep=true;route();route.keep=false;
+  setTimeout(()=>{e.st='SAN_SANG';if(!nd.ma_phien_ban_mac_dinh)nd.ma_phien_ban_mac_dinh=v.id;toast('Media API báo xong v'+v.so_phien_ban+'. Kiểm tra tệp rồi bấm “Duyệt”.');if(location.hash==='#/t/noi_dung/'+nd.id){route.keep=true;route();route.keep=false}},2200)})}
+function wfHtml(nd){const cur=nd.trang_thai;const ck=checks(nd);const acts=TRANS[cur].filter(a=>S.role!=='PROVIDER'||a[0]===1);const okAll=ck.every(c=>c[0]);const q=DB.quy_trinh_noi_dung.find(x=>x.ma_noi_dung===nd.id);
+ return `<h3 class="t">Quy trình duyệt</h3><div class="steps">${FLOW.map((s,i)=>`<div class="st ${i<cur&&cur<4?'done':''} ${i===cur?'cur':''}">${s[1]}</div>`).join('')}</div>
+ <div class="hint" style="margin:0 0 8px">Người phụ trách: ${esc(q?lbl('tai_khoan_he_thong',q.ma_nguoi_phu_trach):'—')}</div>
+ <div class="chk"><ul>${ck.map(c=>`<li><span class="${c[0]?'ok':'no'}">${c[0]?'✓':'✕'}</span><span>${c[1]}<small>${esc(c[2])}</small></span></li>`).join('')}</ul></div>
+ <div class="acts2">${acts.map(a=>`<button class="btn sm ${a[2]}" data-to="${a[0]}" ${a[0]===3&&!okAll?'disabled title="Chưa đủ điều kiện xuất bản"':''} ${a[0]===2&&!mediaOk(nd)?'disabled title="Media chưa đầy đủ: chạy Transcode và kiểm tra tệp trước khi duyệt"':''}>${a[1]}</button>`).join('')}</div>
+ ${cur===2&&!okAll?'<div class="hint">Nút Xuất bản bật khi mọi điều kiện đạt (BR-11, BR-16).</div>':''}
+ ${cur===1&&!mediaOk(nd)?'<div class="hint">Nút Duyệt bật khi media đã sẵn sàng. Xem panel “Media &amp; tệp trên Cloudflare R2” bên dưới.</div>':''}`}
+/* ---------- màn hình Nội dung: form chính + tab ---------- */
+const CARD={mua_phim:{add:'Thêm mùa phim'},noi_dung_da_ngon_ngu:{add:'Thêm đa ngôn ngữ'},phien_ban_noi_dung:{add:'Thêm phiên bản'},phu_de:{add:'Thêm phụ đề',gate:'ma_ngon_ngu'},anh_bia:{add:'Thêm ảnh bìa'},ban_quyen_noi_dung:{add:'Thêm bản quyền'},lich_phat_hanh:{add:'Thêm lịch phát hành'},thong_tin_noi_dung:{one:1},quy_trinh_noi_dung:{one:1,roKeys:['buoc','trang_thai'],noDel:1}};
+const CTABS=[['mua_phim','Mùa phim',v=>v.loai===1],['thong_tin_noi_dung','Thông tin nội dung'],['noi_dung_da_ngon_ngu','Nội dung đa ngôn ngữ'],['cat','Danh mục đa ngôn ngữ'],['phien_ban_noi_dung','Phiên bản nội dung'],['phu_de','Phụ đề'],['anh_bia','Ảnh bìa'],['ban_quyen_noi_dung','Bản quyền nội dung'],['quy_trinh','Quy trình'],['lich_phat_hanh','Lịch phát hành']];
+const TABDESC={mua_phim:'Mỗi mùa là một form lưu độc lập. Chỉ dùng cho nội dung loại Series.',thong_tin_noi_dung:'Metadata 1–1 với nội dung: quốc gia, ngôn ngữ gốc, thể loại, thời lượng, độ tuổi.',noi_dung_da_ngon_ngu:'Mỗi ngôn ngữ là một form riêng; lưu hoặc xóa form này không ảnh hưởng form khác (BR-05).',phu_de:'Chọn ngôn ngữ trước, các trường còn lại sẽ hiện ra. Mỗi phụ đề lưu độc lập.',anh_bia:'Poster, thumbnail, backdrop. Mỗi ảnh là một form lưu độc lập.',ban_quyen_noi_dung:'Thời hạn và lãnh thổ được phân phối; OTT kiểm tra khi phát (BR-09).',lich_phat_hanh:'Khoảng thời gian nội dung được hiển thị ở OTT (BR-11).'};
+function countFor(tabId,id){if(tabId==='cat')return DB.noi_dung_danh_muc.filter(r=>r.ma_noi_dung===id).length;if(tabId==='quy_trinh')return DB.lich_su_quy_trinh.filter(r=>r.ma_noi_dung===id).length;return live(tabId).filter(r=>r.ma_noi_dung===id).length}
+function cardTitle(tn,r){if(!r)return T[tn].vi+' mới';
+ switch(tn){case 'mua_phim':return 'Mùa '+r.so_mua+(r.tieu_de?' · '+r.tieu_de:'');
+ case 'noi_dung_da_ngon_ngu':return lbl('ngon_ngu',r.ma_ngon_ngu)+' · '+r.tieu_de;
+ case 'phien_ban_noi_dung':return 'Phiên bản v'+r.so_phien_ban;
+ case 'phu_de':return 'Phụ đề '+lbl('ngon_ngu',r.ma_ngon_ngu)+' · '+r.dinh_dang;
+ case 'anh_bia':return ['Poster','Thumbnail','Backdrop'][r.loai]+' · '+(r.ten_tep||'');
+ case 'ban_quyen_noi_dung':return 'Bản quyền '+fmt(r.bat_dau_luc).split(',')[0]+' → '+(r.ket_thuc_luc?fmt(r.ket_thuc_luc).split(',')[0]:'không giới hạn');
+ case 'lich_phat_hanh':return 'Phát hành '+fmt(r.phat_hanh_luc);
+ case 'thong_tin_noi_dung':return 'Thông tin chi tiết';
+ case 'quy_trinh_noi_dung':return 'Quy trình hiện tại'}return '#'+r.id}
+function badgesFor(tn,r){if(!r)return '<span class="pill c0 rnew">chưa lưu</span>';
+ if(tn==='phien_ban_noi_dung'){const nd=find('noi_dung',r.ma_noi_dung);const m=EXT.find(x=>x.id==r.ma_tai_nguyen_media);return (nd.ma_phien_ban_mac_dinh===r.id?'<span class="pill c2">Đang phục vụ</span> ':'')+(m?`<span class="pill ${mediaSt[m.st][1]}">${mediaSt[m.st][0]}</span>`:'')}
+ return ''}
+function cardHtml(tn,row,ndId){const cfg=CARD[tn]||{};
+ const o={hide:['ma_noi_dung'],prefill:{ma_noi_dung:ndId},gate:cfg.gate,roKeys:cfg.roKeys,noSys:true};
+ return `<div class="rcard" data-t="${tn}" data-id="${row?row.id:''}"><div class="rhead"><b class="rtitle">${esc(cardTitle(tn,row))}</b><span class="rbadges">${badgesFor(tn,row)}</span></div>${formHtml(tn,row,o)}<div class="rbar">${cfg.noDel?'':'<button class="btn d sm rdel" type="button">Xóa</button>'}<button class="btn p sm rsave" type="button">Lưu</button></div></div>`}
+function cardTab(tn,row,desc){const cfg=CARD[tn]||{};const rows=live(tn).filter(r=>r.ma_noi_dung===row.id);const list=cfg.one&&!rows.length?[null]:rows;
+ return `<div class="tabhead"><p>${desc}</p>${cfg.add?`<button class="btn p sm radd" data-t="${tn}" type="button">+ ${cfg.add}</button>`:''}</div><div class="cards" data-t="${tn}">${list.map(r=>cardHtml(tn,r,row.id)).join('')||`<div class="empty">Chưa có bản ghi nào. Bấm “${cfg.add}” để thêm.</div>`}</div>`}
+function catName(id,lang){const d=find('danh_muc',id);const tr=live('danh_muc_da_ngon_ngu').find(x=>x.ma_danh_muc==id&&x.ma_ngon_ngu==lang);return (d.ma_danh_muc_cha?catName(d.ma_danh_muc_cha,lang)+' › ':'')+(tr?tr.ten:d.ten)}
+const langOf=m=>+$('[name="_ngon_ngu"]',m.closest('form')).value;
+function catCard(langId,ids,saved){const fl=fieldOf('noi_dung_danh_muc','_ngon_ngu');
+ const ms=msHtml({name:'_dm',num:true,sel:ids,aria:'Danh mục',
+  opts:m=>{const lang=langOf(m);return live('danh_muc').map(d=>({id:d.id,label:catName(d.id,lang),sub:live('danh_muc_da_ngon_ngu').some(x=>x.ma_danh_muc==d.id&&x.ma_ngon_ngu==lang)?'':'chưa dịch'}))},
+  labelOf:(x,m)=>catName(x,m?langOf(m):langId)});
+ return `<div class="rcard catcard" data-t="noi_dung_danh_muc" data-ids='${JSON.stringify(ids)}'><div class="rhead"><b class="rtitle">Danh mục theo ngôn ngữ</b><span class="rbadges">${saved?'':'<span class="pill c0 rnew">chưa lưu</span>'}</span></div><form class="frm" data-t="noi_dung_danh_muc" novalidate><div class="grid2">${fieldHtml('noi_dung_danh_muc',fl,langId,{})}<div class="field wide catsel ${langId?'':'hide'}" data-f="_dm"><label>Danh mục</label><div class="fm"><span>bảng nối noi_dung_danh_muc</span><b>N–N → danh_muc</b></div>${ms}<div class="hint">Tên danh mục hiển thị theo ngôn ngữ đã chọn.</div></div></div></form><div class="rbar"><button class="btn d sm rdel" type="button">Xóa</button><button class="btn p sm rsave" type="button">Lưu</button></div></div>`}
+function catTab(row){const ids=DB.noi_dung_danh_muc.filter(r=>r.ma_noi_dung===row.id).map(r=>r.ma_danh_muc);
+ return `<div class="tabhead"><p>Chọn ngôn ngữ trước, sau đó chọn nhiều danh mục (tên hiển thị theo ngôn ngữ đó). Mỗi form lưu độc lập; dữ liệu ghi vào bảng nối <code>noi_dung_danh_muc</code>.</p><button class="btn p sm radd" data-t="cat" type="button">+ Thêm danh mục đa ngôn ngữ</button></div><div class="cards" data-t="cat">${ids.length?catCard(1,ids,true):'<div class="empty">Chưa gán danh mục nào. Bấm “Thêm danh mục đa ngôn ngữ”.</div>'}</div>`}
+function qtTab(row){const q=live('quy_trinh_noi_dung').find(x=>x.ma_noi_dung===row.id);const hist=DB.lich_su_quy_trinh.filter(x=>x.ma_noi_dung===row.id).sort((a,b)=>b.thoi_diem.localeCompare(a.thoi_diem));
+ return `<div class="tabhead"><p>Bước hiện tại (<code>quy_trinh_noi_dung</code>, quan hệ 1–1). Bước và trạng thái đổi bằng các nút chuyển bước ở khung “Quy trình duyệt”; ở đây chỉ chỉnh người phụ trách.</p></div><div class="cards" data-t="quy_trinh_noi_dung">${q?cardHtml('quy_trinh_noi_dung',q,row.id):'<div class="empty">Nội dung chưa có quy trình.</div>'}</div><div class="tabhead" style="border-top:1px solid var(--line)"><p><b>Lịch sử quy trình</b> (<code>lich_su_quy_trinh</code>): chỉ ghi thêm, không sửa hoặc xóa (BR-13)</p></div>${gridHtml('lich_su_quy_trinh',hist,{hide:['ma_noi_dung'],noact:true})}`}
+function pvTab(row){const fd=fieldOf('noi_dung','ma_phien_ban_mac_dinh');
+ return `<div class="defbox"><form class="frm" data-t="noi_dung" id="defform" novalidate>${fieldHtml('noi_dung',fd,row.ma_phien_ban_mac_dinh,{})}</form><button class="btn p sm" id="defsave" type="button">Lưu phiên bản mặc định</button></div>`+cardTab('phien_ban_noi_dung',row,'Mỗi lần encode lại sinh một phiên bản mới (BR-12). Mỗi phiên bản là một form lưu độc lập.')}
+function tabHtml(id,row){
+ if(id==='cat')return catTab(row);if(id==='quy_trinh')return qtTab(row);if(id==='phien_ban_noi_dung')return pvTab(row);
+ return cardTab(id,row,TABDESC[id])}
+function drawRoles(form){const m=$('.msel[data-name="_dien_vien"]',form);if(!m)return;const box=$('.roles',m.closest('.field'));const cur={};$$('.roleinp',box).forEach(i=>cur[i.dataset.id]=i.value);const rid=form._row&&form._row.id;
+ box.innerHTML=mselSel(m).map(id=>{const ex=rid?live('noi_dung_dien_vien').find(r=>r.ma_noi_dung==rid&&r.ma_dien_vien==id):null;const val=cur[id]!==undefined?cur[id]:(ex?ex.vai_dien||'':'');return `<label class="rolerow"><span>Vai diễn của <b>${esc(lbl('dien_vien',id))}</b></span><input class="roleinp" data-id="${id}" value="${esc(val)}" placeholder="Tên nhân vật" aria-label="Vai diễn của ${esc(lbl('dien_vien',id))}"></label>`}).join('')}
+function viewContent(idRaw){
+ const isNew=idRaw==='new';const id=isNew?null:+idRaw;const row=isNew?null:find('noi_dung',id);
+ if(!isNew&&!row)return {html:'<div class="empty">Không tìm thấy nội dung.</div>'};
+ const h=`<div class="head"><div><h1 id="ttl">${esc(isNew?'Thêm nội dung':row.tieu_de)}</h1><p>${isNew?'Điền form chính rồi bấm Tạo mới. Các tab sẽ mở ra sau khi nội dung được tạo.':'Form chính nhập các trường của bảng nội dung. Mỗi tab bên dưới là một nhóm dữ liệu liên quan, lưu độc lập.'}</p></div><div class="acts"><button class="btn" id="back">← Danh sách nội dung</button>${row&&!everPublished(row)?'<button class="btn d" id="rm">Xóa nội dung</button>':''}</div></div>
+ <div class="metaline"><code>cms_db.noi_dung</code>${row?`<code>id = ${row.id}</code>`:''}<span class="legend"><span><i class="lg"></i>input</span><span><i class="lg fk"></i>combobox khóa ngoại / chọn nhiều</span><span><i class="lg ext"></i>khóa logic sang media_db</span><span><i class="lg ro"></i>chỉ đọc</span></span></div>
+ <div class="${row?'layout':''}"><div class="card pad">${formHtml('noi_dung',row,{noSys:false})}<div class="savebar"><button class="btn" id="cancel">Hủy</button><button class="btn p" id="save">${isNew?'Tạo mới':'Lưu thông tin chung'}</button></div></div>${row?`<div class="card pad" id="wf">${wfHtml(row)}</div>`:''}</div>
+ ${row?`<div class="card pad" id="mp" style="margin-top:14px">${mediaPanelHtml(row)}</div>`:''}
+ ${row?`<div class="tabs" role="tablist">${CTABS.map(t=>`<button role="tab" data-tab="${t[0]}">${t[1]}<span>0</span></button>`).join('')}</div><div class="tabbody" id="tabbody"></div>`:'<div class="banner" style="margin-top:20px">Sau khi tạo nội dung, các tab Mùa phim (khi loại là Series), Thông tin nội dung, Nội dung đa ngôn ngữ, Danh mục, Phiên bản, Phụ đề, Ảnh bìa, Bản quyền, Quy trình và Lịch phát hành sẽ xuất hiện tại đây.</div>'}`;
+ return {html:h,after(){
+  const form=$('form.frm');form.id='mainform';form._row=row||{};form._onms=m=>{if(m.dataset.name==='_dien_vien')drawRoles(form)};syncForm(form);drawRoles(form);
+  /* BR-11b/11c: loai va nha cung cap khong doi sau khi tao; nha cung cap chi sua khi BAN_NHAP va khong duoc xoa */
+  const prov=S.role==='PROVIDER';
+  const freeze=k=>{const fl=$('.field[data-f="'+k+'"]',form);if(fl)fl.setAttribute('inert','')};
+  if(row){freeze('loai');freeze('ma_nha_cung_cap')}
+  else if(prov){const c=$('.combo[data-k="ma_nha_cung_cap"]',form);if(c){$('input[type=hidden]',c).value=1;$('.combo-in',c).value=lbl('nha_cung_cap_noi_dung',1);const fl=c.closest('.field');fl.setAttribute('inert','');fl.insertAdjacentHTML('beforeend','<div class="hint">Tự gán theo nhà cung cấp của tài khoản đăng nhập.</div>')}}
+  if(prov&&row&&row.trang_thai!==0){const rmb=$('#rm');if(rmb)rmb.remove()}
+  if(prov&&row&&row.trang_thai!==0){
+   const card=form.closest('.card');card.setAttribute('inert','');
+   const tb=$('#tabbody');if(tb)tb.setAttribute('inert','');
+   card.parentElement.insertAdjacentHTML('beforebegin','<div class="banner w" style="margin-bottom:14px">Nội dung đang ở bước “'+FLOW[row.trang_thai][1]+'”. Nhà cung cấp chỉ được xem; chỉ tài khoản nội bộ chỉnh sửa được (BR-11c).</div>');
+  }
+  $('#back').onclick=()=>location.hash='#/t/noi_dung';$('#cancel').onclick=()=>isNew?location.hash='#/t/noi_dung':route();
+  const rm=$('#rm');if(rm)rm.onclick=()=>removeRec('noi_dung',id,()=>location.hash='#/t/noi_dung');
+  $('#save').onclick=()=>{const r=saveRec('noi_dung',id,form);if(!r)return;
+   if(isNew){location.hash='#/t/noi_dung/'+r.id;return}
+   toast('Đã lưu thông tin chung của nội dung');$('#ttl').textContent=r.tieu_de;form._row=r;$('#wf').innerHTML=wfHtml(r)};
+  if(!row)return;
+  bindMediaPanel(row);
+  const body=$('#tabbody');
+  const vis=()=>{const v=collect(form);return CTABS.filter(t=>!t[2]||t[2](v)).map(t=>t[0])};
+  const refresh=()=>{$$('.tabs button').forEach(b=>{b.firstElementChild.textContent=countFor(b.dataset.tab,id)});$('#wf').innerHTML=wfHtml(row)};
+  const updateTabs=()=>{const v=vis();$$('.tabs button').forEach(b=>b.style.display=v.includes(b.dataset.tab)?'':'none');if(!v.includes(S.ctab))showTab(v[0])};
+  function showTab(t){S.ctab=t;$$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));body.innerHTML=tabHtml(t,row);
+   $$('.rcard:not(.catcard)',body).forEach(c=>initCard(c));$$('.catcard',body).forEach(initCat);
+   const df=$('#defform',body);if(df)df._row=row}
+  function initCard(card){const tn=card.dataset.t,fm=$('form',card);fm._row=card.dataset.id?find(tn,card.dataset.id):{ma_noi_dung:id};syncForm(fm)}
+  function initCat(card){const fm=$('form',card);fm._row={};fm._onchange=k=>{if(k==='_ngon_ngu'){const v=$('[name="_ngon_ngu"]',fm).value;$('.catsel',fm).classList.toggle('hide',!v);mselRefresh($('.msel',fm))}}}
+  form._onchange=k=>{if(k==='loai')updateTabs()};
+  $$('.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+  S.ctab=S.ctabFor===id&&S.ctab?S.ctab:'thong_tin_noi_dung';S.ctabFor=id;
+  refresh();updateTabs();if(!$('.tabs button.on'))showTab(S.ctab);
+  $('#wf').onclick=e=>{const b=e.target.closest('[data-to]');if(b)transition(row,+b.dataset.to)};
+  body.onclick=e=>{
+   const add=e.target.closest('.radd');
+   if(add){const tn=add.dataset.t;const cont=$('.cards',body);const em=$('.empty',cont);if(em)em.remove();const d=document.createElement('div');
+    if(tn==='cat'){d.innerHTML=catCard(null,[],false);const c=d.firstChild;cont.prepend(c);initCat(c)}
+    else{d.innerHTML=cardHtml(tn,null,id);const c=d.firstChild;cont.prepend(c);initCard(c)}
+    const first=$('.combo-in:not([disabled]),input:not([type=hidden]):not([readonly])',cont.firstChild);first&&first.focus();return}
+   const sv=e.target.closest('.rsave');
+   if(sv){const card=sv.closest('.rcard');
+    if(card.classList.contains('catcard')){const fm=$('form',card);const lang=+$('[name="_ngon_ngu"]',fm).value;
+     if(!lang){const d=$('.field[data-f="_ngon_ngu"]',fm);if(!$('.errm',d))d.insertAdjacentHTML('beforeend','<div class="errm">Chọn ngôn ngữ trước.</div>');toast('Chưa lưu: chọn ngôn ngữ trước.');return}
+     const ids=mselSel($('.msel',fm));const prev=JSON.parse(card.dataset.ids||'[]');const others=$$('.catcard',body).filter(c=>c!==card).flatMap(c=>JSON.parse(c.dataset.ids||'[]'));
+     prev.filter(x=>!ids.includes(x)&&!others.includes(x)).forEach(x=>{const r=DB.noi_dung_danh_muc.find(y=>y.ma_noi_dung===id&&y.ma_danh_muc===x);if(r)DB.noi_dung_danh_muc.splice(DB.noi_dung_danh_muc.indexOf(r),1)});
+     ids.forEach(x=>{if(!DB.noi_dung_danh_muc.some(y=>y.ma_noi_dung===id&&y.ma_danh_muc===x))DB.noi_dung_danh_muc.push({id:nid('noi_dung_danh_muc'),ma_noi_dung:id,ma_danh_muc:x,ngay_tao:NOW,nguoi_tao:ME})});
+     card.dataset.ids=JSON.stringify(ids);const nb=$('.rnew',card);if(nb)nb.remove();$('.errm',fm)&&$$('.errm',fm).forEach(x=>x.remove());toast('Đã lưu danh mục theo ngôn ngữ ('+ids.length+' danh mục)');refresh();return}
+    const tn=card.dataset.t;const fm=$('form',card);const rid=card.dataset.id?+card.dataset.id:null;
+    const r=saveRec(tn,rid,fm);if(!r)return;card.dataset.id=r.id;fm._row=r;$('.rtitle',card).textContent=cardTitle(tn,r);$('.rbadges',card).innerHTML=badgesFor(tn,r);
+    toast(rid?'Đã lưu thay đổi':'Đã thêm bản ghi mới');refresh();return}
+   const dl=e.target.closest('.rdel');
+   if(dl){const card=dl.closest('.rcard');const tn=card.dataset.t;const cont=card.parentNode;
+    const done=()=>{card.remove();if(!$('.rcard',cont)){const cfg=CARD[tn]||{};if(cfg.one){showTab(S.ctab)}else cont.innerHTML=`<div class="empty">Chưa có bản ghi nào.</div>`}refresh()};
+    if(card.classList.contains('catcard')){const prev=JSON.parse(card.dataset.ids||'[]');if(!prev.length){done();return}
+     openModal(`<h2>Xóa form danh mục?</h2><p style="color:var(--muted)">Các danh mục chỉ thuộc form này sẽ được bỏ khỏi nội dung.</p><div class="savebar"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn d" id="mok">Xóa</button></div>`);
+     $('#mok').onclick=()=>{const others=$$('.catcard',body).filter(c=>c!==card).flatMap(c=>JSON.parse(c.dataset.ids||'[]'));prev.filter(x=>!others.includes(x)).forEach(x=>{const r=DB.noi_dung_danh_muc.find(y=>y.ma_noi_dung===id&&y.ma_danh_muc===x);if(r)DB.noi_dung_danh_muc.splice(DB.noi_dung_danh_muc.indexOf(r),1)});closeModal();toast('Đã xóa');done()};return}
+    if(!card.dataset.id){done();return}
+    removeRec(tn,+card.dataset.id,()=>{if(tn==='phien_ban_noi_dung'&&row.ma_phien_ban_mac_dinh===+card.dataset.id)row.ma_phien_ban_mac_dinh=null;done()});return}
+   if(e.target.closest('#defsave')){const v=$('[name="ma_phien_ban_mac_dinh"]',body).value;row.ma_phien_ban_mac_dinh=v?+v:null;toast('Đã lưu phiên bản mặc định (BR-12)');
+    $$('.rcard[data-t="phien_ban_noi_dung"]',body).forEach(c=>{if(c.dataset.id)$('.rbadges',c).innerHTML=badgesFor('phien_ban_noi_dung',find('phien_ban_noi_dung',c.dataset.id))});refresh()}}}}}
+/* ---------- màn hình chi tiết chung (các bảng danh mục / quản trị) ---------- */
+const TABS_GEN={danh_muc:[['danh_muc_da_ngon_ngu','ma_danh_muc'],['danh_muc','ma_danh_muc_cha']],nha_cung_cap_noi_dung:[['noi_dung','ma_nha_cung_cap']]};
+const LINK_ONLY=new Set(['noi_dung']);
+function showFilms(tn,id){const isD=tn==='dao_dien';const pt=isD?'noi_dung_dao_dien':'noi_dung_dien_vien',k=isD?'ma_dao_dien':'ma_dien_vien';
+ const rows=live(pt).filter(r=>r[k]==id).map(r=>({r,nd:find('noi_dung',r.ma_noi_dung)})).filter(x=>x.nd&&!x.nd.da_xoa);
+ const lo=fieldOf('noi_dung','loai').opts,tt=fieldOf('noi_dung','trang_thai').opts;
+ openDrawer('Phim liên quan · '+lbl(tn,id),rows.length?`<p class="hint" style="margin:0 0 10px">Nguồn: bảng nối <code>${pt}</code>. Bấm tên phim để mở màn hình nội dung.</p><div class="tbl-wrap"><table class="g"><thead><tr><th>Nội dung</th><th>Loại</th><th>Trạng thái</th>${isD?'':'<th>Vai diễn</th>'}<th>Năm</th></tr></thead><tbody>${rows.map(({r,nd})=>`<tr><td><a class="lk" href="#/t/noi_dung/${nd.id}">${esc(nd.tieu_de)}</a></td><td><span class="pill ${lo[nd.loai][2]}">${lo[nd.loai][1]}</span></td><td><span class="pill ${tt[nd.trang_thai][2]}">${tt[nd.trang_thai][1]}</span></td>${isD?'':`<td>${esc(r.vai_dien||'—')}</td>`}<td>${nd.nam_phat_hanh||'—'}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Chưa có phim nào liên quan.</div>',closeDrawer,'Đóng');
+ $('#dc').style.display='none'}
+function viewRecord(tn,idRaw){
+ const t=T[tn];const isNew=idRaw==='new';const id=isNew?null:+idRaw;const row=isNew?null:find(tn,id);
+ if(!isNew&&!row)return {html:`<div class="empty">Không tìm thấy bản ghi.</div>`};
+ const qp=Object.fromEntries(new URLSearchParams((location.hash.split('?')[1]||'')));const pre={};for(const k in qp)pre[k]=isNaN(qp[k])?qp[k]:+qp[k];
+ const par=parentsOf(tn);const tabs=row?(TABS_GEN[tn]||[]).map(([a,b])=>({t:a,k:b})):[];
+ const hasPanel=par.length||tabs.length;
+ const title=isNew?'Thêm '+t.vi.toLowerCase():t.label(row);
+ let right='';
+ if(hasPanel){right=`<div class="card pad rel"><h3 class="t">Quan hệ dữ liệu</h3>`;
+  if(par.length)right+=`<h4>Tham chiếu tới (bảng cha)</h4><ul>${par.map(f=>{const v=row?row[f.k]:null;return `<li><span>${esc(f.label)}<span class="card-n">N–1</span><br><code>${f.k}</code></span>${f.ref==='@media'?`<span class="lk ext">${v?esc(lbl('@media',v)):'—'}</span>`:v?`<a class="lk" href="${href(f.ref,v)}">${esc(lbl(f.ref,v))}</a>`:'<span style="color:#9aa4b8">—</span>'}</li>`}).join('')}</ul>`;
+  if(tabs.length)right+=`<h4>Được tham chiếu bởi (bảng con) · bấm để mở tab</h4><div class="kidchips">${tabs.map(c=>{const n=live(c.t).filter(x=>x[c.k]==id).length;return `<button class="chipx ${n?'':'z'}" data-tab="${c.t}:${c.k}">${c.t===tn?'Danh mục con':T[c.t].vi} <b>${n}</b></button>`}).join('')}</div>`;
+  right+='</div>'}
+ const films=row&&(tn==='dao_dien'||tn==='dien_vien')?live(tn==='dao_dien'?'noi_dung_dao_dien':'noi_dung_dien_vien').filter(r=>r[tn==='dao_dien'?'ma_dao_dien':'ma_dien_vien']===id).length:0;
+ const key=tn;const tk=S['tab_'+key];let tabKey=tabs.some(c=>c.t+':'+c.k===tk)?tk:(tabs[0]?tabs[0].t+':'+tabs[0].k:null);
+ const h=`<div class="head"><div><h1>${esc(title)}</h1><p>${isNew?'Điền thông tin rồi lưu.':t.desc}</p></div><div class="acts"><button class="btn" id="back">← ${t.vi}</button>${films||(row&&(tn==='dao_dien'||tn==='dien_vien'))?`<button class="btn" id="films" title="Danh sách phim liên quan">Phim liên quan <b style="font-family:var(--mono);background:var(--fk-bg);color:var(--fk);border-radius:99px;padding:0 7px">${films}</b></button>`:''}${row&&!t.append?'<button class="btn d" id="rm">Xóa</button>':''}</div></div>
+ <div class="metaline"><code>cms_db.${tn}</code>${row?`<code>id = ${row.id}</code>`:''}${t.append?'<span class="pill c1">chỉ ghi thêm</span>':''}<span class="legend"><span><i class="lg"></i>input</span><span><i class="lg fk"></i>combobox khóa ngoại / chọn nhiều</span><span><i class="lg ext"></i>khóa logic sang media_db</span><span><i class="lg ro"></i>chỉ đọc</span></span></div>
+ <div class="${hasPanel?'layout':'single'}"><div class="card pad">${formHtml(tn,row,{prefill:pre,ro:!!t.append&&!isNew})}${t.append&&!isNew?'':`<div class="savebar"><button class="btn" id="cancel">Hủy</button><button class="btn p" id="save">${isNew?'Tạo mới':'Lưu thay đổi'}</button></div>`}</div>${right?`<div>${right}</div>`:''}</div>
+ ${tabs.length?`<div class="tabs" role="tablist">${tabs.map(c=>{const k=c.t+':'+c.k;const n=live(c.t).filter(x=>x[c.k]==id).length;return `<button role="tab" class="${k===tabKey?'on':''}" data-tab="${k}">${c.t===tn?'Danh mục con':T[c.t].vi}<span>${n}</span></button>`}).join('')}</div><div class="tabbody" id="tabbody"></div>`:''}`;
+ return {html:h,after(){
+  const form=$('form.frm');form._row=row||{};form._onms=()=>{};syncForm(form);
+  $('#back').onclick=()=>location.hash='#/t/'+tn;
+  const sv=$('#save');if(sv)sv.onclick=()=>{const r=saveRec(tn,id,form);if(r){toast(isNew?'Đã tạo bản ghi':'Đã lưu thay đổi');if(isNew)location.hash=`#/t/${tn}/${r.id}`;else{route.keep=true;route();route.keep=false}}};
+  const cn=$('#cancel');if(cn)cn.onclick=()=>history.back();
+  const rm=$('#rm');if(rm)rm.onclick=()=>removeRec(tn,id,()=>location.hash='#/t/'+tn);
+  const fb=$('#films');if(fb)fb.onclick=()=>showFilms(tn,id);
+  $$('.rel [data-tab]').forEach(b=>b.onclick=()=>{S['tab_'+key]=b.dataset.tab;route.keep=true;route();route.keep=false;setTimeout(()=>$('.tabs')&&$('.tabs').scrollIntoView({behavior:'smooth',block:'center'}),40)});
+  $$('.tabs [data-tab]').forEach(b=>b.onclick=()=>{S['tab_'+key]=b.dataset.tab;tabKey=b.dataset.tab;drawTab()});
+  function drawTab(){if(!tabKey)return;$$('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tabKey));
+   const [ct,ck]=tabKey.split(':');const c=T[ct];const rows=DB[ct].filter(x=>x[ck]==id&&!x.da_xoa);const lo=LINK_ONLY.has(ct);
+   $('#tabbody').innerHTML=`<div class="tabhead"><p><b>${ct===tn?'Danh mục con':c.vi}</b> · <code>${ct}.${ck}</code> → <code>${tn}.id</code> · quan hệ ${cardOf({t:ct,k:ck})}<br>${c.desc}</p>${lo||c.append?'':`<button class="btn p sm" id="addchild">+ Thêm</button>`}</div>${gridHtml(ct,rows,{embedded:1,hide:[ck],noact:lo})}`;
+   const ac=$('#addchild');if(ac)ac.onclick=()=>editChild(ct,null,{[ck]:id},()=>{route.keep=true;route();route.keep=false});
+   $('#tabbody').onclick=e=>{const tr=e.target.closest('tr.row');if(!tr)return;const rid=+tr.dataset.id;const a=e.target.closest('[data-a]');
+    if(lo){location.hash=href(ct,rid);return}
+    if(a&&a.dataset.a==='del'){removeRec(ct,rid,()=>{route.keep=true;route();route.keep=false});return}
+    if(!e.target.closest('a'))editChild(ct,rid,{[ck]:id},()=>{route.keep=true;route();route.keep=false})}}
+  if(tabs.length)drawTab()}}}
+/* ---------- Chính sách quyền xem: nhóm theo tên nội dung ---------- */
+function policySummary(ndId){const ps=live('chinh_sach_quyen_xem').filter(x=>x.ma_noi_dung===ndId).sort((a,b)=>find('cap_quyen_xem',a.ma_cap_quyen).thu_tu-find('cap_quyen_xem',b.ma_cap_quyen).thu_tu);
+ return ps.map(p=>`<span class="lk" style="margin:2px 4px 2px 0">${esc(lbl('cap_quyen_xem',p.ma_cap_quyen))}${p.duoc_xem?'':' · không được xem'}${p.chat_luong_toi_da?' · '+p.chat_luong_toi_da:''}${p.so_tap_toi_da?' · '+p.so_tap_toi_da+' tập':''}</span>`).join('')||'<span class="pill c4">Chưa có chính sách</span>'}
+function viewPolicyList(){
+ const st=S.flt.policy||(S.flt.policy={q:''});const lo=fieldOf('noi_dung','loai').opts;
+ const h=`<div class="head"><div><h1>${T.chinh_sach_quyen_xem.vi}</h1><p>Danh sách nhóm theo tên nội dung. Bấm một nội dung để xem và chỉnh các chính sách quyền xem tương ứng (BR-06, BR-07).</p></div><div class="acts"><button class="btn p" id="addbtn">+ Thêm chính sách</button></div></div>
+ <div class="metaline"><code>cms_db.chinh_sach_quyen_xem</code><span>Tham chiếu tới:</span><a class="chipx" href="#/t/noi_dung">${T.noi_dung.vi}</a><a class="chipx" href="#/t/cap_quyen_xem">${T.cap_quyen_xem.vi}</a></div>
+ <div class="tool"><input type="search" id="q" placeholder="Tìm theo tên nội dung…" value="${esc(st.q)}" aria-label="Tìm theo tên nội dung"></div><div class="card" id="gridbox"></div>`;
+ return {html:h,after(){const draw=()=>{const q=norm(st.q);const rows=live('noi_dung').filter(c=>norm(c.tieu_de).includes(q)).map(c=>({c,n:live('chinh_sach_quyen_xem').filter(x=>x.ma_noi_dung===c.id).length})).sort((a,b)=>(b.n>0)-(a.n>0)||a.c.tieu_de.localeCompare(b.c.tieu_de));
+   $('#gridbox').innerHTML=rows.length?`<div class="tbl-wrap"><table class="g"><thead><tr><th>Tên nội dung<code>noi_dung.tieu_de</code></th><th>Loại</th><th>Số chính sách</th><th>Tóm tắt theo cấp quyền<code>cap_quyen_xem</code></th><th></th></tr></thead><tbody>${rows.map(({c,n})=>`<tr class="row" data-id="${c.id}"><td><b>${esc(c.tieu_de)}</b></td><td><span class="pill ${lo[c.loai][2]}">${lo[c.loai][1]}</span></td><td>${n}</td><td>${policySummary(c.id)}</td><td class="act"><span style="color:#9aa4b8">›</span></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">Không tìm thấy nội dung.</div>'};
+  draw();$('#q').oninput=e=>{st.q=e.target.value;draw()};
+  $('#gridbox').onclick=e=>{const tr=e.target.closest('tr.row');if(tr)location.hash='#/t/chinh_sach_quyen_xem/'+tr.dataset.id};
+  $('#addbtn').onclick=()=>editChild('chinh_sach_quyen_xem',null,{},r=>{location.hash='#/t/chinh_sach_quyen_xem/'+r.ma_noi_dung})}}}
+function viewPolicyDetail(ndId){const nd=find('noi_dung',ndId);if(!nd)return {html:'<div class="empty">Không tìm thấy nội dung.</div>'};
+ const rows=live('chinh_sach_quyen_xem').filter(x=>x.ma_noi_dung===ndId).sort((a,b)=>find('cap_quyen_xem',a.ma_cap_quyen).thu_tu-find('cap_quyen_xem',b.ma_cap_quyen).thu_tu);
+ const miss=live('cap_quyen_xem').filter(c=>!rows.some(r=>r.ma_cap_quyen===c.id));
+ const h=`<div class="head"><div><h1>Chính sách quyền xem · ${esc(nd.tieu_de)}</h1><p>Mỗi dòng cho biết một cấp quyền được xem nội dung này thế nào. Cấp cao kế thừa cấp thấp: VIP_PRO → VIP → FREE (BR-06).</p></div><div class="acts"><button class="btn" id="back">← ${T.chinh_sach_quyen_xem.vi}</button><a class="btn" href="#/t/noi_dung/${nd.id}" style="text-decoration:none">Mở nội dung</a><button class="btn p" id="add">+ Thêm chính sách</button></div></div>
+ <div class="metaline"><code>cms_db.chinh_sach_quyen_xem</code><code>noi_dung.id = ${nd.id}</code><span class="pill ${fieldOf('noi_dung','loai').opts[nd.loai][2]}">${fieldOf('noi_dung','loai').opts[nd.loai][1]}</span></div>
+ ${miss.length?`<div class="banner w">Chưa có chính sách cho cấp: <b>${miss.map(c=>c.ma_cap_quyen).join(', ')}</b>. Người dùng ở cấp này sẽ không xem được nội dung.</div>`:''}
+ <div class="card" id="gridbox">${gridHtml('chinh_sach_quyen_xem',rows,{embedded:1,hide:['ma_noi_dung']})}</div>`;
+ return {html:h,after(){const rr=()=>{route.keep=true;route();route.keep=false};
+  $('#back').onclick=()=>location.hash='#/t/chinh_sach_quyen_xem';$('#add').onclick=()=>editChild('chinh_sach_quyen_xem',null,{ma_noi_dung:ndId},rr);
+  $('#gridbox').onclick=e=>{const tr=e.target.closest('tr.row');if(!tr)return;const rid=+tr.dataset.id;const a=e.target.closest('[data-a]');
+   if(a&&a.dataset.a==='del'){removeRec('chinh_sach_quyen_xem',rid,rr);return}editChild('chinh_sach_quyen_xem',rid,{ma_noi_dung:ndId},rr)}}}}
+/* ---------- bản đồ dữ liệu ---------- */
+const POS={nha_cung_cap_noi_dung:[10,30],tai_khoan_he_thong:[10,110],tai_khoan_vai_tro:[10,190],vai_tro:[10,270],vai_tro_quyen_han:[10,350],quyen_han:[10,430],he_thong:[10,510],phien_he_thong:[200,510],
+ quy_trinh_noi_dung:[265,30],lich_su_quy_trinh:[265,110],lich_phat_hanh:[265,230],ban_quyen_noi_dung:[265,310],chinh_sach_quyen_xem:[265,390],cap_quyen_xem:[265,470],
+ mua_phim:[520,70],noi_dung:[520,250],phien_ban_noi_dung:[520,420],'@media':[520,520],
+ thong_tin_noi_dung:[775,30],noi_dung_da_ngon_ngu:[775,100],phu_de:[775,170],anh_bia:[775,240],noi_dung_dao_dien:[775,310],noi_dung_dien_vien:[775,380],noi_dung_danh_muc:[775,450],
+ ngon_ngu:[1030,135],dao_dien:[1030,310],dien_vien:[1030,380],danh_muc:[1030,450],danh_muc_da_ngon_ngu:[1030,540]};
+function mapSvg(){
+ const W=178,H=34;const box=n=>{const p=POS[n];const h=n==='noi_dung'?46:H;return {x:p[0],y:p[1],w:W,h}};
+ let edges='',nodes='';const E=[];
+ for(const c in T)for(const f of T[c].fields)if(f.t==='fk'&&!f.audit&&!f.virtual&&c!==f.ref)E.push([c,f.ref,f.k]);
+ for(const [c,p,k] of E){const a=box(c),b=box(p);let d;
+  if(Math.abs(a.x-b.x)<5){const x=a.x+W;d=`M${x},${a.y+a.h/2} C${x+50},${a.y+a.h/2} ${x+50},${b.y+b.h/2} ${x},${b.y+b.h/2}`}
+  else{const left=a.x>b.x;const x1=left?a.x:a.x+W,x2=left?b.x+W:b.x;const dx=left?-60:60;d=`M${x1},${a.y+a.h/2} C${x1+dx},${a.y+a.h/2} ${x2-dx},${b.y+b.h/2} ${x2},${b.y+b.h/2}`}
+  edges+=`<path class="edge ${p==='@media'?'ext':''}" data-a="${c}" data-b="${p}" d="${d}"><title>Màn Chiếu CMS — Mockup cms_db (góp ý lần 1)</title></path>`}
+ const gl=[[10,'Quản trị / RBAC · Nhà cung cấp'],[265,'Workflow · Phát hành & bản quyền'],[520,'Nội dung cốt lõi'],[775,'Metadata, ảnh, phụ đề, diễn viên'],[1030,'Danh mục dùng chung']];
+ nodes+=gl.map(g=>`<text class="gh" x="${g[0]}" y="14">${g[1]}</text>`).join('');
+ for(const n in POS){const b=box(n);const ext=n==='@media';
+  nodes+=`<g class="node ${ext?'ext':''} ${n==='noi_dung'?'core':''}" data-n="${n}" tabindex="0"><rect x="${b.x}" y="${b.y}" width="${b.w}" height="${b.h}"/><text x="${b.x+10}" y="${b.y+(b.h>40?19:15)}">${ext?'tai_nguyen_media':T[n].vi}</text><text class="s" x="${b.x+10}" y="${b.y+(b.h>40?35:28)}">${ext?'media_db · khóa logic':n}</text></g>`}
+ return `<svg viewBox="0 0 1230 600" role="img" aria-label="Sơ đồ quan hệ giữa các bảng cms_db">${edges}${nodes}</svg>`}
+function viewHome(){
+ const cnt=n=>live(n).length;
+ const h=`<div class="head"><div><h1>Bản đồ dữ liệu CMS</h1><p>29 bảng của <code>cms_db</code>. Rê chuột vào một bảng để thấy các quan hệ của nó, bấm để mở màn hình quản lý bảng đó.</p></div></div>
+ <div class="banner"><b>Cách đọc màn hình:</b> trường dữ liệu thuần là <b>input</b>; khóa ngoại và khóa logic sang hệ thống khác là <b>combobox</b> (xanh chàm = khóa ngoại trong cms_db, cam = khóa logic sang media_db); quan hệ N–N là <b>combobox chọn nhiều</b> (gõ để tìm, chọn nhiều).</div>
+ <div class="card map" id="map">${mapSvg()}</div>
+ ${GROUPS.map(g=>`<h3 class="t" style="margin:24px 0 10px">${g[0]}</h3><div class="idx">${g[2].map(n=>`<a href="#/t/${n}"><b>${T[n].ic} ${T[n].vi}</b><code>${n}</code><p>${cnt(n)} bản ghi · ${parentsOf(n).length} khóa ngoại</p></a>`).join('')}</div>`).join('')}
+ <h3 class="t" style="margin:24px 0 4px">Bảng nằm trong màn hình khác</h3><p class="hint" style="margin:0 0 10px">Các bảng này không có menu riêng; dữ liệu được nhập ngay trong tab hoặc trường của màn hình chứa chúng.</p>
+ <div class="idx">${Object.keys(HOST).map(n=>`<a href="${HOST[n][1]}"><b>${T[n].ic} ${T[n].vi}</b><code>${n}</code><p>Trong: ${HOST[n][0]}</p></a>`).join('')}</div>`;
+ return {html:h,after(){const m=$('#map');
+  $$('.node',m).forEach(n=>{const go=()=>{const k=n.dataset.n;if(k!=='@media')location.hash=hostList(k)};n.onclick=go;n.onkeydown=e=>e.key==='Enter'&&go();
+   const on=()=>{const k=n.dataset.n;m.classList.add('f');const rel=new Set([k]);$$('.edge',m).forEach(e=>{const hit=e.dataset.a===k||e.dataset.b===k;e.classList.toggle('hl',hit);if(hit){rel.add(e.dataset.a);rel.add(e.dataset.b)}});$$('.node',m).forEach(x=>x.classList.toggle('hl',rel.has(x.dataset.n)))};
+   const off=()=>m.classList.remove('f');n.onmouseenter=on;n.onmouseleave=off;n.onfocus=on;n.onblur=off})}}}
+/* ---------- shell ---------- */
+function buildNav(){
+ const cur=location.hash;
+ $('#nav').innerHTML=`<a class="home ${cur===''||cur==='#/'||cur==='#'?'on':''}" href="#/">◫ Bản đồ dữ liệu</a>`+GROUPS.filter(g=>ROLES[S.role].includes(g[1])).map(g=>`<div class="grp ${S.shut&&S.shut[g[1]]?'shut':''}" data-g="${g[1]}"><button>${g[0]}<span>▾</span></button><div>${g[2].map(n=>`<a class="nav ${cur.startsWith('#/t/'+n+'/')||cur==='#/t/'+n?'on':''}" href="#/t/${n}">${T[n].vi}<small>${n}</small></a>`).join('')}</div></div>`).join('');
+ $$('.grp>button').forEach(b=>b.onclick=()=>{const g=b.parentNode;g.classList.toggle('shut');(S.shut=S.shut||{})[g.dataset.g]=g.classList.contains('shut')})}
+function route(){
+ closeDrawer();closeModal();
+ const m=location.hash.match(/^#\/t\/([a-z_]+)(?:\/([a-z0-9]+))?/);let v,crumb;
+ if(m&&T[m[1]]){const tn=m[1],rid=m[2];
+  if(HOST[tn]){location.replace(rid&&rid!=='new'?href(tn,rid):HOST[tn][1]);return}
+  if(tn==='noi_dung')v=rid?viewContent(rid):viewList(tn);
+  else if(tn==='chinh_sach_quyen_xem')v=rid&&rid!=='new'?viewPolicyDetail(+rid):viewPolicyList();
+  else v=rid?viewRecord(tn,rid):viewList(tn);
+  const gname=(GROUPS.find(g=>g[2].includes(tn))||[''])[0];
+  crumb=`<a href="#/">CMS</a> / ${gname} / <b>${T[tn].vi}</b>${rid?' / '+(rid==='new'?'Thêm mới':'#'+rid):''}`}
+ else{v=viewHome();crumb='CMS / <b>Bản đồ dữ liệu</b>'}
+ $('#crumb').innerHTML=crumb;$('#view').innerHTML=v.html;v.after&&v.after();buildNav();
+ if(!route.keep)window.scrollTo(0,0)}
+window.addEventListener('hashchange',route);
+$('#role').onchange=e=>{S.role=e.target.value;toast('Menu được dựng theo quyền của vai trò: '+e.target.selectedOptions[0].text);buildNav()};
+$('#scrim').onclick=closeDrawer;$('#scrim2').onclick=closeModal;
+route();
+</script></body></html>
